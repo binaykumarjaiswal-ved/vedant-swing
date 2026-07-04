@@ -1,37 +1,67 @@
 #!/usr/bin/env python3
-"""Vedant Swing USER-GUIDE.pdf — practical report layout."""
+"""Vedant Swing USER-GUIDE.pdf — Hindi labels, logo, phone-friendly text."""
 
 from __future__ import annotations
 
+import subprocess
+import sys
 from pathlib import Path
 
 from fpdf import FPDF
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "USER-GUIDE.pdf"
+LOGO = ROOT / "assets" / "vedant-swing-logo.png"
+HINDI_REG = Path(r"C:\Windows\Fonts\Nirmala.ttf")
+HINDI_BOLD = Path(r"C:\Windows\Fonts\NirmalaB.ttf")
 
 BLUE = (30, 64, 120)
 ACCENT = (59, 130, 246)
 LIGHT = (240, 245, 252)
-GREEN = (22, 120, 70)
 RED = (180, 50, 50)
 GREY = (100, 110, 125)
 WHITE = (255, 255, 255)
 BLACK = (25, 30, 40)
 
-ML, MR, MT, MB = 14, 14, 12, 14
+ML, MR, MT, MB = 12, 12, 10, 12
+BODY = 10.5
+TABLE = 9.5
+ROW_H = 8.0
+
+
+def bi(en: str, hi: str) -> str:
+    return f"{en}  |  {hi}"
+
+
+def ensure_logo() -> Path:
+    if not LOGO.exists():
+        subprocess.run([sys.executable, str(ROOT / "scripts" / "create_logo.py")], check=True)
+    return LOGO
 
 
 class Report(FPDF):
+    def __init__(self) -> None:
+        super().__init__(orientation="P", unit="mm", format="A4")
+        self.set_margins(ML, MT, MR)
+        self.set_auto_page_break(auto=True, margin=MB)
+        self.add_font("Nirmala", "", str(HINDI_REG))
+        self.add_font("Nirmala", "B", str(HINDI_BOLD))
+
     def footer(self):
         self.set_y(-10)
-        self.set_font("Helvetica", "I", 7)
+        self.use_hi(8)
         self.set_text_color(*GREY)
-        self.cell(0, 5, f"Vedant Swing User Guide  |  Page {self.page_no()}", align="C")
+        self.cell(0, 5, bi(f"Page {self.page_no()}", f"पृष्ठ {self.page_no()}"), align="C")
 
     @property
     def body_w(self) -> float:
         return self.w - ML - MR
+
+    def use_en(self, size: float = BODY, bold: bool = False) -> None:
+        self.set_font("Helvetica", "B" if bold else "", size)
+
+    def use_hi(self, size: float = BODY, bold: bool = False) -> None:
+        self.set_font("Nirmala", "B" if bold else "", size)
 
     def check_space(self, h: float) -> None:
         if self.get_y() + h > self.h - MB:
@@ -39,111 +69,110 @@ class Report(FPDF):
 
     def cover(self) -> None:
         self.add_page()
+        logo = ensure_logo()
         self.set_fill_color(*BLUE)
-        self.rect(0, 0, self.w, 52, style="F")
-        self.set_xy(ML, 16)
-        self.set_font("Helvetica", "B", 22)
+        self.rect(0, 0, self.w, 58, style="F")
+        self.image(str(logo), x=ML, y=10, w=28)
+        self.set_xy(ML + 32, 14)
+        self.use_en(24, bold=True)
         self.set_text_color(*WHITE)
-        self.cell(self.body_w, 10, "Vedant Swing", align="L")
-        self.set_xy(ML, 28)
-        self.set_font("Helvetica", "", 11)
-        self.cell(self.body_w, 6, "Practical User Guide - Nifty 500 Swing Trading App", align="L")
-        self.set_xy(ML, 38)
-        self.set_font("Helvetica", "B", 9)
-        self.cell(self.body_w, 5, "https://vedant-swing-web.onrender.com", align="L")
+        self.cell(self.body_w - 32, 10, "Vedant Swing")
+        self.set_xy(ML + 32, 26)
+        self.use_hi(12, bold=True)
+        self.cell(self.body_w - 32, 7, "वेदांत स्विंग - उपयोगकर्ता गाइड")
+        self.set_xy(ML + 32, 36)
+        self.use_en(9, bold=True)
+        self.cell(self.body_w - 32, 5, "https://vedant-swing-web.onrender.com")
+        self.set_xy(ML + 32, 44)
+        self.use_hi(8)
+        self.cell(self.body_w - 32, 5, "Nifty 500 स्विंग ट्रेडिंग ऐप")
 
-        y = 62
+        y = 66
         boxes = [
-            ("Market", "India NSE"),
-            ("Universe", "Nifty 500"),
-            ("Style", "Swing (3-7 days)"),
-            ("Paper Cash", "Rs. 5,00,000"),
+            (bi("Market", "बाजार"), "India NSE"),
+            (bi("Universe", "स्टॉक"), "Nifty 500"),
+            (bi("Style", "शैली"), "Swing 3-7d"),
+            (bi("Paper", "पेपर"), "Rs.5,00,000"),
         ]
         bw = (self.body_w - 9) / 4
         for i, (label, val) in enumerate(boxes):
             x = ML + i * (bw + 3)
             self.set_fill_color(*LIGHT)
-            self.rect(x, y, bw, 18, style="F")
+            self.rect(x, y, bw, 20, style="F")
             self.set_xy(x + 2, y + 3)
-            self.set_font("Helvetica", "", 7)
+            self.use_hi(7.5)
             self.set_text_color(*GREY)
-            self.cell(bw - 4, 4, label.upper())
-            self.set_xy(x + 2, y + 9)
-            self.set_font("Helvetica", "B", 9)
+            self.multi_cell(bw - 4, 3.5, label, align="C")
+            self.set_xy(x + 2, y + 12)
+            self.use_en(10, bold=True)
             self.set_text_color(*BLACK)
-            self.cell(bw - 4, 5, val)
+            self.cell(bw - 4, 5, val, align="C")
 
         self.set_xy(ML, y + 26)
-        self.set_font("Helvetica", "", 9)
+        self.use_hi(BODY)
         self.set_text_color(*BLACK)
-        self.multi_cell(
-            self.body_w,
-            5,
-            "This report explains every screen, button, and workflow in the Vedant Swing mobile web app. "
-            "Use it as your daily reference for research, paper trading, and trade planning.",
-        )
+        self.multi_cell(self.body_w, 5.5, bi(
+            "Practical guide for every screen, button and daily workflow.",
+            "हर स्क्रीन, बटन और दैनिक कार्य की व्यावहारिक गाइड।",
+        ))
 
-    def section(self, title: str, subtitle: str = "") -> None:
-        self.check_space(16)
+    def section(self, title_en: str, title_hi: str, subtitle: str = "") -> None:
+        self.check_space(18)
         self.set_fill_color(*BLUE)
         self.set_x(ML)
-        self.set_font("Helvetica", "B", 11)
+        self.use_hi(13, bold=True)
         self.set_text_color(*WHITE)
-        self.cell(self.body_w, 8, f"  {title}", new_x="LMARGIN", new_y="NEXT", fill=True)
+        self.cell(self.body_w, 9, f"  {bi(title_en, title_hi)}", new_x="LMARGIN", new_y="NEXT", fill=True)
         if subtitle:
             self.ln(1)
-            self.set_font("Helvetica", "I", 8)
+            self.use_hi(9)
             self.set_text_color(*GREY)
             self.set_x(ML)
-            self.multi_cell(self.body_w, 4, subtitle)
+            self.multi_cell(self.body_w, 4.5, subtitle)
         self.ln(2)
 
-    def subsection(self, title: str) -> None:
+    def subsection(self, title_en: str, title_hi: str) -> None:
         self.check_space(10)
-        self.set_font("Helvetica", "B", 9.5)
+        self.use_hi(11, bold=True)
         self.set_text_color(*ACCENT)
         self.set_x(ML)
-        self.cell(self.body_w, 6, title, new_x="LMARGIN", new_y="NEXT")
+        self.cell(self.body_w, 6, bi(title_en, title_hi), new_x="LMARGIN", new_y="NEXT")
         self.ln(1)
 
-    def bullets(self, items: list[str]) -> None:
-        self.set_font("Helvetica", "", 8.5)
-        self.set_text_color(*BLACK)
-        for item in items:
-            self.check_space(6)
+    def bullets(self, items: list[tuple[str, str]]) -> None:
+        for en, hi in items:
+            self.check_space(8)
             self.set_x(ML + 2)
-            self.set_font("Helvetica", "B", 8.5)
+            self.use_en(BODY, bold=True)
             self.set_text_color(*ACCENT)
-            self.cell(4, 4.5, "-")
-            self.set_font("Helvetica", "", 8.5)
+            self.cell(5, 5.5, "-")
+            self.use_hi(BODY)
             self.set_text_color(*BLACK)
-            self.multi_cell(self.body_w - 6, 4.5, item)
+            self.multi_cell(self.body_w - 7, 5.5, bi(en, hi))
 
-    def numbered(self, items: list[str]) -> None:
-        self.set_font("Helvetica", "", 8.5)
-        for i, item in enumerate(items, 1):
-            self.check_space(6)
+    def numbered(self, items: list[tuple[str, str]]) -> None:
+        for i, (en, hi) in enumerate(items, 1):
+            self.check_space(8)
             self.set_x(ML + 2)
-            self.set_font("Helvetica", "B", 8.5)
+            self.use_en(BODY, bold=True)
             self.set_text_color(*BLUE)
-            self.cell(6, 4.5, f"{i}.")
-            self.set_font("Helvetica", "", 8.5)
+            self.cell(7, 5.5, f"{i}.")
+            self.use_hi(BODY)
             self.set_text_color(*BLACK)
-            self.multi_cell(self.body_w - 8, 4.5, item)
+            self.multi_cell(self.body_w - 9, 5.5, bi(en, hi))
 
     def table(self, headers: list[str], rows: list[list[str]], widths: list[float] | None = None) -> None:
         if widths is None:
             widths = [self.body_w / len(headers)] * len(headers)
-        row_h = 6.5
-        self.check_space(row_h * (len(rows) + 2))
-        self.set_font("Helvetica", "B", 8)
+        self.check_space(ROW_H * (len(rows) + 2))
+        self.use_hi(TABLE, bold=True)
         self.set_fill_color(*BLUE)
         self.set_text_color(*WHITE)
         self.set_x(ML)
         for h, w in zip(headers, widths):
-            self.cell(w, row_h, h, border=1, fill=True, align="C")
+            self.cell(w, ROW_H, h, border=1, fill=True, align="C")
         self.ln()
-        self.set_font("Helvetica", "", 7.8)
+        self.use_hi(TABLE)
         self.set_text_color(*BLACK)
         for ri, row in enumerate(rows):
             self.set_x(ML)
@@ -151,255 +180,201 @@ class Report(FPDF):
             if fill:
                 self.set_fill_color(*LIGHT)
             for cell, w in zip(row, widths):
-                self.cell(w, row_h, cell, border=1, fill=fill, align="L")
+                self.cell(w, ROW_H, cell, border=1, fill=fill, align="L")
             self.ln()
         self.ln(2)
 
-    def info_box(self, title: str, text: str, color: tuple[int, int, int] = ACCENT) -> None:
-        self.check_space(22)
+    def info_box(self, title_en: str, title_hi: str, text_en: str, text_hi: str) -> None:
+        self.check_space(28)
         y = self.get_y()
         self.set_fill_color(*LIGHT)
-        self.rect(ML, y, self.body_w, 20, style="F")
-        self.set_draw_color(*color)
-        self.rect(ML, y, 3, 20, style="F")
+        self.rect(ML, y, self.body_w, 26, style="F")
+        self.set_draw_color(*ACCENT)
+        self.rect(ML, y, 3, 26, style="F")
         self.set_xy(ML + 5, y + 3)
-        self.set_font("Helvetica", "B", 8.5)
-        self.set_text_color(*color)
-        self.cell(self.body_w - 8, 5, title)
-        self.set_xy(ML + 5, y + 9)
-        self.set_font("Helvetica", "", 8)
+        self.use_hi(10, bold=True)
+        self.set_text_color(*ACCENT)
+        self.cell(self.body_w - 8, 5, bi(title_en, title_hi))
+        self.set_xy(ML + 5, y + 10)
+        self.use_hi(BODY)
         self.set_text_color(*BLACK)
-        self.multi_cell(self.body_w - 10, 4, text)
-        self.set_y(y + 22)
+        self.multi_cell(self.body_w - 10, 5, bi(text_en, text_hi))
+        self.set_y(y + 28)
 
-    def warn_box(self, text: str) -> None:
-        self.info_box("Important", text, RED)
+    def warn_box(self, text_en: str, text_hi: str) -> None:
+        self.info_box("Important", "महत्वपूर्ण", text_en, text_hi)
 
 
 def build_report() -> Report:
-    pdf = Report(orientation="P", unit="mm", format="A4")
-    pdf.set_margins(ML, MT, MR)
-    pdf.set_auto_page_break(auto=True, margin=MB)
-
+    pdf = Report()
     pdf.cover()
 
-    # --- Quick start ---
     pdf.add_page()
-    pdf.section("Quick Start", "Get the app on your phone in 2 minutes")
+    pdf.section("Quick Start", "त्वरित शुरुआत", bi(
+        "Get the app on your phone in 2 minutes",
+        "2 मिनट में फोन पर ऐप लगाएं",
+    ))
     pdf.numbered([
-        "Open https://vedant-swing-web.onrender.com in Chrome or Safari",
-        'Tap menu -> "Add to Home screen" (works like a real app)',
-        "First load after idle may take 30-60 seconds (cloud wake-up)",
-        "Tap Refresh (top-right) if numbers look stale",
+        (bi("Open app URL in Chrome or Safari", "Chrome/Safari में लिंक खोलें"),
+         "vedant-swing-web.onrender.com"),
+        (bi("Menu -> Add to Home screen", "मेनू -> होम स्क्रीन में जोड़ें"),
+         bi("Works like a real app", "असली ऐप जैसा")),
+        (bi("First load may take 30-60 sec", "पहली बार 30-60 सेकंड"),
+         bi("Cloud wake-up time", "सर्वर जागने में समय")),
+        (bi("Tap Refresh if data is old", "पुराना डेटा हो तो रिफ्रेश"),
+         bi("Top-right button", "ऊपर दाएं बटन")),
     ])
     pdf.ln(2)
-    pdf.subsection("Top Bar - Always Visible")
+    pdf.subsection("Top Bar", "ऊपरी पट्टी")
     pdf.table(
-        ["Element", "What it does"],
+        [bi("Item", "विकल्प"), bi("Use", "उपयोग")],
         [
-            ["Refresh", "Reloads market mood, scans, watchlist, paper, journal, alerts"],
-            ["Subtitle", "Watchlist count | Active alerts | Current time (IST)"],
-            ["Market pill", "Nifty BULLISH / BEARISH / NEUTRAL + 20-day % change"],
+            [bi("Refresh", "रिफ्रेश"), bi("Reload all data", "सारा डेटा रीलोड")],
+            [bi("Subtitle", "सूचना"), bi("Watchlist | Alerts | Time", "वॉचलिस्ट | अलर्ट | समय")],
+            [bi("Market pill", "बाजार"), bi("Nifty BULLISH/BEARISH + 20d %", "निफ्टी मूड + 20 दिन %")],
         ],
-        [45, pdf.body_w - 45],
+        [42, pdf.body_w - 42],
     )
 
-    pdf.section("App Tabs Overview")
+    pdf.section("App Tabs", "ऐप टैब")
     pdf.table(
-        ["Tab", "Purpose", "Main actions"],
+        [bi("Tab", "टैब"), bi("Hindi", "हिंदी"), bi("Main use", "मुख्य काम")],
         [
-            ["Home", "Research hub", "Search, chart, analyze, evening scan"],
-            ["Watch", "Track favourites", "Add/remove symbols, tap to analyze"],
-            ["Paper", "Practice trades", "Virtual Rs.5L portfolio, buy/sell"],
-            ["Journal", "Trade discipline", "Plan entry/stop/target, log R:R"],
-            ["Alerts", "Price triggers", "Above/below alerts, history"],
+            ["Home", "होम", bi("Search, chart, scan", "खोज, चार्ट, स्कैन")],
+            ["Watch", "वॉचलिस्ट", bi("Favourite stocks", "पसंदीदा शेयर")],
+            ["Paper", "पेपर", bi("Virtual Rs.5L trading", "अभ्यास ट्रेडिंग")],
+            ["Journal", "जर्नल", bi("Trade plan + R:R", "ट्रेड योजना")],
+            ["Alerts", "अलर्ट", bi("Price above/below", "कीमत अलर्ट")],
         ],
-        [18, 38, pdf.body_w - 56],
+        [22, 28, pdf.body_w - 50],
     )
 
-    # --- Home tab ---
     pdf.add_page()
-    pdf.section("Home Tab", "Your main research and decision screen")
+    pdf.section("Home Tab", "होम टैब", bi("Main research screen", "मुख्य शोध स्क्रीन"))
 
-    pdf.subsection("Search Stock")
+    pdf.subsection("Search Stock", "शेयर खोजें")
     pdf.bullets([
-        "Symbol box: type NSE ticker (TITAN, RELIANCE, M&M)",
-        "Analyze: runs full technical scoring",
-        "Quick chips: one-tap analyze for popular stocks",
+        (bi("Symbol box: NSE name", "सिंबल बॉक्स: NSE नाम"), bi("TITAN, RELIANCE, M&M", "उदाहरण")),
+        (bi("Analyze button", "विश्लेषण बटन"), bi("Full technical score", "पूरा स्कोर")),
+        (bi("Quick chips", "त्वरित बटन"), bi("One-tap popular stocks", "लोकप्रिय शेयर")),
     ])
 
-    pdf.subsection("Price Chart (Google Finance style)")
+    pdf.subsection("Price Chart", "कीमत चार्ट")
     pdf.table(
-        ["Button", "Period shown", "Candle type"],
+        [bi("Btn", "बटन"), bi("Period", "अवधि"), bi("Type", "प्रकार")],
         [
-            ["1D", "Today", "5-minute"],
-            ["5D", "Last 5 days", "15-minute"],
-            ["1M", "1 month", "Daily"],
-            ["3M", "3 months", "Daily"],
-            ["6M", "6 months (default)", "Daily"],
-            ["1Y", "1 year", "Daily"],
-            ["5Y", "5 years", "Weekly"],
-            ["MAX", "Full history", "Weekly"],
+            ["1D", bi("Today", "आज"), bi("5 min", "5 मिनट")],
+            ["5D", bi("5 days", "5 दिन"), bi("15 min", "15 मिनट")],
+            ["1M", bi("1 month", "1 महीना"), "Daily"],
+            ["6M", bi("6 months", "6 महीने"), "Daily"],
+            ["1Y", bi("1 year", "1 साल"), "Daily"],
+            ["MAX", bi("Full", "पूरा"), "Weekly"],
         ],
-        [14, 42, pdf.body_w - 56],
-    )
-    pdf.table(
-        ["Stat", "Meaning"],
-        [
-            ["Open / High / Low / Close", "Price range for selected period"],
-            ["Volume", "K=thousands, L=lakhs, Cr=crore shares"],
-            ["RSI", "Below 30 oversold | Above 70 overbought"],
-            ["EMA lines", "Purple=9 | Blue=21 | Orange=50 day trend"],
-        ],
-        [55, pdf.body_w - 55],
+        [14, 40, pdf.body_w - 54],
     )
 
-    pdf.subsection("Analysis Result Card")
+    pdf.subsection("Analysis Card", "विश्लेषण कार्ड")
     pdf.table(
-        ["Field / Button", "Action"],
+        [bi("Button", "बटन"), bi("Action", "काम")],
         [
-            ["Signal badge", "STRONG BUY / BUY / WATCH / AVOID"],
-            ["Score 0-100", "Higher = stronger swing setup"],
-            ["Target +3%", "Suggested profit level for swing"],
-            ["+ Watchlist", "Save stock to Watch tab"],
-            ["+ Alert", "Pre-fill price alert form"],
-            ["Paper Buy", "One-tap virtual buy (green=OK, red=error)"],
-            ["Journal", "Pre-fill trade plan form"],
+            [bi("+ Watchlist", "+ वॉचलिस्ट"), bi("Save to Watch tab", "सूची में जोड़ें")],
+            [bi("+ Alert", "+ अलर्ट"), bi("Open alert form", "अलर्ट फॉर्म")],
+            [bi("Paper Buy", "पेपर खरीद"), bi("Virtual buy + message", "अभ्यास खरीद")],
+            [bi("Journal", "जर्नल"), bi("Fill trade plan", "योजना भरें")],
         ],
-        [45, pdf.body_w - 45],
+        [48, pdf.body_w - 48],
     )
 
-    pdf.subsection("Evening Swing Scan")
+    pdf.subsection("Evening Scan", "शाम की स्कैन")
     pdf.bullets([
-        "Auto-runs 3:45 PM IST on trading days (Nifty 500 scan)",
-        "Run now: manual scan when you want fresh setups",
-        "Filters: All | Pullback 21 EMA | Breakout | Oversold Bounce",
-        "Tap any row to open full stock analysis",
+        (bi("Auto 3:45 PM IST", "ऑटो 3:45 बजे"), bi("Nifty 500 scan", "500 स्टॉक स्कैन")),
+        (bi("Run now", "अभी चलाएं"), bi("Manual scan", "मैन्युअल स्कैन")),
+        (bi("Tap stock row", "पंक्ति दबाएं"), bi("Open analysis", "विश्लेषण खोलें")),
     ])
 
-    pdf.info_box(
-        "Position Tracker",
-        "Shows one real tracked position if synced from cloud. "
-        "Record Average / Record Sell logs your live trade. "
-        "Empty? Use Paper tab for practice instead.",
-    )
-
-    # --- Other tabs ---
     pdf.add_page()
-    pdf.section("Watch Tab", "Personal shortlist of stocks to monitor")
+    pdf.section("Watch Tab", "वॉचलिस्ट टैब")
     pdf.bullets([
-        "Add symbol + Add button to build your list",
-        "Tap any stock to analyze on Home tab",
-        "Remove deletes from watchlist",
-        "Shortcut: Analyze stock -> + Watchlist on Home",
+        (bi("Add symbol", "सिंबल जोड़ें"), bi("Build your list", "सूची बनाएं")),
+        (bi("Tap stock", "शेयर दबाएं"), bi("Analyze on Home", "होम पर विश्लेषण")),
+        (bi("Remove", "हटाएं"), bi("Delete from list", "सूची से हटाएं")),
     ])
 
-    pdf.section("Paper Tab", "Virtual trading - Rs. 5,00,000 starting cash")
+    pdf.section("Paper Tab", "पेपर ट्रेडिंग")
     pdf.table(
-        ["Item", "Details"],
+        [bi("Item", "विकल्प"), bi("Details", "विवरण")],
         [
-            ["Cash", "Remaining virtual money"],
-            ["Open positions", "Stocks you hold in paper mode"],
-            ["Sell", "Enter exit price -> shows profit/loss"],
-            ["Place buy", "Manual buy with symbol, qty, entry, stop, target"],
+            [bi("Cash", "नकद"), bi("Virtual money left", "बची राशि")],
+            [bi("Sell", "बेचें"), bi("Enter exit price", "बिक्री कीमत")],
+            [bi("Place buy", "खरीदें"), bi("Symbol, qty, price", "सिंबल, मात्रा, कीमत")],
         ],
         [40, pdf.body_w - 40],
     )
     pdf.warn_box(
-        "One stock = one position only. Sell first before buying the same symbol again. "
-        "Paper trading is NOT connected to your demat account.",
+        bi("One stock = one position. Sell first before rebuy.", "एक शेयर एक बार। दोबारा खरीद से पहले बेचें।"),
+        bi("Not connected to demat account.", "डीमैट से जुड़ा नहीं।"),
     )
 
-    pdf.section("Journal Tab", "Plan trades before you enter - build discipline")
+    pdf.section("Journal Tab", "जर्नल टैब")
     pdf.table(
-        ["Field", "Purpose"],
+        [bi("Field", "फ़ील्ड"), bi("Meaning", "अर्थ")],
         [
-            ["Entry", "Planned buy price"],
-            ["Stop", "Maximum loss exit price"],
-            ["Target", "Profit exit price"],
-            ["R:R preview", "Risk-reward ratio (aim for 2:1 or better)"],
-            ["Close", "Mark trade finished with actual exit price"],
+            [bi("Entry", "प्रवेश"), bi("Buy price plan", "खरीद कीमत")],
+            [bi("Stop", "स्टॉप"), bi("Loss limit", "नुकसान सीमा")],
+            [bi("Target", "लक्ष्य"), bi("Profit goal", "मुनाफा लक्ष्य")],
+            [bi("R:R", "जोखिम:लाभ"), bi("Risk reward ratio", "अनुपात")],
         ],
-        [35, pdf.body_w - 35],
+        [38, pdf.body_w - 38],
     )
 
-    pdf.section("Alerts Tab", "Know when price hits your level")
+    pdf.section("Alerts Tab", "अलर्ट टैब")
     pdf.bullets([
-        "Price above: alert when stock crosses level upward",
-        "Price below: alert when stock falls under level",
-        "Check alerts now: manual trigger (auto every 30 min on cloud)",
-        "Alert History: see past triggered alerts",
+        (bi("Price above", "ऊपर कीमत"), bi("Alert when price rises", "बढ़ने पर सूचना")),
+        (bi("Price below", "नीचे कीमत"), bi("Alert when price falls", "गिरने पर सूचना")),
+        (bi("Check now", "अभी जांचें"), bi("Manual alert check", "तुरंत जांच")),
     ])
 
-    # --- Reference ---
     pdf.add_page()
-    pdf.section("Signal Reference", "How to read analysis badges")
+    pdf.section("Signals", "संकेत")
     pdf.table(
-        ["Signal", "Meaning", "Action"],
+        [bi("Signal", "संकेत"), bi("Meaning", "अर्थ"), bi("Action", "कार्रवाई")],
         [
-            ["STRONG BUY", "Best setups - multiple signals align", "Priority review"],
-            ["BUY", "Good swing entry", "Consider for watchlist/paper"],
-            ["WATCH", "Not ready yet", "Wait for better entry"],
-            ["AVOID", "Weak or against trend", "Skip"],
+            ["STRONG BUY", bi("Best setup", "सबसे अच्छा"), bi("Review first", "पहले देखें")],
+            ["BUY", bi("Good entry", "अच्छी एंट्री"), bi("Watchlist/Paper", "सूची/पेपर")],
+            ["WATCH", bi("Wait", "प्रतीक्षा"), bi("Not yet", "अभी नहीं")],
+            ["AVOID", bi("Skip", "छोड़ें"), bi("No trade", "ट्रेड नहीं")],
         ],
-        [28, 62, pdf.body_w - 90],
+        [30, 55, pdf.body_w - 85],
     )
 
-    pdf.subsection("Swing Score Guide")
+    pdf.section("Daily Routine IST", "दैनिक दिनचर्या")
     pdf.table(
-        ["Score", "Quality"],
+        [bi("Time", "समय"), bi("Action", "काम")],
         [
-            ["70+", "Strong candidate"],
-            ["62-69", "Acceptable (scan minimum)"],
-            ["Below 62", "Usually filtered out"],
-        ],
-        [30, pdf.body_w - 30],
-    )
-
-    pdf.section("3 Evening Scan Strategies")
-    pdf.table(
-        ["Strategy", "When to use", "Idea"],
-        [
-            ["Pullback 21 EMA", "Uptrend dip", "Buy near 21-day average, RSI 40-55"],
-            ["Breakout", "Momentum", "Price breaks tight range with volume"],
-            ["Oversold Bounce", "Quick bounce", "RSI low but trend still up (higher risk)"],
-        ],
-        [38, 32, pdf.body_w - 70],
-    )
-
-    pdf.section("Daily Routine (IST)", "Suggested workflow - no laptop needed")
-    pdf.table(
-        ["Time", "Action"],
-        [
-            ["9:00 AM", "Morning research runs on cloud automatically"],
-            ["9:15 AM", "Open app -> check Alerts tab"],
-            ["10:00 AM", "Analyze watchlist stocks, check chart timeframes"],
-            ["3:45 PM", "Evening Nifty 500 scan runs automatically"],
-            ["4:00 PM", "Review Evening Scan on Home tab"],
-            ["4:30 PM", "Shortlist -> Watchlist -> Paper or Journal"],
+            ["9:00 AM", bi("Morning research auto", "सुबह रिपोर्ट")],
+            ["9:15 AM", bi("Check Alerts tab", "अलर्ट देखें")],
+            ["3:45 PM", bi("Evening scan auto", "शाम स्कैन")],
+            ["4:00 PM", bi("Review setups on Home", "सेटअप देखें")],
+            ["4:30 PM", bi("Paper trade or Journal", "पेपर/जर्नल")],
         ],
         [28, pdf.body_w - 28],
     )
 
-    pdf.section("Toast Messages", "Bottom popup feedback")
+    pdf.section("Toast Messages", "संदेश रंग")
     pdf.table(
-        ["Color", "Meaning", "Examples"],
+        [bi("Color", "रंग"), bi("Meaning", "अर्थ")],
         [
-            ["Green", "Success", "Bought 10 TCS, added to watchlist"],
-            ["Red", "Error", "Already holding stock, insufficient cash"],
-            ["Grey", "Info", "Scan running, loading data"],
+            [bi("Green", "हरा"), bi("Success - buy done", "सफल")],
+            [bi("Red", "लाल"), bi("Error - duplicate buy", "त्रुटि")],
+            [bi("Grey", "धूसर"), bi("Loading / scan running", "लोड हो रहा")],
         ],
-        [18, 28, pdf.body_w - 46],
+        [30, pdf.body_w - 30],
     )
 
-    pdf.ln(2)
-    pdf.info_box(
-        "Phase 2 (Coming later)",
-        "Angel One broker link | Email alerts (SETUP_GMAIL_ALERTS.txt) | Telegram notifications",
-    )
     pdf.warn_box(
-        "DISCLAIMER: Vedant Swing is a personal research tool. Not SEBI-registered advice. "
-        "Not financial advice. Trade at your own risk.",
+        bi("DISCLAIMER: Not SEBI advice. Research tool only. Trade at your own risk.",
+           "अस्वीकरण: SEBI सलाह नहीं। केवल शोध। जोखिम आपका।"),
+        bi("Personal use only.", "केवल व्यक्तिगत उपयोग।"),
     )
 
     return pdf
