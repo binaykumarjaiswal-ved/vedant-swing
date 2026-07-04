@@ -417,6 +417,153 @@ input:focus {
 
 .hidden { display: none !important; }
 
+.tab-nav {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.5rem 0.65rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card2);
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.tab-panel { display: none; flex-direction: column; gap: 0.75rem; }
+.tab-panel.active { display: flex; }
+
+.card-head-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.card-head-row h2 { margin-bottom: 0; }
+
+.btn-sm {
+  padding: 0.4rem 0.65rem;
+  font-size: 0.75rem;
+}
+
+.strategy-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+
+.strategy-chip {
+  padding: 0.3rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.strategy-chip.active {
+  border-color: var(--primary);
+  color: #93c5fd;
+}
+
+.pick-row, .pick-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.75rem;
+  background: var(--bg);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.pick-row:active, .pick-item:active { opacity: 0.85; }
+
+.pick-mid {
+  flex: 1;
+  min-width: 0;
+}
+
+.pick-mid strong { display: block; font-size: 1rem; }
+.pick-mid span { font-size: 0.72rem; color: var(--muted); }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.form-grid button[type="submit"] {
+  grid-column: 1 / -1;
+}
+
+.portfolio-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.portfolio-cash {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--green);
+}
+
+.portfolio-count {
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.closed-list {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.journal-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.journal-item {
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 0.75rem;
+}
+
+.journal-item.open { border-left: 3px solid var(--primary); }
+.journal-item.closed { border-left: 3px solid var(--muted); opacity: 0.85; }
+
+.journal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.journal-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  margin-top: 0.35rem;
+}
+
+.journal-meta span { color: var(--muted); display: block; font-size: 0.68rem; }
+
 .toast {
   position: fixed;
   bottom: 1.5rem;

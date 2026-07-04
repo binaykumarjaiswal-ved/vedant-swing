@@ -1,0 +1,128 @@
+{
+  "generated": "2026-07-04T13:45:04",
+  "universe": "fallback list",
+  "scanned": 20,
+  "hits": 2,
+  "top": [
+    {
+      "status": "ok",
+      "symbol": "KOTAKBANK",
+      "price": 396.75,
+      "rsi": 51.0,
+      "macd_bullish": false,
+      "trend": "sideways",
+      "chg_5d": -3.0,
+      "chg_20d": 5.11,
+      "vs_nifty_20d": 1.14,
+      "range_position": 51.2,
+      "volume_ratio": 0.98,
+      "ema21": 397.23,
+      "ema20": 397.49,
+      "ema50": 392.31,
+      "swing_score": 43.0,
+      "reasons": [
+        "RSI 51 ideal for 3% bounce",
+        "Mid 52w range (51%)"
+      ],
+      "entry": 396.75,
+      "target": 408.65,
+      "avg_trigger": 384.85,
+      "target_pct": 3.0,
+      "strategy": "pullback_21ema",
+      "strategy_reason": "Pullback near 21 EMA in uptrend",
+      "signal": "BUY",
+      "index_group": "Nifty 50"
+    },
+    {
+      "status": "ok",
+      "symbol": "AXISBANK",
+      "price": 1342.0999755859375,
+      "rsi": 51.4,
+      "macd_bullish": false,
+      "trend": "sideways",
+      "chg_5d": -2.55,
+      "chg_20d": 5.49,
+      "vs_nifty_20d": 1.51,
+      "range_position": 71.6,
+      "volume_ratio": 0.55,
+      "ema21": 1344.25,
+      "ema20": 1345.48,
+      "ema50": 1321.26,
+      "swing_score": 41.0,
+      "reasons": [
+        "RSI 51 ideal for 3% bounce",
+        "Beating Nifty by +1.5%"
+      ],
+      "entry": 1342.0999755859375,
+      "target": 1382.36,
+      "avg_trigger": 1301.84,
+      "target_pct": 3.0,
+      "strategy": "pullback_21ema",
+      "strategy_reason": "Pullback near 21 EMA in uptrend",
+      "signal": "BUY",
+      "index_group": "Nifty 50"
+    }
+  ],
+  "by_strategy": {
+    "pullback_21ema": [
+      {
+        "status": "ok",
+        "symbol": "KOTAKBANK",
+        "price": 396.75,
+        "rsi": 51.0,
+        "macd_bullish": false,
+        "trend": "sideways",
+        "chg_5d": -3.0,
+        "chg_20d": 5.11,
+        "vs_nifty_20d": 1.14,
+        "range_position": 51.2,
+        "volume_ratio": 0.98,
+        "ema21": 397.23,
+        "ema20": 397.49,
+        "ema50": 392.31,
+        "swing_score": 43.0,
+        "reasons": [
+          "RSI 51 ideal for 3% bounce",
+          "Mid 52w range (51%)"
+        ],
+        "entry": 396.75,
+        "target": 408.65,
+        "avg_trigger": 384.85,
+        "target_pct": 3.0,
+        "strategy": "pullback_21ema",
+        "strategy_reason": "Pullback near 21 EMA in uptrend",
+        "signal": "BUY",
+        "index_group": "Nifty 50"
+      },
+      {
+        "status": "ok",
+        "symbol": "AXISBANK",
+        "price": 1342.0999755859375,
+        "rsi": 51.4,
+        "macd_bullish": false,
+        "trend": "sideways",
+        "chg_5d": -2.55,
+        "chg_20d": 5.49,
+        "vs_nifty_20d": 1.51,
+        "range_position": 71.6,
+        "volume_ratio": 0.55,
+        "ema21": 1344.25,
+        "ema20": 1345.48,
+        "ema50": 1321.26,
+        "swing_score": 41.0,
+        "reasons": [
+          "RSI 51 ideal for 3% bounce",
+          "Beating Nifty by +1.5%"
+        ],
+        "entry": 1342.0999755859375,
+        "target": 1382.36,
+        "avg_trigger": 1301.84,
+        "target_pct": 3.0,
+        "strategy": "pullback_21ema",
+        "strategy_reason": "Pullback near 21 EMA in uptrend",
+        "signal": "BUY",
+        "index_group": "Nifty 50"
+      }
+    ]
+  }
+}

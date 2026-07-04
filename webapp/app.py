@@ -148,6 +148,13 @@ def api_journal_add():
     ))
 
 
+@app.route("/api/journal/<entry_id>/close", methods=["POST"])
+def api_journal_close(entry_id: str):
+    from journal import close_entry
+    body = request.get_json(silent=True) or {}
+    return jsonify(close_entry(entry_id, float(body.get("exit", 0))))
+
+
 def main():
     port = int(os.environ.get("PORT", 5050))
     app.run(host="0.0.0.0", port=port, debug=False, threaded=True)
