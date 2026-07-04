@@ -67,7 +67,9 @@ def run_morning_research(cfg: dict, benchmark: dict) -> tuple[list, list, dict, 
     sector_report = format_sector_report(cfg.get("sector_top_n", 5) + 3)
 
     ai_summary = ""
-    if cfg.get("ai_enabled", True):
+    from pa_config import is_ai_enabled
+
+    if is_ai_enabled():
         from ai_analyst import generate_morning_briefing
         ai_summary = generate_morning_briefing(
             research_picks, news["market_headlines"], benchmark, sector_report

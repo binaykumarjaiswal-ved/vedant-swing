@@ -300,6 +300,27 @@ input:focus {
 
 .ai-block { border-left: 3px solid var(--primary); }
 
+.news-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.news-list li { margin-bottom: 0.35rem; }
+
+.news-src {
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.news-sent {
+  font-size: 0.72rem;
+  color: var(--amber);
+  font-style: normal;
+}
+
 .ai-text {
   white-space: pre-wrap;
   word-break: break-word;

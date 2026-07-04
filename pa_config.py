@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 
@@ -28,7 +29,25 @@ GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 STOCK_SCAN_LIMIT = int(os.environ.get("STOCK_SCAN_LIMIT", "100"))
 CHECK_INTERVAL_MIN = int(os.environ.get("CHECK_INTERVAL_MIN", "10"))
-AI_ENABLED = os.environ.get("AI_ENABLED", "true").lower() in ("1", "true", "yes")
+def _config_ai_enabled() -> bool:
+    try:
+        cfg = json.loads((BASE_DIR / "config.json").read_text(encoding="utf-8"))
+        return bool(cfg.get("ai_enabled", True))
+    except Exception:
+        return True
+
+
+def is_ai_enabled() -> bool:
+    """Env AI_ENABLED overrides config.json when set."""
+    env = os.environ.get("AI_ENABLED", "").strip().lower()
+    if env in ("1", "true", "yes"):
+        return True
+    if env in ("0", "false", "no"):
+        return False
+    return _config_ai_enabled()
+
+
+AI_ENABLED = is_ai_enabled()
 
 # github = GitHub Actions (free) | oracle = Oracle VM
 CLOUD_PROVIDER = os.environ.get("CLOUD_PROVIDER", "github").strip().lower()

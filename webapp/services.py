@@ -10,6 +10,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 CONFIG = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
+
+from pa_config import is_ai_enabled  # noqa: E402
 DATA_DIR = ROOT / "data"
 REPORTS_DIR = DATA_DIR / "reports"
 if not REPORTS_DIR.exists():
@@ -277,9 +279,15 @@ def analyze_symbol(symbol: str, with_ai: bool = True) -> dict:
         result["signal"] = "AVOID"
 
     ai_note = ""
-    if with_ai and CONFIG.get("ai_enabled", True):
+    ai_status = ""
+    if with_ai and is_ai_enabled():
         ai_note = analyze_symbol_deep(result, result["market_mood"])
+        if not ai_note:
+            import os
+            ai_status = "no_key" if not os.environ.get("GROQ_API_KEY") else "failed"
+    result["ai_enabled"] = is_ai_enabled()
     result["ai_note"] = ai_note
+    result["ai_status"] = ai_status
     result["ok"] = True
     result["analyzed_at"] = datetime.now().strftime("%Y-%m-%d %H:%M IST")
     return result

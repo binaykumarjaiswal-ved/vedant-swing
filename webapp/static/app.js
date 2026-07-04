@@ -63,6 +63,10 @@ function renderHeaderStats(data) {
     `Watchlist ${data.watchlist_count ?? 0} · Alerts ${data.active_alerts ?? 0} · ${data.updated || ""}`;
 }
 
+function escHtml(s) {
+  return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 function renderResult(data) {
   lastResult = data;
   $("result-card").classList.remove("hidden");
@@ -82,7 +86,50 @@ function renderResult(data) {
   $("res-ema21").textContent = data.ema21 ?? "—";
   $("res-ema50").textContent = data.ema50 ?? "—";
   const reasons = data.reasons || [];
-  $("res-reasons").innerHTML = reasons.length ? "<strong>Signals</strong><ul>" + reasons.map((r) => `<li>${r}</li>`).join("") + "</ul>" : "";
+  $("res-reasons").innerHTML = reasons.length ? "<strong>Signals</strong><ul>" + reasons.map((r) => `<li>${escHtml(r)}</li>`).join("") + "</ul>" : "";
+
+  const hasFund = data.pe_trailing || data.sector || data.quarter_trend || data.fund_verdict;
+  $("res-fund-block").classList.toggle("hidden", !hasFund);
+  if (hasFund) {
+    $("res-pe").textContent = data.pe_trailing ?? "—";
+    const sector = data.sector || "—";
+    $("res-sector").textContent = data.sector_strong === false ? `${sector} (weak)` : sector;
+    $("res-quarter").textContent = data.quarter_trend ?? "—";
+    $("res-fund-verdict").textContent = data.fund_verdict ?? "—";
+  }
+
+  const hasLevels = data.support || data.resistance;
+  $("res-levels-block").classList.toggle("hidden", !hasLevels);
+  if (hasLevels) {
+    const note = data.level_note ? ` · ${data.level_note}` : "";
+    $("res-levels").textContent = `Support ${fmtRs(data.support)} · Resistance ${fmtRs(data.resistance)}${note}`;
+  }
+
+  const headlines = data.news_headlines || [];
+  $("res-news-block").classList.toggle("hidden", !headlines.length && !data.news_summary);
+  if (headlines.length) {
+    $("res-news-list").innerHTML = headlines.map((h) =>
+      `<li><span class="news-src">${escHtml(h.source)}</span> ${escHtml(h.title)} <em class="news-sent">${escHtml(h.sentiment)}</em></li>`
+    ).join("");
+  } else if (data.news_summary) {
+    $("res-news-list").innerHTML = `<li>${escHtml(data.news_summary)}</li>`;
+  }
+
+  const showAi = data.ai_enabled !== false;
+  $("res-ai-block").classList.toggle("hidden", !showAi);
+  if (showAi) {
+    if (data.ai_note) {
+      $("res-ai-meta").textContent = data.analyzed_at ? `Generated ${data.analyzed_at}` : "Groq powered";
+      $("res-ai-text").textContent = data.ai_note;
+    } else if (data.ai_status === "no_key") {
+      $("res-ai-meta").textContent = "API key missing";
+      $("res-ai-text").textContent = "Add GROQ_API_KEY in Render environment variables to enable AI reports.";
+    } else {
+      $("res-ai-meta").textContent = "Unavailable";
+      $("res-ai-text").textContent = "AI research could not be generated. Try again in a moment.";
+    }
+  }
+
   if (window.renderStockChart) window.renderStockChart(data.symbol);
 }
 
@@ -93,7 +140,7 @@ async function runAnalyze(symbol) {
   $("result-card").classList.add("hidden");
   $("btn-analyze").disabled = true;
   try {
-    const data = await fetch(`/api/analyze/${encodeURIComponent(symbol)}?ai=0`).then((r) => r.json());
+    const data = await fetch(`/api/analyze/${encodeURIComponent(symbol)}?ai=1`).then((r) => r.json());
     if (!data.ok) return toast(data.error || "Failed");
     renderResult(data);
   } catch (e) {

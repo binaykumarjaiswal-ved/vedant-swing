@@ -15,7 +15,9 @@ services:
       - key: GITHUB_TOKEN
         sync: false
       - key: AI_ENABLED
-        value: "false"
+        value: "true"
+      - key: GROQ_API_KEY
+        sync: false
       - key: STOCK_SCAN_LIMIT
         value: "500"
       - key: EMAIL_ENABLED

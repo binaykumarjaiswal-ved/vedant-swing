@@ -91,6 +91,28 @@
           <div class="stat"><span class="stat-label">EMA50</span><span class="stat-val" id="res-ema50">—</span></div>
         </div>
         <div class="reasons" id="res-reasons"></div>
+        <div class="fund-block hidden" id="res-fund-block">
+          <strong>Fundamentals</strong>
+          <div class="stats-grid compact">
+            <div class="stat"><span class="stat-label">PE</span><span class="stat-val" id="res-pe">—</span></div>
+            <div class="stat"><span class="stat-label">Sector</span><span class="stat-val" id="res-sector">—</span></div>
+            <div class="stat"><span class="stat-label">Quarter</span><span class="stat-val" id="res-quarter">—</span></div>
+            <div class="stat"><span class="stat-label">Fund view</span><span class="stat-val" id="res-fund-verdict">—</span></div>
+          </div>
+        </div>
+        <div class="levels-block hidden" id="res-levels-block">
+          <strong>Support &amp; Resistance</strong>
+          <p class="muted small" id="res-levels">—</p>
+        </div>
+        <div class="news-block hidden" id="res-news-block">
+          <strong>Live News (RSS)</strong>
+          <ul class="news-list" id="res-news-list"></ul>
+        </div>
+        <div class="ai-block hidden" id="res-ai-block">
+          <strong>AI Deep Research</strong>
+          <span class="muted small" id="res-ai-meta"></span>
+          <pre class="ai-text" id="res-ai-text"></pre>
+        </div>
         <div class="action-row">
           <button type="button" class="btn btn-ghost" id="btn-add-watch">+ Watchlist</button>
           <button type="button" class="btn btn-ghost" id="btn-add-alert">+ Alert</button>
@@ -102,7 +124,7 @@
 
       <div class="loading hidden" id="loading">
         <div class="spinner"></div>
-        <p>Running technical analysis…</p>
+        <p id="loading-msg">Fetching prices, news &amp; Groq AI research…</p>
       </div>
 
       <section class="card">
