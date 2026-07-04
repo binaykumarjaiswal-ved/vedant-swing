@@ -1,0 +1,40 @@
+VEDANT SWING — ACTIVATE GROQ API KEY (safe, encrypted, no chat)
+================================================================
+
+You never paste the API key in chat. Only in the notepad file on your PC.
+
+QUICK STEPS
+-----------
+1. Open this file in Notepad:
+   D:\BINAY-Projects\vedant-swing\local-secrets\groq-key-PASTE-HERE.txt
+
+2. Paste your Groq API key on the blank line (one line only).
+   Get key from: https://console.groq.com/keys
+
+3. Save the file (Ctrl+S).
+
+4. Double-click:
+   D:\BINAY-Projects\vedant-swing\ACTIVATE-GROQ.bat
+
+WHAT THE SCRIPT DOES
+--------------------
+- Reads key from your notepad file
+- Encrypts it with Windows lock (only your PC can decrypt)
+- Saves to: local-secrets\secrets.enc
+- Clears the notepad file (removes plain text key)
+- Pushes key to Render cloud (vedant-swing-web)
+- Saves GitHub secret GROQ_API_KEY (for future jobs)
+- Tests live AI report on TITAN
+
+AFTER ACTIVATION
+----------------
+Open: https://vedant-swing-web.onrender.com
+Analyze any stock → scroll to "AI Deep Research"
+
+TO CHANGE KEY LATER
+-------------------
+Paste new key in groq-key-PASTE-HERE.txt again → run ACTIVATE-GROQ.bat
+
+FILES NEVER GO TO GITHUB
+------------------------
+local-secrets\  (entire folder is gitignored)

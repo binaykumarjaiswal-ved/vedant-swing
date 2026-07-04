@@ -106,7 +106,10 @@ def main() -> int:
     service_id = svc["id"]
     url = svc.get("serviceDetails", {}).get("url") or f"https://{SERVICE_NAME}.onrender.com"
 
-    from pa_config import EMAIL_APP_PASSWORD, EMAIL_ENABLED, EMAIL_FROM, EMAIL_TO, GROQ_API_KEY
+    from pa_config import EMAIL_APP_PASSWORD, EMAIL_ENABLED, EMAIL_FROM, EMAIL_TO
+    from secret_store import load_groq_key
+
+    groq_key = os.environ.get("GROQ_API_KEY", "").strip() or load_groq_key()
 
     cron_secret = os.environ.get("CRON_SECRET", "").strip()
     if not cron_secret:
@@ -130,8 +133,8 @@ def main() -> int:
         env["EMAIL_TO"] = EMAIL_TO
     if EMAIL_APP_PASSWORD:
         env["EMAIL_APP_PASSWORD"] = EMAIL_APP_PASSWORD
-    if GROQ_API_KEY:
-        env["GROQ_API_KEY"] = GROQ_API_KEY
+    if groq_key:
+        env["GROQ_API_KEY"] = groq_key
     set_env_vars(api_key, service_id, env)
 
     try:
