@@ -1,0 +1,167 @@
+=================================================================
+  VEDANT SWING — MORNING RESEARCH — 05 Jul 2026 02:29 AM IST
+  Groq AI brain + Nifty 500 scan | Sector filter | PE + S/R + RSS news
+=================================================================
+Market mood: BULLISH (Nifty 20d: +4.0%)
+Stocks scanned: 38 | News items: 75 | Universe: fallback list
+
+
+── GROQ AI MORNING BRAIN ──
+[Groq AI Morning Brain — llama-3.3-70b-versatile]
+**MORNING GROQ RESEARCH REPORT**
+
+**1. MARKET VERDICT**
+The market mood is **BULLISH**, with the Nifty 20-day return at +4.0%. This suggests a positive trend, and swing traders can look to capitalize on this momentum. However, it's essential to remain cautious and selective in stock picks, as the market can be volatile.
+
+**2. NEWS & MACRO**
+Recent headlines, such as "Retail investors bet on these 10 small-cap stocks; they rally up to 185% in 3 months" and "Top picks! Redington among 5 stocks with upside potential of up to 27%. Do you own any?" indicate a positive sentiment towards the market. Additionally, "US rally vs India story? Wealth managers explain why NRIs should stay the course for next 10 years" suggests a long-term bullish outlook for the Indian market. However, "Gold’s sharp correction: What lies ahead for prices?" and "Bitcoin trades near $62,000; inflation, geopolitical risks remain key market drivers" remind us of the potential risks and uncertainties in the market.
+
+**3. STRONG SECTORS**
+* Banking: +6.6% 20d return
+* NBFC: +6.6% 20d return
+* Insurance: +6.6% 20d return
+* FMCG: +4.0% 20d return
+* Energy: +4.0% 20d return
+These sectors have shown strong performance over the past 20 days and are likely to continue their upward trend. However, it's essential to be selective within these sectors and focus on stocks with strong fundamentals and technicals.
+
+**4. TOP 3 STOCKS FOR TODAY**
+* **SBIN**: Verdict - BUY. Why - Strong sector, good technicals (RSI 57.3), and average fundamentals. Entry zone - Rs.1008.8, Target - Rs.1071.20, Stop/Average trigger - Rs.1008.8.
+* **HINDUNILVR**: Verdict - WATCH. Why - Strong fundamentals, but sideways trend and high PE (48.5). Entry zone - Rs.2135.16, Target - Rs.2267.24, Stop/Average trigger - Rs.2135.16.
+* **LICI**: Verdict - BUY. Why - Strong sector, good technicals (RSI 63.7), and strong fundamentals. Entry zone - Rs.417.34, Target - Rs.443.16, Stop/Average trigger - Rs.417.34.
+
+**5. STOCKS TO AVOID TODAY**
+* **RECLTD**: Weak fundamentals and negative EPS growth (-21.7%) make it a stock to avoid.
+* **COLPAL**: Average fundamentals and high PE (42.0) make it a less attractive option compared to other FMCG stocks.
+
+**6. RISKS**
+* Market risk: A sudden change in market sentiment can lead to a decline in stock prices.
+* Global risk: Geopolitical tensions and economic uncertainties can impact the Indian market.
+* Sector risk: A downturn in a particular sector can affect stocks within that sector.
+* Event risk: Unexpected events, such as a change in government policies or natural disasters, can impact the market.
+* Liquidity risk: A lack of liquidity in a particular stock can make it difficult to buy or sell.
+
+**7. PRE-MARKET CHECKLIST**
+1. Is the market trend bullish? - Yes
+2. Are the strong sectors aligned with the market trend? - Yes
+3. Are the top stocks for today from strong sectors? - Yes
+4. Do the top stocks have good technicals? - Yes
+5. Do the top stocks have strong fundamentals? - Yes
+6. Are the entry zones and targets clearly defined? - Yes
+7. Are the stop/average triggers in place? - Yes
+8. Is the risk-reward ratio favorable? - Yes
+
+**8. FINAL CALL**
+Based on the analysis, **LICI** is the top stock for today's 3% swing. Its strong sector, good technicals, and strong fundamentals make it an attractive option. However, it's essential to remain cautious and monitor the market closely, as the trend can change quickly.
+
+Not SEBI-registered advice. Trade at your own risk.
+
+── SECTOR STRENGTH (20-day) ──
+  #1 Banking: +6.6% 20d STRONG
+  #2 NBFC: +6.6% 20d STRONG
+  #3 Insurance: +6.6% 20d STRONG
+  #4 FMCG: +4.0% 20d STRONG
+  #5 Energy: +4.0% 20d STRONG
+  #6 Metal: +4.0% 20d 
+  #7 Infra: +4.0% 20d 
+  #8 Power: +4.0% 20d 
+
+── TOP RESEARCH PICKS (technical scan) ──
+
+#1  SBIN  (Nifty 50 | Banking)  —  Rs.1040.00
+     Signal: STRONG BUY  |  Score: 91/100
+     Best buy: Rs.1040.00  |  Qty: 28  |  Target +3%: Rs.1071.20
+     Technical: RSI 57.3 | Trend up | vs Nifty +2.4%
+     Fundamentals: PE 11.4 | EPS growth +0.2% | Average fundamentals
+     Support Rs.933.9 | Resistance Rs.1101.1 | S 934 / R 1101
+     TA: RSI 57 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+     News: F&amp;O Talk: Smallcap index better placed than Nifty, says Sudeep Sha | SBI Funds Management seeks Rs 2,000 crore in pr
+
+#2  MARICO  (Nifty Next 50 | FMCG)  —  Rs.838.55
+     Signal: STRONG BUY  |  Score: 84/100
+     Best buy: Rs.838.55  |  Qty: 35  |  Target +3%: Rs.863.71
+     Technical: RSI 57.1 | Trend up | vs Nifty -0.5%
+     Fundamentals: PE 61.7 | EPS growth +14.0% | Average fundamentals
+     Support Rs.740.4 | Resistance Rs.873.0 | S 740 / R 873
+     TA: RSI 57 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#3  HINDUNILVR  (Nifty 50 | FMCG)  —  Rs.2201.20
+     Signal: STRONG BUY  |  Score: 82/100
+     Best buy: Rs.2201.20  |  Qty: 13  |  Target +3%: Rs.2267.24
+     Technical: RSI 56.2 | Trend sideways | vs Nifty +0.8%
+     Fundamentals: PE 48.5 | EPS growth +21.4% | Strong fundamentals
+     Support Rs.2044.9 | Resistance Rs.2383.75 | S 2045 / R 2384
+     TA: RSI 56 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#4  BRITANNIA  (Nifty 50 | FMCG)  —  Rs.5379.00
+     Signal: STRONG BUY  |  Score: 81/100
+     Best buy: Rs.5379.00  |  Qty: 5  |  Target +3%: Rs.5540.37
+     Technical: RSI 59.8 | Trend sideways | vs Nifty +1.1%
+     Fundamentals: PE 51.0 | EPS growth +21.1% | Average fundamentals
+     Support Rs.5035.0 | Resistance Rs.5924.0 | S 5035 / R 5924
+     TA: RSI 60 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#5  DABUR  (Nifty Next 50 | FMCG)  —  Rs.444.35
+     Signal: STRONG BUY  |  Score: 79/100
+     Best buy: Rs.444.35  |  Qty: 67  |  Target +3%: Rs.457.68
+     Technical: RSI 59.0 | Trend sideways | vs Nifty +0.8%
+     Fundamentals: PE 41.7 | EPS growth +15.1% | Strong fundamentals
+     Support Rs.414.6 | Resistance Rs.490.5 | S 415 / R 490
+     TA: RSI 59 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+     News: Dabur Q1 updates: Co expects double-digit revenue growth as rural dema
+
+#6  RECLTD  (Nifty Next 50 | NBFC)  —  Rs.365.15
+     Signal: STRONG BUY  |  Score: 78/100
+     Best buy: Rs.365.15  |  Qty: 82  |  Target +3%: Rs.376.10
+     Technical: RSI 58.0 | Trend up | vs Nifty +2.2%
+     Fundamentals: PE 5.9 | EPS growth -21.7% | Weak fundamentals
+     Support Rs.321.0 | Resistance Rs.387.45 | S 321 / R 387
+     TA: RSI 58 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#7  COLPAL  (Nifty Next 50 | FMCG)  —  Rs.2047.00
+     Signal: STRONG BUY  |  Score: 76/100
+     Best buy: Rs.2047.00  |  Qty: 14  |  Target +3%: Rs.2108.41
+     Technical: RSI 52.7 | Trend sideways | vs Nifty -1.6%
+     Fundamentals: PE 42.0 | EPS growth -0.5% | Average fundamentals
+     Support Rs.1856.22 | Resistance Rs.2197.79 | S 1856 / R 2198
+     TA: RSI 53 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#8  LICI  (Nifty Next 50 | Insurance)  —  Rs.430.25
+     Signal: STRONG BUY  |  Score: 75/100
+     Best buy: Rs.430.25  |  Qty: 69  |  Target +3%: Rs.443.16
+     Technical: RSI 63.7 | Trend up | vs Nifty +6.1%
+     Fundamentals: PE 9.5 | EPS growth +55.1% | Strong fundamentals
+     Support Rs.379.14 | Resistance Rs.440.0 | Near resistance Rs.440
+     TA: RSI 64 mild momentum, MACD bullish crossover, Above 20 EMA
+
+#9  HDFCBANK  (Nifty 50 | Banking)  —  Rs.801.05
+     Signal: BUY  |  Score: 75/100
+     Best buy: Rs.801.05  |  Qty: 37  |  Target +3%: Rs.825.08
+     Technical: RSI 65.4 | Trend up | vs Nifty +5.0%
+     Fundamentals: PE 17.9 | EPS growth +8.0% | Average fundamentals
+     Support Rs.720.39 | Resistance Rs.807.0 | Near resistance Rs.807 | Testing resistance
+     TA: RSI 65 mild momentum, MACD bullish crossover, Above 20 EMA
+     News: HDFC Bank Q1 business update: Gross advances rise 15% to Rs 30.61 lakh | HDFC Bank share price to be in focus on Monday 
+
+#10  BPCL  (Nifty 50 | Energy)  —  Rs.308.15
+     Signal: BUY  |  Score: 70/100
+     Best buy: Rs.308.15  |  Qty: 97  |  Target +3%: Rs.317.39
+     Technical: RSI 53.1 | Trend up | vs Nifty +0.5%
+     Fundamentals: PE 5.1 | EPS growth +28.1% | Strong fundamentals
+     Support Rs.276.6 | Resistance Rs.321.6 | S 277 / R 322
+     TA: RSI 53 ideal for 3% bounce, Above 20 EMA, Uptrend intact
+
+── MARKET HEADLINES (RSS) ──
+  - [Economic Times Markets] How Did Trump Make $1.4 Billion From Crypto?
+  - [Economic Times Markets] Raamdeo Agrawal's 7 book recommendations for stock market investors
+  - [Economic Times Markets] Retail investors bet on these 10 small-cap stocks; they rally up to 185% in 3 months
+  - [Economic Times Markets] Bitcoin trades near $62,000; inflation, geopolitical risks remain key market drivers
+  - [Economic Times Markets] Gold’s sharp correction: What lies ahead for prices?
+  - [Economic Times Markets] IPO Calendar: Mainboard IPO of Kusumgar among 3 new public offers on investors' radar next week
+  - [Economic Times Markets] Top picks! Redington among 5 stocks with upside potential of up to 27%. Do you own any?
+  - [Economic Times Markets] Why the capital cycle approach is a powerful framework for long-term investing
+  - [Economic Times Markets] Why the next Bitcoin cycle will be won by investors who understand liquidity
+  - [Economic Times Markets] US rally vs India story? Wealth managers explain why NRIs should stay the course for next 10 years
+
+── DISCLAIMER ──
+Automated research only. NOT financial advice. Not SEBI-registered.
+=================================================================
