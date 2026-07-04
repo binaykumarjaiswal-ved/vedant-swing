@@ -20,6 +20,14 @@ CACHE_SEC = int(os.environ.get("SYNC_CACHE_SEC", "90"))
 
 _last_pull = 0.0
 
+USER_DATA_FILES = (
+    "watchlists.json",
+    "alerts.json",
+    "alert_log.json",
+    "paper_portfolio.json",
+    "journal.json",
+)
+
 
 def _enabled() -> bool:
     return bool(GITHUB_REPO and GITHUB_TOKEN)
@@ -81,6 +89,12 @@ def pull_state(force: bool = False) -> bool:
         (DATA_DIR / "position.json").write_text(pos_text, encoding="utf-8")
         ok = True
 
+    for name in USER_DATA_FILES:
+        text, _ = _get_file(f"data/{name}")
+        if text:
+            (DATA_DIR / name).write_text(text, encoding="utf-8")
+            ok = True
+
     try:
         url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/data/reports"
         r = requests.get(url, headers=_headers(), timeout=30)
@@ -139,3 +153,30 @@ def push_position(content: str) -> bool:
         global _last_pull
         _last_pull = time.time()
     return ok
+
+
+def push_user_data(filename: str) -> bool:
+    """Upload watchlist / alerts / paper / journal to GitHub (persistent on Render)."""
+    if not _enabled():
+        return False
+    if filename not in USER_DATA_FILES:
+        return False
+    local = DATA_DIR / filename
+    if not local.exists():
+        return False
+    text = local.read_text(encoding="utf-8")
+    ok = _put_file(
+        f"data/{filename}",
+        text,
+        f"webapp: {filename} {time.strftime('%Y-%m-%d %H:%M UTC', time.gmtime())}",
+    )
+    if ok:
+        global _last_pull
+        _last_pull = time.time()
+    return ok
+
+
+def sync_before_read() -> None:
+    """Pull user data from GitHub before reading local JSON (cached)."""
+    if _enabled():
+        pull_state()

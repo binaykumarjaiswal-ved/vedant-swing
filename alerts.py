@@ -15,6 +15,11 @@ LOG = BASE_DIR / "data" / "alert_log.json"
 
 
 def _load() -> dict:
+    try:
+        from cloud_sync import sync_before_read
+        sync_before_read()
+    except Exception:
+        pass
     if not FILE.exists():
         return {"alerts": []}
     try:
@@ -26,6 +31,11 @@ def _load() -> dict:
 def _save(data: dict) -> None:
     FILE.parent.mkdir(parents=True, exist_ok=True)
     FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    try:
+        from cloud_sync import push_user_data
+        push_user_data("alerts.json")
+    except Exception:
+        pass
 
 
 def _log(entry: dict) -> None:
@@ -36,6 +46,11 @@ def _log(entry: dict) -> None:
     data["events"].insert(0, entry)
     data["events"] = data["events"][:100]
     LOG.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    try:
+        from cloud_sync import push_user_data
+        push_user_data("alert_log.json")
+    except Exception:
+        pass
 
 
 def list_alerts(active_only: bool = True) -> list[dict]:

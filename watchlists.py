@@ -11,6 +11,11 @@ FILE = BASE_DIR / "data" / "watchlists.json"
 
 
 def _load() -> dict:
+    try:
+        from cloud_sync import sync_before_read
+        sync_before_read()
+    except Exception:
+        pass
     if not FILE.exists():
         return {"lists": {"default": {"name": "My Watchlist", "symbols": [], "notes": {}}}}
     try:
@@ -22,6 +27,11 @@ def _load() -> dict:
 def _save(data: dict) -> None:
     FILE.parent.mkdir(parents=True, exist_ok=True)
     FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    try:
+        from cloud_sync import push_user_data
+        push_user_data("watchlists.json")
+    except Exception:
+        pass
 
 
 def list_watchlists() -> dict:

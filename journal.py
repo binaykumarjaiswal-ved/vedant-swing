@@ -12,6 +12,11 @@ JOURNAL_FILE = BASE_DIR / "data" / "journal.json"
 
 
 def _load() -> dict:
+    try:
+        from cloud_sync import sync_before_read
+        sync_before_read()
+    except Exception:
+        pass
     if not JOURNAL_FILE.exists():
         return {"entries": []}
     try:
@@ -23,6 +28,11 @@ def _load() -> dict:
 def _save(data: dict) -> None:
     JOURNAL_FILE.parent.mkdir(parents=True, exist_ok=True)
     JOURNAL_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    try:
+        from cloud_sync import push_user_data
+        push_user_data("journal.json")
+    except Exception:
+        pass
 
 
 def calc_rr(entry: float, stop: float, target: float) -> float:

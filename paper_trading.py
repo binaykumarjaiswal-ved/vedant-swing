@@ -12,6 +12,11 @@ PORTFOLIO_FILE = BASE_DIR / "data" / "paper_portfolio.json"
 
 
 def _load() -> dict:
+    try:
+        from cloud_sync import sync_before_read
+        sync_before_read()
+    except Exception:
+        pass
     if not PORTFOLIO_FILE.exists():
         return {"cash": 500000.0, "positions": [], "closed": []}
     try:
@@ -23,6 +28,11 @@ def _load() -> dict:
 def _save(data: dict) -> None:
     PORTFOLIO_FILE.parent.mkdir(parents=True, exist_ok=True)
     PORTFOLIO_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    try:
+        from cloud_sync import push_user_data
+        push_user_data("paper_portfolio.json")
+    except Exception:
+        pass
 
 
 def get_portfolio() -> dict:
