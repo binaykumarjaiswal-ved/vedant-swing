@@ -141,12 +141,13 @@ def get_dashboard() -> dict:
         watchlist_count = 0
         active_alerts = 0
 
-    from market_calendar import get_market_context
+    from market_calendar import get_market_context, ist_now
 
+    ctx = get_market_context()
     return {
         "app": CONFIG.get("app_name", "Vedant Swing"),
-        "updated": datetime.now().strftime("%Y-%m-%d %H:%M IST"),
-        "market": get_market_context(),
+        "updated": ist_now().strftime("%d %b %Y, %I:%M %p IST"),
+        "market": ctx,
         "benchmark": benchmark,
         "watchlist_count": watchlist_count,
         "active_alerts": active_alerts,

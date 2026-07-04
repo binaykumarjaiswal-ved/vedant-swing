@@ -114,8 +114,10 @@ function renderMarket(benchmark) {
 }
 
 function renderHeaderStats(data) {
+  const refreshed = data.updated ? `Data refreshed ${data.updated}` : "";
   $("header-stats").textContent =
-    `Watchlist ${data.watchlist_count ?? 0} · Alerts ${data.active_alerts ?? 0} · Refreshed ${data.updated || ""}`;
+    `Watchlist ${data.watchlist_count ?? 0} · Alerts ${data.active_alerts ?? 0}` +
+    (refreshed ? ` · ${refreshed}` : "");
   if (data.market) renderDateTimeBar(data.market);
 }
 
