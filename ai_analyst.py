@@ -148,49 +148,75 @@ def _pick_context(p: dict) -> str:
     return "\n".join(lines)
 
 
+def _format_market_headlines(headlines: list[dict]) -> str:
+    if not headlines:
+        return "- No market headlines in RSS feeds"
+    lines = []
+    for h in headlines[:12]:
+        title = (h.get("title") or "")[:130]
+        source = h.get("source") or "News"
+        sentiment = h.get("sentiment") or "neutral"
+        lines.append(f"- [{source}] {title} ({sentiment})")
+    return "\n".join(lines)
+
+
 def generate_morning_briefing(
     picks: list[dict],
     market_headlines: list[dict],
     benchmark: dict,
     sector_report: str = "",
+    news_total: int = 0,
 ) -> str:
+    """Groq-powered morning brain — full decision report from scan + RSS news."""
     if not is_ai_enabled():
         return ""
     if not load_ai_keys():
         return ""
 
-    pick_blocks = "\n\n".join(_pick_context(p) for p in picks[:5])
-    headlines = "\n".join(f"- {h['title'][:90]}" for h in market_headlines[:8])
+    pick_blocks = "\n\n".join(_pick_context(p) for p in picks[:8])
+    headlines = _format_market_headlines(market_headlines)
 
-    prompt = f"""Indian Nifty swing research — full morning decision report (500-700 words).
+    prompt = f"""You are the PRIMARY RESEARCH BRAIN for Vedant Swing — Indian NSE delivery swing app.
+Synthesize ALL data below (technicals, fundamentals, sectors, real RSS news). Be decisive and specific.
 
-STRATEGY: Delivery swing, +3% profit target, Rs.30,000/trade, max 5 averages on -3%.
-UNIVERSE: Nifty 50 + Next 50 | Scan: 100 stocks | Sector filter: top 5 strong sectors only.
+TRADER RULES
+- Delivery swing only, +3% profit target, Rs.30,000/trade, max 7 days hold
+- Max 5 averages on -3% drop | Only top 5 strong sectors preferred
+- Universe: Nifty 500 scan (top scores shown)
 
-MARKET: {benchmark.get('mood')} | Nifty 20d {benchmark.get('change_20d', 0):+.1f}%
+MARKET CONTEXT
+- Mood: {benchmark.get('mood')} | Nifty 20d: {benchmark.get('change_20d', 0):+.1f}%
+- News items scanned: {news_total}
 
 {sector_report}
 
-TOP 5 PICKS (technical + PE + quarterly + support/resistance):
+TOP SCAN PICKS (technical + fundamentals + news + support/resistance):
 {pick_blocks}
 
-HEADLINES:
+LIVE MARKET HEADLINES (RSS — cite these in your analysis):
 {headlines}
 
-Write structured report with these EXACT sections:
+Write a MORNING GROQ RESEARCH REPORT (700-900 words) with these EXACT sections:
 
-1. MARKET VERDICT (2-3 lines)
-2. STRONG SECTORS TODAY (bullet list)
-3. TOP 3 STOCK PICKS — for each: Why buy, PE/earnings view, support/resistance, 3% target logic
-4. RISKS (bullet list — market, sector, stock-specific)
-5. DECISION CHECKLIST (numbered yes/no items trader should verify before buying)
-6. FINAL RECOMMENDATION — best 1 stock for today or "No buy — wait"
+1. MARKET VERDICT — BULLISH / NEUTRAL / BEARISH for swing buys today (bold + 3 sentences)
+2. NEWS & MACRO — what headlines mean for Nifty swing traders today (cite 3+ headlines by name)
+3. STRONG SECTORS — bullet list from sector data; which to favour / avoid
+4. TOP 3 STOCKS FOR TODAY — for EACH stock:
+   - Verdict: BUY / WATCH / SKIP
+   - Why (technicals + PE/earnings + news)
+   - Entry zone, target (+3%), stop/average trigger
+5. STOCKS TO AVOID TODAY — 2 bullets with reasons
+6. RISKS — 5 bullets (market, global, sector, event, liquidity)
+7. PRE-MARKET CHECKLIST — 8 numbered yes/no questions before first buy
+8. FINAL CALL — ONE best stock for today's 3% swing OR "No buy — wait for clarity" with reason
 
-End: "Not SEBI-registered advice. Trade at your own risk."
+End exactly with: "Not SEBI-registered advice. Trade at your own risk."
 """
 
-    text = _ask(prompt, max_tokens=1500)
-    return f"[AI Research — Groq {AI_MODEL}]\n{text}" if text else ""
+    text = _ask(prompt, max_tokens=2200)
+    if not text:
+        return ""
+    return f"[Groq AI Morning Brain — {AI_MODEL}]\n{text}"
 
 
 def analyze_buy(pick: dict, benchmark: dict) -> str:

@@ -6,6 +6,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+GROQ_SECTION = "── GROQ AI MORNING BRAIN ──"
+
 BASE_DIR = Path(__file__).parent
 REPORTS_DIR = BASE_DIR / "data" / "reports"
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -48,26 +50,38 @@ def save_morning_report(
     universe_source: str,
     sector_report: str = "",
 ) -> tuple[Path, Path]:
+    from market_calendar import ist_now
+
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    now = datetime.now()
+    now = ist_now()
     date_str = now.strftime("%Y-%m-%d")
-    time_str = now.strftime("%d %b %Y %I:%M %p")
+    time_str = now.strftime("%d %b %Y %I:%M %p IST")
 
     lines = [
         "=" * 65,
         f"  VEDANT SWING — MORNING RESEARCH — {time_str}",
-        "  Nifty 500 scan | Sector filter | PE + S/R",
+        "  Groq AI brain + Nifty 500 scan | Sector filter | PE + S/R + RSS news",
         "=" * 65,
         f"Market mood: {benchmark.get('mood', 'NEUTRAL')} (Nifty 20d: {benchmark.get('change_20d', 0):+.1f}%)",
         f"Stocks scanned: {len(all_scored)} | News items: {news_stats.get('total', 0)} | Universe: {universe_source}",
         "",
     ]
 
+    if ai_summary:
+        lines.extend(["", GROQ_SECTION, ai_summary, ""])
+    else:
+        lines.extend([
+            "",
+            GROQ_SECTION,
+            "Groq AI report not generated — set GROQ_API_KEY on Render and ai_enabled=true.",
+            "",
+        ])
+
     if sector_report:
         lines.append(sector_report)
         lines.append("")
 
-    lines.append("── TOP RESEARCH PICKS (3% swing) ──")
+    lines.append("── TOP RESEARCH PICKS (technical scan) ──")
 
     if picks:
         for i, p in enumerate(picks, 1):
@@ -77,12 +91,10 @@ def save_morning_report(
         lines.append("  No strong setups today.")
 
     if market_headlines:
-        lines.extend(["", "── MARKET HEADLINES ──"])
-        for h in market_headlines[:8]:
-            lines.append(f"  - {h.get('title', '')[:100]}")
-
-    if ai_summary:
-        lines.extend(["", "── AI MORNING BRIEFING ──", ai_summary])
+        lines.extend(["", "── MARKET HEADLINES (RSS) ──"])
+        for h in market_headlines[:10]:
+            src = h.get("source", "")
+            lines.append(f"  - [{src}] {h.get('title', '')[:110]}")
 
     lines.extend([
         "",
@@ -103,6 +115,10 @@ def save_morning_report(
 
     html_path = REPORTS_DIR / f"morning_research_{date_str}.html"
     html_path.write_text(_build_html(picks, benchmark, time_str, market_headlines, ai_summary), encoding="utf-8")
+
+    if ai_summary:
+        ai_path = REPORTS_DIR / f"morning_ai_{date_str}.txt"
+        ai_path.write_text(ai_summary, encoding="utf-8")
 
     try:
         from email_notify import send_morning_report
@@ -144,5 +160,5 @@ pre{{white-space:pre-wrap;background:#1e293b;padding:16px;border-radius:8px}}
 <p>{time_str} | {benchmark.get('mood','NEUTRAL')} | Nifty 20d {benchmark.get('change_20d',0):+.1f}%</p>
 {rows}
 <h2>Market Headlines</h2><ul>{hl}</ul>
-<h2>AI Briefing</h2>{ai_block}
+<h2>Groq AI Morning Brain</h2>{ai_block}
 </body></html>"""

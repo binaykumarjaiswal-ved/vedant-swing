@@ -128,7 +128,21 @@ function renderMorningBriefing(data) {
   const report = $("morning-report-text");
   const details = $("morning-details");
   const staleBanner = $("morning-stale-banner");
+  const groqBlock = $("morning-groq-block");
+  const groqText = $("morning-groq-text");
+  const groqMeta = $("morning-groq-meta");
   const meta = data.report_meta || {};
+
+  if (data.has_groq_morning && groqText) {
+    groqText.textContent = data.ai_morning_briefing;
+    if (groqMeta) groqMeta.textContent = `Powered by Groq · ${meta.report_display || "latest report"}`;
+    groqBlock?.classList.remove("hidden");
+  } else if (groqText) {
+    groqText.textContent =
+      "Groq morning report will appear after Run now or auto scan Mon–Fri 8:30 AM IST. " +
+      "Ensure GROQ_API_KEY is set on Render.";
+    if (groqMeta) groqMeta.textContent = "";
+  }
   const todayLabel = data.market?.today_label || "";
 
   $("morning-date").textContent = meta.report_display

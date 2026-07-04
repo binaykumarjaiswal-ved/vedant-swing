@@ -107,6 +107,21 @@ def _evening_fallback_picks() -> dict | None:
     }
 
 
+def _extract_groq_morning(text: str) -> str:
+    marker = "── GROQ AI MORNING BRAIN ──"
+    if marker not in text:
+        legacy = "── AI MORNING BRIEFING ──"
+        if legacy in text:
+            marker = legacy
+        else:
+            return ""
+    chunk = text.split(marker, 1)[1]
+    for end in ("── TOP RESEARCH PICKS", "── DISCLAIMER", "── MARKET HEADLINES"):
+        if end in chunk:
+            chunk = chunk.split(end, 1)[0]
+    return chunk.strip()
+
+
 def _parse_top_picks(text: str) -> list[dict]:
     picks = []
     blocks = re.split(r"(?=^#\d+\s)", text, flags=re.MULTILINE)
@@ -168,11 +183,17 @@ def get_dashboard() -> dict:
 
     report_meta = _report_meta("")
     evening_fallback = None
+    ai_morning_briefing = ""
     if report_path:
         report_date = report_path.stem.replace("morning_research_", "")
         report_meta = _report_meta(report_date)
         text = report_path.read_text(encoding="utf-8")
-        report_preview = text[:1200]
+        ai_morning_briefing = _extract_groq_morning(text)
+        if not ai_morning_briefing:
+            ai_file = REPORTS_DIR / f"morning_ai_{report_date}.txt"
+            if ai_file.exists():
+                ai_morning_briefing = ai_file.read_text(encoding="utf-8").strip()
+        report_preview = ai_morning_briefing or text[:1200]
         top_picks = _parse_top_picks(text)
     if not report_meta.get("is_today"):
         evening_fallback = _evening_fallback_picks()
@@ -236,6 +257,8 @@ def get_dashboard() -> dict:
         "top_picks": top_picks,
         "has_report": bool(report_path),
         "evening_fallback": evening_fallback,
+        "ai_morning_briefing": ai_morning_briefing,
+        "has_groq_morning": bool(ai_morning_briefing),
         "scan": scan_info,
     }
 

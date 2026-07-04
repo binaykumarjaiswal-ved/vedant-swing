@@ -882,6 +882,16 @@ select {
   font-weight: 600;
 }
 
+.morning-groq-block {
+  margin-bottom: 0.75rem;
+  border-left: 3px solid var(--green);
+}
+
+.morning-groq-block .ai-text {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
 .morning-report-text {
   white-space: pre-wrap;
   font-size: 0.78rem;

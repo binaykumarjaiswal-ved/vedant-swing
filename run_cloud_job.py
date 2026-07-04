@@ -71,9 +71,21 @@ def run_morning_research(cfg: dict, benchmark: dict) -> tuple[list, list, dict, 
 
     if is_ai_enabled():
         from ai_analyst import generate_morning_briefing
+
+        print("[Groq] Generating AI morning brain report...", flush=True)
         ai_summary = generate_morning_briefing(
-            research_picks, news["market_headlines"], benchmark, sector_report
+            research_picks,
+            news["market_headlines"],
+            benchmark,
+            sector_report,
+            news_total=news.get("total", 0),
         )
+        if ai_summary:
+            print(f"  [Groq] Morning AI ready ({len(ai_summary)} chars)", flush=True)
+        else:
+            print("  [Groq] WARNING: Morning AI empty — check GROQ_API_KEY on Render", flush=True)
+    else:
+        print("  [Groq] AI disabled in config", flush=True)
 
     from morning_report import save_morning_report
     txt_path, _ = save_morning_report(
