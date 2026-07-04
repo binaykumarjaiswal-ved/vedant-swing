@@ -1,0 +1,31 @@
+{
+  "app_name": "Vedant Swing",
+  "profit_target_pct": 3.0,
+  "loss_trigger_pct": 3.0,
+  "average_fraction": 0.30,
+  "max_averages": 5,
+  "default_investment": 30000,
+  "max_hold_days": 7,
+  "one_buy_per_day": true,
+  "min_buy_score": 62,
+  "top_research_picks": 10,
+  "news_weight": 0.15,
+  "news_max_age_hours": 48,
+  "ai_enabled": false,
+  "report_time": "15:45",
+  "stock_scan_limit": 500,
+  "sector_filter_enabled": true,
+  "sector_top_n": 5,
+  "min_picks_after_sector_filter": 3,
+  "fund_weight": 0.12,
+  "deep_enrich_top_n": 15,
+  "paper_starting_cash": 500000,
+  "universe": "nifty500",
+  "broker_integration": false,
+  "news_sources": [
+    {"name": "Moneycontrol Markets", "url": "https://www.moneycontrol.com/rss/marketreports.xml"},
+    {"name": "Economic Times Markets", "url": "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms"},
+    {"name": "Livemint Markets", "url": "https://www.livemint.com/rss/markets"},
+    {"name": "Google News India Markets", "url": "https://news.google.com/rss/search?q=Nifty+500+swing+trading+India&hl=en-IN&gl=IN&ceid=IN:en"}
+  ]
+}

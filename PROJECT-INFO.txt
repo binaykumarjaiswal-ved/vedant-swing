@@ -1,0 +1,28 @@
+VEDANT SWING — Nifty 500 Swing Trading Web App
+==============================================
+
+PRODUCT: Vedant Swing
+UNIVERSE: Nifty 500 (NSE India)
+DATA: Yahoo Finance (yfinance) + NSE fallback
+BROKER: None in MVP (Angel One noted for Phase 2)
+HOSTING: GitHub + Render (free) + optional Google Cloud Shell
+
+BUILT-IN STRATEGIES:
+  1. Pullback to 21 EMA
+  2. Breakout from consolidation
+  3. Oversold bounce (Nifty 100 quality names)
+
+EVENING FLOW (automatic on GitHub):
+  3:45 PM IST  GitHub Action runs evening_scan.py
+  4:00 PM IST  Open web app → review setups
+  9:15 AM IST  Paper trade or journal entry
+
+GITHUB REPO:
+  binaykumarjaiswal-ved/vedant-swing
+
+GOOGLE CLOUD (optional dev):
+  bash gcp/bootstrap.sh
+
+NO SECRETS IN REPO. Add tokens only in GitHub Secrets / Render dashboard.
+
+NOT SEBI-REGISTERED ADVICE. Trade at your own risk.

@@ -1,0 +1,70 @@
+STOCK ANALYST WEB APP — FREE INTERNET DEPLOY (NO PC NEEDED)
+============================================================
+
+Your mobile web app runs 24/7 on Render.com (FREE, no credit card).
+
+ONE-TIME SETUP (about 5 minutes)
+--------------------------------
+
+STEP 1 — Push code (already done if you ran DEPLOY_WEBAPP.bat)
+  Folder: github-upload → GitHub repo stock-analyst-cloud
+
+STEP 2 — Create Render account (FREE)
+  1. Open: https://dashboard.render.com/register
+  2. Click "Sign up with GitHub"
+  3. Authorize Render (no card needed on free plan)
+
+STEP 3 — Deploy from Blueprint
+  1. Render Dashboard → New + → Blueprint
+  2. Connect repository: stock-analyst-cloud
+  3. Render reads render.yaml automatically
+  4. Click "Apply"
+
+STEP 4 — Add 2 secrets in Render (Environment tab)
+  GROQ_API_KEY     = same key as GitHub Actions (for AI analysis)
+  GITHUB_TOKEN     = GitHub Personal Access Token (see Step 5)
+
+  GITHUB_REPO is already set: binaykumarjaiswal-ved/stock-analyst-cloud
+
+STEP 5 — Create GITHUB_TOKEN (one time)
+  1. GitHub → Settings → Developer settings → Personal access tokens
+  2. Tokens (classic) → Generate new token
+  3. Name: stock-analyst-web
+  4. Scope: check "repo" (full repo access for private repo sync)
+  5. Copy token → paste in Render as GITHUB_TOKEN
+
+STEP 6 — Get your public URL
+  After deploy (~3 min), Render shows:
+    https://stock-analyst-web.onrender.com
+  (name may vary slightly)
+
+STEP 7 — Keep app fast during market hours (optional)
+  GitHub repo → Settings → Secrets → Actions
+  Add: WEBAPP_URL = https://stock-analyst-web.onrender.com
+  GitHub will ping every 10 min so Render does not sleep.
+
+ON YOUR PHONE
+-------------
+  1. Open the Render URL in Chrome
+  2. Menu → Add to Home screen
+  3. Use like a real app — search stocks, share results, track TITAN
+
+WHAT WORKS WITHOUT PC
+-----------------------
+  ✓ Search any stock → real NSE + news + AI analysis
+  ✓ Share results to WhatsApp
+  ✓ View open position (synced from GitHub cloud bot)
+  ✓ Morning research + top 5 picks
+  ✓ Record sell / average (syncs back to GitHub)
+
+NOTES
+-----
+  - First open after 15 min idle may take 30–60 sec (free tier wakes up)
+  - GitHub Actions still runs morning scans + Telegram (if configured)
+  - Not SEBI advice — signals only
+
+TROUBLESHOOTING
+---------------
+  "Analysis slow"     → Normal on free tier; wait up to 60 sec
+  "Position not shown"→ Check GITHUB_TOKEN in Render env
+  "AI note missing"   → Add GROQ_API_KEY in Render env

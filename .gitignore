@@ -1,0 +1,14 @@
+secrets.env
+__pycache__/
+*.pyc
+data/cache/
+data/reports/*
+!data/reports/.gitkeep
+!data/reports/morning_research_*.txt
+!data/reports/signal_*.txt
+!data/reports/evening_scan_*.json
+data/last_alert.json
+data/telegram_offset.json
+data/trades_log.json
+.env
+render-api-key.txt

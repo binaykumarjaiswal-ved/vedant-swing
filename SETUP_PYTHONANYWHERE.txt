@@ -1,0 +1,153 @@
+STOCK ANALYST — FREE CLOUD SETUP (Runs When Laptop Is OFF)
+===========================================================
+
+WHAT YOU GET:
+  - 8:40 AM daily BUY signal (Nifty 50 + Next 50 scan)
+  - SELL / AVERAGE / HOLD alerts when you have open position
+  - Telegram commands: /buy /sell /average /status
+  - NO Angel One keys needed (safe for cloud)
+
+RECOMMENDED: GITHUB ACTIONS ONLY (see SETUP_GITHUB.txt + CLOUD-GUIDE-SIMPLE.txt)
+  - Morning BUY + every 30 min SELL/AVERAGE — one platform, fully free
+
+OPTIONAL BACKUP: PythonAnywhere — morning only (cannot do intraday on free tier)
+
+================================================================================
+PART A — PYTHONANYWHERE (20 minutes, one time)
+================================================================================
+
+STEP 1 — CREATE FREE ACCOUNT
+  https://www.pythonanywhere.com/registration/register/beginner/
+  Confirm email.
+
+STEP 2 — PACK & UPLOAD
+  On laptop: double-click PACK_FOR_PYTHONANYWHERE.bat
+  Creates: Desktop\stock-analyst-cloud.zip
+
+  On PythonAnywhere:
+  1. Login -> Files -> /home/YOURUSERNAME/
+  2. Create folder: stock-analyst
+  3. Upload stock-analyst-cloud.zip
+  4. Bash console:
+       cd ~
+       unzip -o stock-analyst-cloud.zip -d stock-analyst
+       cd stock-analyst
+
+STEP 3 — INSTALL
+       pip3.10 install --user -r requirements.txt
+
+STEP 4 — SECRETS
+  1. Copy secrets.example.env -> secrets.env
+  2. Edit secrets.env:
+       TELEGRAM_BOT_TOKEN=from_BotFather
+       TELEGRAM_CHAT_ID=6407769605
+       STOCK_SCAN_LIMIT=50
+       GROQ_API_KEY=optional_for_AI_notes
+
+  Bot: @Vinayved_bot
+
+STEP 5 — TEST
+       cd ~/stock-analyst
+       python3.10 run_cloud_job.py
+
+  Check Telegram — you should get BUY or position alert.
+
+STEP 6 — SCHEDULE (AUTOMATIC DAILY)
+  Dashboard -> Tasks -> Add scheduled task:
+
+  Time (UTC): 03:10
+  Command:
+    cd /home/YOURUSERNAME/stock-analyst && python3.10 run_cloud_job.py
+
+  03:10 UTC = 8:40 AM India (IST)
+
+  Free tier: 1 task/day — perfect for morning BUY scan.
+
+================================================================================
+PART B — GITHUB ACTIONS (intraday alerts, optional)
+================================================================================
+
+Why: PythonAnywhere free = 1 run/day only.
+     GitHub Actions can check your position every 2 hours during market
+     and alert SELL or AVERAGE instantly.
+
+STEP 1 — CREATE GITHUB REPO
+  1. github.com -> New repository -> stock-analyst-cloud (private OK)
+  2. Upload all files from pythonanywhere folder to repo root
+     (include .github/workflows folder)
+
+STEP 2 — ADD SECRETS
+  Repo -> Settings -> Secrets -> Actions -> New:
+    TELEGRAM_BOT_TOKEN
+    TELEGRAM_CHAT_ID
+    GROQ_API_KEY (optional)
+
+STEP 3 — ENABLE ACTIONS
+  Actions tab -> enable workflows
+  Runs automatically Mon-Fri at:
+    9:15 AM, 11:00 AM, 12:30 PM, 2:00 PM, 3:15 PM IST
+  (Only sends alert on SELL or AVERAGE — not spam HOLD)
+
+STEP 4 — SYNC POSITION TO CLOUD
+  Position is stored in data/position.json on PythonAnywhere.
+  After /buy on Telegram, cloud tracks your trade automatically.
+
+================================================================================
+TELEGRAM COMMANDS (from your phone)
+================================================================================
+
+  /buy TITAN    — after you purchase in broker
+  /average      — after you add more on -3% drop
+  /sell         — after you sell for +3% profit
+  /status       — check open position
+  /help         — command list
+
+Commands are processed each time cloud job runs (morning + intraday).
+
+================================================================================
+IMPORTANT — FREE TIER LIMITS
+================================================================================
+
+  PythonAnywhere free:
+    - 1 scheduled task per day (morning scan)
+    - NOT a 24/7 always-on server
+    - Task must finish in ~5 min (use STOCK_SCAN_LIMIT=50)
+
+  GitHub Actions free:
+    - 2000 min/month private repo (enough for intraday checks)
+    - Not true 24/7 but covers market hours
+
+  For TRUE 24/7 always-on: Oracle Cloud free VM (advanced, not included here)
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+"No module named yfinance"
+  -> pip3.10 install --user -r requirements.txt
+
+Task timeout on PythonAnywhere
+  -> Set STOCK_SCAN_LIMIT=40 in secrets.env
+
+No Telegram message
+  -> Run manually in Bash first, read error text
+
+NSE blocked, using Yahoo
+  -> Normal on cloud; prices still work
+
+================================================================================
+SECURITY
+================================================================================
+
+  SAFE to upload: stock-analyst-cloud.zip
+  Contains: NO Angel One, NO broker passwords
+  Only YOU add Telegram token in secrets.env on cloud
+
+  NEVER commit secrets.env to GitHub — use GitHub Secrets instead.
+
+================================================================================
+LAPTOP FOLDER
+================================================================================
+
+  D:\BINAY-Projects\10-Stock-Analyst\pythonanywhere\
+  PACK_FOR_PYTHONANYWHERE.bat on Desktop zip

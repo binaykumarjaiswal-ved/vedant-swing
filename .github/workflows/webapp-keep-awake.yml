@@ -1,0 +1,22 @@
+name: Keep Web App Awake (market hours)
+
+on:
+  schedule:
+    # Every 10 min, 3:30–10:30 UTC = 9:00 AM–4:00 PM IST (Mon–Fri)
+    - cron: "0,10,20,30,40,50 3,4,5,6,7,8,9,10 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render web app
+        env:
+          WEBAPP_URL: ${{ secrets.WEBAPP_URL }}
+        run: |
+          if [ -z "$WEBAPP_URL" ]; then
+            echo "WEBAPP_URL secret not set — skip (add after Render deploy)"
+            exit 0
+          fi
+          curl -sf --max-time 30 "${WEBAPP_URL%/}/api/health" || true
+          echo "Pinged $WEBAPP_URL"

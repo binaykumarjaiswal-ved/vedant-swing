@@ -1,0 +1,16 @@
+{
+  "active": true,
+  "symbol": "TITAN",
+  "initial_amount": 30000,
+  "lots": [
+    {
+      "price": 4481.1,
+      "qty": 6,
+      "amount": 26886.6,
+      "kind": "initial",
+      "date": "2026-07-02"
+    }
+  ],
+  "average_count": 0,
+  "opened": "2026-07-02"
+}

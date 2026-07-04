@@ -1,0 +1,27 @@
+name: Web App Morning Boost (Render — no GitHub delay)
+
+# Pings Render to run morning scan directly — same idea as morning-boost.yml for GitHub.
+on:
+  schedule:
+    - cron: "55 2 * * 1-5"
+    - cron: "0,5,10,15,20,25,30,35,40,45,50,55 3 * * 1-5"
+    - cron: "0,5,10,15,20,25,30,35,40,45,50,55 4 * * 1-5"
+    - cron: "0,5,10,15,20,25,30 5 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  morning-on-render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger morning scan on Render
+        env:
+          WEBAPP_URL: ${{ secrets.WEBAPP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$WEBAPP_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "Set WEBAPP_URL and CRON_SECRET in GitHub secrets"
+            exit 0
+          fi
+          URL="${WEBAPP_URL%/}/api/cron/morning?key=${CRON_SECRET}"
+          echo "Pinging Render morning scan..."
+          curl -sf --max-time 300 "$URL" || echo "Scan started or server waking up"

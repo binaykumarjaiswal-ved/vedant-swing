@@ -1,0 +1,31 @@
+================================================================================
+  STOCK ANALYST — FREE SETUP (₹0, NO CARD, LAPTOP OFF)
+================================================================================
+
+STATUS: ACTIVE — nothing for you to configure manually.
+
+PLATFORM: GitHub Actions only (Oracle / VPS / cron-job.org skipped)
+
+HOW IT WORKS:
+  1. stock-analyst.yml  — main agent (morning + intraday every 10 min)
+  2. morning-boost.yml  — every 5 min 8:30-10:00 AM IST kicks main workflow
+                          (same idea as cron-job.org, but built into GitHub)
+
+MORNING:
+  8:25 AM – 3:35 PM IST catch-up window (if GitHub queue is slow)
+  morning-boost dispatches extra runs so alert arrives sooner
+
+INTRADAY:
+  9:10 AM – 3:35 PM IST — SELL / AVERAGE checks every ~10 min
+
+TELEGRAM:
+  Bot: @Vinayved_bot
+  /buy /sell /average /status
+
+POSITION:
+  Saved in GitHub data/position.json automatically
+
+DAILY MANUAL WORK: ZERO
+  (only /buy or /sell after you trade in broker)
+
+================================================================================

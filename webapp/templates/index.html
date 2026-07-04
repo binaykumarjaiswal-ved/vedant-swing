@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Vedant Swing">
+  <title>Vedant Swing</title>
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-top">
+      <h1>Vedant Swing</h1>
+      <button type="button" class="icon-btn" id="btn-refresh" title="Refresh">↻</button>
+    </div>
+    <p class="subtitle">Nifty 500 · 3 swing strategies · Paper trade · Journal</p>
+    <div class="market-pill" id="market-pill">Loading market…</div>
+    <div class="scan-banner hidden" id="scan-banner"></div>
+  </header>
+
+  <main class="main">
+    <!-- Search -->
+    <section class="card search-card">
+      <h2>Search Stock</h2>
+      <form id="search-form" class="search-row">
+        <input type="text" id="symbol-input" placeholder="e.g. TITAN, RELIANCE" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <button type="submit" class="btn btn-primary" id="btn-analyze">Analyze</button>
+      </form>
+      <div class="chip-row" id="quick-chips"></div>
+    </section>
+
+    <!-- Analysis result -->
+    <section class="card result-card hidden" id="result-card">
+      <div class="result-header">
+        <div>
+          <span class="symbol-big" id="res-symbol">—</span>
+          <span class="index-tag" id="res-index"></span>
+          <span class="sector-tag hidden" id="res-sector"></span>
+        </div>
+        <span class="signal-badge" id="res-signal">—</span>
+      </div>
+      <div class="score-bar-wrap">
+        <div class="score-bar" id="res-score-bar"></div>
+      </div>
+      <p class="score-label"><span id="res-score">0</span>/100</p>
+
+      <div class="stats-grid">
+        <div class="stat"><span class="stat-label">Price</span><span class="stat-val" id="res-price">—</span></div>
+        <div class="stat"><span class="stat-label">Target +3%</span><span class="stat-val green" id="res-target">—</span></div>
+        <div class="stat"><span class="stat-label">RSI</span><span class="stat-val" id="res-rsi">—</span></div>
+        <div class="stat"><span class="stat-label">Trend</span><span class="stat-val" id="res-trend">—</span></div>
+        <div class="stat"><span class="stat-label">vs Nifty 20d</span><span class="stat-val" id="res-vs-nifty">—</span></div>
+        <div class="stat"><span class="stat-label">Buy qty</span><span class="stat-val" id="res-qty">—</span></div>
+      </div>
+
+      <div class="fund-block hidden" id="res-fund"></div>
+      <div class="levels-block hidden" id="res-levels"></div>
+
+      <div class="reasons" id="res-reasons"></div>
+      <div class="news-block hidden" id="res-news"></div>
+      <div class="ai-block hidden" id="res-ai"></div>
+
+      <div class="action-row">
+        <button type="button" class="btn btn-share" id="btn-share">Share Result</button>
+        <button type="button" class="btn btn-ghost" id="btn-copy">Copy</button>
+      </div>
+      <p class="disclaimer">Not SEBI-registered advice. Trade at your own risk.</p>
+    </section>
+
+    <div class="loading hidden" id="loading">
+      <div class="spinner"></div>
+      <p>Running Level 2 analysis (PE + S/R + Groq)…</p>
+    </div>
+
+    <!-- Open position -->
+    <section class="card" id="position-card">
+      <h2>Open Position</h2>
+      <div id="position-body">
+        <p class="muted">Loading…</p>
+      </div>
+      <div class="action-row hidden" id="position-actions">
+        <button type="button" class="btn btn-warn" data-action="average">Record Average</button>
+        <button type="button" class="btn btn-danger" data-action="sell">Record Sell</button>
+      </div>
+    </section>
+
+    <!-- Evening swing scan -->
+    <section class="card">
+      <h2>Evening Swing Scan</h2>
+      <p class="muted small" id="evening-scan-meta">Runs after 3:45 PM IST on Nifty 500</p>
+      <div id="evening-scan-list" class="picks-list"></div>
+    </section>
+
+    <!-- Top picks from morning scan -->
+    <section class="card">
+      <h2>Today&apos;s Top Picks</h2>
+      <p class="muted small" id="picks-date"></p>
+      <div id="picks-list" class="picks-list"></div>
+    </section>
+
+    <!-- Morning report -->
+    <section class="card">
+      <h2>Morning Research</h2>
+      <pre class="report-preview" id="report-preview">Loading…</pre>
+    </section>
+  </main>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

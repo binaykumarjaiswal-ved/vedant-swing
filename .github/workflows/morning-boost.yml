@@ -1,0 +1,33 @@
+name: Morning Boost (8:30-10:00 IST)
+
+# Replaces cron-job.org — wakes main workflow every 5 min during morning window.
+# workflow_dispatch often starts faster than waiting in GitHub schedule queue.
+
+on:
+  schedule:
+    - cron: "0,5,10,15,20,25,30,35,40,45,50,55 3 * * 1-5"   # 8:30-9:25 IST
+    - cron: "0,5,10,15,20,25,30 4 * * 1-5"                    # 9:30-10:00 IST
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: morning-boost
+  cancel-in-progress: false
+
+jobs:
+  kick:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: "stock-analyst.yml",
+              ref: "main",
+            });
+            console.log("Dispatched stock-analyst.yml");

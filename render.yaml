@@ -1,0 +1,20 @@
+# Render.com free deploy — Vedant Swing web app
+services:
+  - type: web
+    name: vedant-swing-web
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn webapp.app:app --bind 0.0.0.0:$PORT --timeout 900 --workers 1 --threads 2
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: GITHUB_REPO
+        value: binaykumarjaiswal-ved/vedant-swing
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: AI_ENABLED
+        value: "false"
+      - key: STOCK_SCAN_LIMIT
+        value: "500"

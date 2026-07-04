@@ -1,0 +1,66 @@
+=================================================================
+  STOCK ANALYST — MORNING RESEARCH — 02 Jul 2026 09:00 AM
+  Nifty 50 + Nifty Next 50 | 3% swing strategy
+=================================================================
+Market mood: NEUTRAL (Nifty 20d: +nan%)
+Stocks scanned: 97 | News items: 103 | Universe: Fallback list
+
+── TOP RESEARCH PICKS (3% swing) ──
+
+#1  TITAN  (Nifty 50)  —  Rs.4398.60
+     Signal: STRONG BUY  |  Score: 96/100
+     Best buy: Rs.4398.60  |  Qty: 6  |  Target +3%: Rs.4530.56
+     Technical: RSI 59.9 | Trend up | vs Nifty +7.6%
+     TA: RSI 60 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#2  BAJAJFINSV  (Nifty 50)  —  Rs.1797.60
+     Signal: STRONG BUY  |  Score: 96/100
+     Best buy: Rs.1797.60  |  Qty: 16  |  Target +3%: Rs.1851.53
+     Technical: RSI 58.4 | Trend sideways | vs Nifty +3.7%
+     TA: RSI 58 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#3  GODREJCP  (Nifty Next 50)  —  Rs.1043.60
+     Signal: STRONG BUY  |  Score: 96/100
+     Best buy: Rs.1043.60  |  Qty: 28  |  Target +3%: Rs.1074.91
+     Technical: RSI 56.1 | Trend sideways | vs Nifty +5.8%
+     TA: RSI 56 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#4  HINDUNILVR  (Nifty 50)  —  Rs.2182.00
+     Signal: STRONG BUY  |  Score: 89/100
+     Best buy: Rs.2182.00  |  Qty: 13  |  Target +3%: Rs.2247.46
+     Technical: RSI 53.9 | Trend sideways | vs Nifty +5.4%
+     TA: RSI 54 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+     News: Dabur, HUL, Nestle rise up to 5% as NIFTY FMCG outshines NIFTY50; chec
+
+#5  ULTRACEMCO  (Nifty 50)  —  Rs.11456.00
+     Signal: STRONG BUY  |  Score: 88/100
+     Best buy: Rs.11456.00  |  Qty: 2  |  Target +3%: Rs.11799.68
+     Technical: RSI 53.4 | Trend sideways | vs Nifty +3.2%
+     TA: RSI 53 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+── MARKET HEADLINES ──
+  - Delhivery, Eternal among 6 stocks flashing bullish signals, hinting at a possible uptrend
+  - Dividend alert! Last day to buy M&amp;M, other 32 stocks for dividends worth Rs 473. How many do you
+  - Rites among 5 stocks showing bullish RSI upswing
+  - Sensex Today | Nifty 50 | Stock Market Live Updates: GIFT Nifty signals a positive start; Asian shar
+  - Positive Breakout: These 9 stocks cross above their 200 DMAs
+  - ShareChat, India’s Meta rival, plans $400 million IPO next year
+  - Oil Price Today (July 2): Crude oil at $70, falls for 2nd session as US-Iran talks progress. Worst o
+  - CSM Technologies shares to list today. Check GMP ahead of debut
+
+── AI MORNING BRIEFING ──
+[AI Morning Brief]
+**Morning Briefing**
+
+The market mood remains NEUTRAL, with Nifty 20d showing no significant movement. Our top research picks for the day include:
+
+* TITAN, BAJAJFINSV, and GODREJCP, all with a score of 96.0 and a STRONG BUY signal. These stocks have an RSI of 59.9, 58.4, and 56.1, respectively.
+* HINDUNILVR also shows promise with a score of 89.1 and a STRONG BUY signal, driven by positive news in the FMCG sector.
+
+Key risks to watch out for include market volatility and potential changes in global economic trends. As always, it's essential to set a 3% profit target and limit each trade to Rs. 30,000.
+
+Please note that this briefing is for informational purposes only and should not be considered as investment advice. **This is not a SEBI-registered advice.**
+
+── DISCLAIMER ──
+Automated research only. NOT financial advice. Not SEBI-registered.
+=================================================================

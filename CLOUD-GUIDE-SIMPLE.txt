@@ -1,0 +1,160 @@
+================================================================================
+  STOCK ANALYST — SIMPLE CLOUD GUIDE (READ THIS FIRST)
+================================================================================
+
+YOUR QUESTION:
+  "PythonAnywhere runs 1 time — GitHub many times — how do I get SELL at 3%
+   profit during market hours?"
+
+ANSWER IN ONE LINE:
+  Use GITHUB ACTIONS ONLY (not PythonAnywhere).
+  GitHub checks your stock every 30 minutes and sends SELL/AVERAGE on Telegram.
+
+================================================================================
+  HOW IT WORKS — LIKE A WATCHMAN
+================================================================================
+
+Think of your AI agent as a watchman checking your stock:
+
+  8:40 AM  → Full scan → sends BUY signal (which stock to buy today)
+  9:15 AM  → Quick check → is profit 3%? → SELL alert
+  9:45 AM  → Quick check again
+  10:15 AM → Quick check again
+  ... every 30 minutes ...
+  3:15 PM  → Last check of the day
+
+  Each quick check takes ~30 seconds.
+  If stock hit +3% profit → Telegram: "SELL NOW"
+  If stock fell -3% from avg → Telegram: "AVERAGE NOW"
+  If neither → no message (no spam)
+
+================================================================================
+  RECOMMENDED FREE PLATFORM: GITHUB ACTIONS
+================================================================================
+
+  WHY NOT PythonAnywhere alone?
+    Free PythonAnywhere = only 1 run per day
+    = good for morning BUY only
+    = CANNOT catch 3% profit at 11 AM or 2 PM
+
+  WHY GitHub Actions?
+    FREE (2000 minutes/month — you use ~300)
+    Runs 14 times per trading day
+    Catches SELL and AVERAGE during market hours
+    Works when laptop is OFF
+
+  DO YOU NEED PythonAnywhere?
+    NO — if you use GitHub Actions for everything.
+    GitHub does morning BUY + intraday SELL/AVERAGE.
+
+================================================================================
+  CHECK INTERVAL — BEST FOR YOUR 3% STRATEGY
+================================================================================
+
+  RECOMMENDED: Every 30 minutes (already set up)
+
+    Why 30 min?
+    - Nifty stocks move slowly on delivery
+    - 3% move usually takes hours, not seconds
+    - 30 min = max 30 min delay after hitting 3% profit
+    - Free tier friendly (14 runs/day)
+
+  OPTIONAL: Every 15 minutes (faster alerts)
+    - Max 15 min delay after 3% profit
+    - More GitHub minutes used (~25 runs/day)
+    - Ask to enable if you want faster alerts
+
+  NOT NEEDED: Every 5 minutes
+    - Overkill for 3% swing on large caps
+    - Uses too many API calls
+
+  SUMMARY TABLE:
+  ┌────────────────┬──────────────┬─────────────────────────┐
+  │ Time           │ What happens │ Telegram message        │
+  ├────────────────┼──────────────┼─────────────────────────┤
+  │ 8:40 AM        │ Full scan    │ BUY signal (1 stock)    │
+  │ 9:15-3:15 PM   │ Price check  │ SELL or AVERAGE only    │
+  │ (every 30 min) │              │ (no spam on HOLD)       │
+  └────────────────┴──────────────┴─────────────────────────┘
+
+================================================================================
+  SETUP — GITHUB ONLY (30 MINUTES, ONE TIME)
+================================================================================
+
+STEP 1 — CREATE GITHUB ACCOUNT (free)
+  https://github.com/signup
+
+STEP 2 — CREATE PRIVATE REPO
+  Name: stock-analyst-cloud
+  Private: YES
+
+STEP 3 — UPLOAD FILES
+  On laptop: run PACK_FOR_PYTHONANYWHERE.bat
+  Unzip stock-analyst-cloud.zip
+  Upload ALL files to GitHub repo (include .github folder)
+
+STEP 4 — ADD SECRETS
+  Repo → Settings → Secrets and variables → Actions → New secret:
+
+    TELEGRAM_BOT_TOKEN  = from BotFather
+    TELEGRAM_CHAT_ID    = 6407769605
+
+  Optional:
+    GROQ_API_KEY        = for AI notes in morning alert
+
+STEP 5 — ENABLE ACTIONS
+  Repo → Actions tab → "I understand" → enable workflows
+
+STEP 6 — TEST
+  Actions → Stock Analyst (Full Day) → Run workflow
+  Check Telegram on phone
+
+DONE! Agent runs automatically Mon-Fri. Laptop can stay OFF.
+
+================================================================================
+  AFTER YOU BUY A STOCK
+================================================================================
+
+  Message @Vinayved_bot on Telegram:
+
+    /buy TITAN
+
+  This saves your position in the cloud.
+  Now every 30 min GitHub checks TITAN price for 3% profit or -3% loss.
+
+  When you sell:
+    /sell
+
+  When you average:
+    /average
+
+  Check position:
+    /status
+
+================================================================================
+  EXAMPLE DAY
+================================================================================
+
+  Monday 8:40 AM  → Telegram: "BUY TITAN Rs.4323, target Rs.4453"
+  You buy in broker → message bot: /buy TITAN
+
+  Monday 10:15 AM → Stock at +1.5% → no message (HOLD)
+  Monday 11:45 AM → Stock at +3.1% → Telegram: "SELL TITAN +3.1% profit!"
+  You sell in broker → message bot: /sell
+
+  Tuesday 8:40 AM → New BUY scan for next stock
+
+================================================================================
+  SECURITY
+================================================================================
+
+  - Private GitHub repo = only you see it
+  - No Angel One keys in cloud
+  - Telegram token stored in GitHub Secrets (encrypted)
+
+================================================================================
+  NEED HELP?
+================================================================================
+
+  Folder: D:\BINAY-Projects\10-Stock-Analyst\pythonanywhere\
+  Pack zip: Desktop\stock-analyst-cloud.zip

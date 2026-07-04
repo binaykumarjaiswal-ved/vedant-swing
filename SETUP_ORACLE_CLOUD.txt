@@ -1,0 +1,182 @@
+================================================================================
+  STOCK ANALYST — ORACLE CLOUD VM SETUP (PRIMARY)
+  GitHub Actions = BACKUP (already running — do NOT disable)
+================================================================================
+
+WHAT YOU GET:
+  - Oracle VM = MAIN agent (exact 8:40 AM + every 10 min intraday)
+  - GitHub     = BACKUP (only alerts if Oracle is down 25+ min)
+  - Laptop OFF forever
+  - Same Telegram bot @Vinayved_bot
+  - TITAN position synced via GitHub repo
+
+DAILY MANUAL WORK: ZERO (only /buy /sell on Telegram after trades)
+
+================================================================================
+PHASE 1 — YOU DO (15 minutes) — Oracle account + VM
+================================================================================
+
+STEP 1 — FREE ORACLE ACCOUNT
+  https://www.oracle.com/cloud/free/
+  - Email + phone verify
+  - Card verify (Rs.0 charge — identity only)
+  - Choose Home Region: India West (Mumbai) if available
+
+STEP 2 — CREATE VM (Always Free)
+  Oracle Console -> Compute -> Instances -> Create Instance
+
+  Settings:
+    Name: stock-analyst
+    Image: Ubuntu 22.04 or 24.04
+    Shape: VM.Standard.A1.Flex (ARM) — 1 OCPU, 6 GB RAM  [Always Free]
+           OR VM.Standard.E2.1.Micro (AMD) if ARM not available
+    Region: Mumbai (ap-mumbai-1)
+    Boot volume: 50 GB default OK
+
+  Networking:
+    Assign public IPv4: YES
+
+  SSH keys:
+    - Click "Generate a key pair"
+    - Download PRIVATE key -> save as:
+        C:\Users\BINAY\.ssh\oracle-stock-analyst.key
+    - Keep this file safe — you need it to login
+
+  Click CREATE
+
+  Wait 2-5 min -> note PUBLIC IP (example: 129.146.xxx.xxx)
+
+STEP 3 — OPEN FIREWALL (SSH only)
+  Instance -> Subnet -> Security List -> Ingress Rules
+  Should already have SSH port 22 open from 0.0.0.0/0
+  (Outbound is open by default — Telegram + NSE need this)
+
+STEP 4 — GITHUB DEPLOY KEY (so Oracle can push position to GitHub)
+  On laptop PowerShell:
+
+    ssh-keygen -t ed25519 -f C:\Users\BINAY\.ssh\oracle-github-deploy -N '""'
+
+  Copy PUBLIC key:
+    type C:\Users\BINAY\.ssh\oracle-github-deploy.pub
+
+  GitHub repo binaykumarjaiswal-ved/stock-analyst-cloud:
+    Settings -> Deploy keys -> Add deploy key
+    Title: oracle-vm
+    Key: paste public key
+    Allow write access: YES (important!)
+
+STEP 5 — CONNECT TO VM (from laptop PowerShell)
+
+    ssh -i C:\Users\BINAY\.ssh\oracle-stock-analyst.key ubuntu@YOUR_VM_IP
+
+  First login success = Phase 1 DONE.
+  Tell agent: "VM IP is xxx, connected OK"
+
+================================================================================
+PHASE 2 — ON VM (copy-paste commands)
+================================================================================
+
+--- A) Upload GitHub deploy key to VM ---
+
+  On laptop (new PowerShell window):
+    scp -i C:\Users\BINAY\.ssh\oracle-stock-analyst.key ^
+      C:\Users\BINAY\.ssh\oracle-github-deploy ^
+      ubuntu@YOUR_VM_IP:~/.ssh/github_deploy
+
+  On VM:
+    chmod 600 ~/.ssh/github_deploy
+    printf "Host github.com\n  IdentityFile ~/.ssh/github_deploy\n  StrictHostKeyChecking accept-new\n" >> ~/.ssh/config
+    chmod 600 ~/.ssh/config
+
+--- B) Clone repo ---
+
+    git clone git@github.com:binaykumarjaiswal-ved/stock-analyst-cloud.git ~/stock-analyst
+    cd ~/stock-analyst
+
+--- C) Install Python + packages ---
+
+    bash oracle/install.sh ~/stock-analyst
+
+--- D) Add secrets ---
+
+    nano ~/stock-analyst/secrets.env
+
+  Set these lines:
+    TELEGRAM_BOT_TOKEN=your_botfather_token
+    TELEGRAM_CHAT_ID=6407769605
+    CLOUD_ROLE=primary
+    STOCK_SCAN_LIMIT=50
+    GROQ_API_KEY=optional
+
+  Save: Ctrl+O Enter, Ctrl+X
+
+--- E) Test (check Telegram) ---
+
+    cd ~/stock-analyst
+    source .venv/bin/activate
+    bash oracle/test-run.sh
+
+  Phone par message aana chahiye.
+
+--- F) Enable automatic cron ---
+
+    bash oracle/setup-cron.sh
+
+  Done! Agent runs Mon-Fri every 10 min. Laptop OFF.
+
+================================================================================
+HOW PRIMARY + BACKUP WORKS
+================================================================================
+
+  Oracle (primary):
+    - Runs run_loop.py every 10 min
+    - Writes cloud_heartbeat.json after each run
+    - Pushes position.json to GitHub
+
+  GitHub (backup):
+    - Still scheduled (unchanged)
+    - CLOUD_ROLE=backup
+    - If Oracle ran in last 25 min -> GitHub skips market alerts
+    - If Oracle DOWN 25+ min -> GitHub takes over automatically
+
+  Result: NO duplicate Telegram spam when Oracle is healthy.
+
+================================================================================
+YOUR TITAN POSITION
+================================================================================
+
+  Already in GitHub data/position.json — Oracle git pull copies it automatically.
+  After setup, send Telegram: /status
+  Should show TITAN open position.
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+"No Telegram message"
+  -> cat ~/stock-analyst/secrets.env  (check token)
+  -> bash oracle/test-run.sh and read error
+
+"git push failed"
+  -> Deploy key must have WRITE access on GitHub
+
+"Cron not running"
+  -> crontab -l
+  -> tail -f ~/stock-analyst/data/cron.log
+
+"Module not found"
+  -> cd ~/stock-analyst && source .venv/bin/activate && pip install -r requirements.txt
+
+================================================================================
+MONTHLY (30 seconds)
+================================================================================
+
+  Login Oracle console once a month — keeps free account active.
+
+================================================================================
+FOLDER ON LAPTOP
+================================================================================
+
+  Code: D:\BINAY-Projects\10-Stock-Analyst\github-upload\
+  Oracle scripts: github-upload\oracle\
+  This guide: github-upload\SETUP_ORACLE_CLOUD.txt

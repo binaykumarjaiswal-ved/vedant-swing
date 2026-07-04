@@ -1,0 +1,10 @@
+{
+  "name": "Vedant Swing",
+  "short_name": "Vedant Swing",
+  "description": "Nifty 500 swing screener, paper trading, and journal",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "orientation": "portrait"
+}

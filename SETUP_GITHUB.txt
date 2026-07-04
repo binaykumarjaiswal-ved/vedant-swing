@@ -1,0 +1,50 @@
+GITHUB ACTIONS SETUP — Complete Stock Analyst (Recommended)
+============================================================
+
+This is the ONLY platform you need. Skip PythonAnywhere.
+
+WHAT RUNS AUTOMATICALLY (Mon-Fri):
+  8:40 AM IST  — BUY signal (scans Nifty 50 + Next 50)
+  9:15 AM      — check open position for SELL/AVERAGE
+  9:45 AM      — check
+  10:15 AM     — check
+  ... every 30 minutes ...
+  3:15 PM      — last check
+
+STEP 1 — GitHub account: https://github.com/signup
+
+STEP 2 — New repository
+  Name: stock-analyst-cloud
+  Private: Yes
+  Do NOT add README (upload files instead)
+
+STEP 3 — Upload project
+  Laptop: PACK_FOR_PYTHONANYWHERE.bat → Desktop\stock-analyst-cloud.zip
+  Unzip locally, then upload all files to repo root via GitHub website
+  OR use GitHub Desktop app
+
+  Must include:
+    .github/workflows/stock-analyst.yml
+    data/position.json
+    all .py files
+
+STEP 4 — Secrets (Settings → Secrets → Actions)
+  TELEGRAM_BOT_TOKEN = your bot token
+  TELEGRAM_CHAT_ID   = 6407769605
+
+STEP 5 — Enable Actions
+  Actions tab → enable workflows
+
+STEP 6 — Test
+  Actions → "Stock Analyst (Full Day)" → Run workflow → Run workflow
+  Check Telegram
+
+TELEGRAM COMMANDS:
+  /buy SYMBOL  /sell  /average  /status  /help
+
+TROUBLESHOOTING:
+  "Workflow not running" → Check Actions enabled, repo is not empty
+  "No Telegram" → Check secrets spelling (exact names)
+  "Position lost" → Always /buy after purchasing; saved in data/position.json
+
+Read CLOUD-GUIDE-SIMPLE.txt for full explanation.
