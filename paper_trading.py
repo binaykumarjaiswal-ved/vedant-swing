@@ -34,8 +34,27 @@ def get_portfolio() -> dict:
     }
 
 
+def _has_position(data: dict, symbol: str) -> dict | None:
+    sym = symbol.upper()
+    return next((p for p in data.get("positions", []) if p.get("symbol") == sym), None)
+
+
 def paper_buy(symbol: str, qty: int, price: float, stop: float = 0, target: float = 0) -> dict:
+    symbol = (symbol or "").strip().upper()
+    if not symbol:
+        return {"ok": False, "error": "Enter a stock symbol"}
+    if qty <= 0:
+        return {"ok": False, "error": "Quantity must be at least 1"}
+    if price <= 0:
+        return {"ok": False, "error": "Enter a valid entry price"}
+
     data = _load()
+    if _has_position(data, symbol):
+        return {
+            "ok": False,
+            "error": f"Already holding {symbol}. Sell it first before buying again.",
+        }
+
     cost = qty * price
     if cost > data.get("cash", 0):
         return {"ok": False, "error": "Insufficient paper cash"}

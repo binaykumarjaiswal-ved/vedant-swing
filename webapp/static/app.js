@@ -8,11 +8,15 @@ let scanPollTimer = null;
 const QUICK = ["TITAN", "RELIANCE", "TCS", "HDFCBANK", "INFY", "BAJFINANCE"];
 const STRATEGY_LABELS = { pullback_21ema: "Pullback 21 EMA", breakout: "Breakout", oversold_bounce: "Oversold Bounce" };
 
-function toast(msg) {
+function toast(msg, type = "info") {
   const el = $("toast");
   el.textContent = msg;
+  el.className = "toast";
+  if (type === "success") el.classList.add("toast-success");
+  if (type === "error") el.classList.add("toast-error");
   el.classList.remove("hidden");
-  setTimeout(() => el.classList.add("hidden"), 2500);
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => el.classList.add("hidden"), 3200);
 }
 
 function signalClass(signal) {
@@ -253,8 +257,74 @@ async function loadDashboard() {
   }
 }
 
+function paperBuyPayload(symbol, price, qty, stop, target) {
+  return {
+    symbol: (symbol || "").trim().toUpperCase(),
+    qty: Math.max(1, parseInt(qty, 10) || 1),
+    price: parseFloat(price) || 0,
+    stop: parseFloat(stop) || 0,
+    target: parseFloat(target) || 0,
+  };
+}
+
+async function executePaperBuy(body, opts = {}) {
+  const sym = body.symbol;
+  if (!sym) {
+    toast("Enter a stock symbol", "error");
+    return { ok: false };
+  }
+  if (!body.price || body.price <= 0) {
+    toast("Enter a valid entry price", "error");
+    return { ok: false };
+  }
+  if (!body.qty || body.qty <= 0) {
+    toast("Quantity must be at least 1", "error");
+    return { ok: false };
+  }
+
+  const portfolio = await fetch("/api/paper").then((r) => r.json()).catch(() => ({}));
+  if ((portfolio.positions || []).some((p) => p.symbol === sym)) {
+    toast(`Already holding ${sym}. Sell first.`, "error");
+    return { ok: false, error: "duplicate" };
+  }
+
+  const btn = opts.button;
+  if (btn) btn.disabled = true;
+  try {
+    const res = await fetch("/api/paper/buy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }).then((r) => r.json());
+    if (res.ok) {
+      toast(`Bought ${body.qty} ${sym} @ ${fmtRs(body.price)}`, "success");
+      if (opts.form) opts.form.reset();
+      await loadPaper();
+      loadDashboard();
+    } else {
+      toast(res.error || "Paper buy failed", "error");
+    }
+    return res;
+  } catch (e) {
+    toast("Network error — try again", "error");
+    return { ok: false };
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function quickPaperBuyFromResult() {
+  if (!lastResult) return toast("Analyze a stock first", "error");
+  const p = lastResult.price || 0;
+  const stop = lastResult.avg_trigger || Math.round(p * 0.97 * 100) / 100;
+  const target = lastResult.target || Math.round(p * 1.03 * 100) / 100;
+  const body = paperBuyPayload(lastResult.symbol, p, lastResult.buy_qty || 10, stop, target);
+  const res = await executePaperBuy(body, { button: $("btn-paper-from-result") });
+  if (res.ok) switchTab("paper");
+}
+
 function fillFromResult(mode) {
-  if (!lastResult) return toast("Analyze first");
+  if (!lastResult) return toast("Analyze first", "error");
   const p = lastResult.price || 0;
   const stop = lastResult.avg_trigger || Math.round(p * 0.97 * 100) / 100;
   const target = lastResult.target || Math.round(p * 1.03 * 100) / 100;
@@ -265,6 +335,7 @@ function fillFromResult(mode) {
     $("paper-target").value = target;
     $("paper-qty").value = lastResult.buy_qty || 10;
     switchTab("paper");
+    toast(`${lastResult.symbol} ready — tap Place buy`, "success");
   } else {
     $("j-symbol").value = lastResult.symbol;
     $("j-entry").value = p;
@@ -296,7 +367,7 @@ $("btn-run-evening").addEventListener("click", async () => {
     toast(`${d.hits || 0} setups`);
   } finally { $("btn-run-evening").disabled = false; }
 });
-$("btn-paper-from-result").addEventListener("click", () => fillFromResult("paper"));
+$("btn-paper-from-result").addEventListener("click", quickPaperBuyFromResult);
 $("btn-journal-from-result").addEventListener("click", () => fillFromResult("journal"));
 $("btn-add-watch").addEventListener("click", async () => {
   if (!lastResult) return toast("Analyze first");
@@ -322,10 +393,14 @@ $("watch-add-form").addEventListener("submit", async (e) => {
 });
 $("paper-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const body = { symbol: $("paper-symbol").value, qty: +$("paper-qty").value, price: +$("paper-price").value, stop: +$("paper-stop").value || 0, target: +$("paper-target").value || 0 };
-  const res = await fetch("/api/paper/buy", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then((r) => r.json());
-  toast(res.ok ? "Paper buy done" : res.error);
-  if (res.ok) { e.target.reset(); loadPaper(); }
+  const body = paperBuyPayload(
+    $("paper-symbol").value,
+    $("paper-price").value,
+    $("paper-qty").value,
+    $("paper-stop").value,
+    $("paper-target").value,
+  );
+  await executePaperBuy(body, { form: e.target, button: e.target.querySelector("button[type=submit]") });
 });
 $("journal-form").addEventListener("submit", async (e) => {
   e.preventDefault();
