@@ -1,0 +1,274 @@
+VEDANT SWING — COMPLETE USER GUIDE
+==================================
+App URL: https://vedant-swing-web.onrender.com
+Market: India NSE · Universe: Nifty 500 · Swing trading (not intraday scalping)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+QUICK START (PHONE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Open the URL in Chrome (Android) or Safari (iPhone)
+2. Menu → "Add to Home screen" — use like a mobile app
+3. First open after idle may take 30–60 sec (free cloud tier wakes up)
+4. Tap ↻ (refresh) if data looks old
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOP BAR (ALWAYS VISIBLE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+VEDANT SWING          — App name
+↻ Refresh             — Reloads market mood, evening scan, watchlist,
+                        paper portfolio, journal, and alerts
+
+Subtitle line         — Shows: Watchlist count · Active alerts · Time (IST)
+
+Market pill (green/   — Nifty market mood for last 20 trading days
+red/amber)              Examples: "Nifty BULLISH · 20d +3.98%"
+                        BULLISH = index trending up
+                        BEARISH = index trending down
+                        NEUTRAL = sideways / mixed
+
+5 TABS:
+  Home    — Search stocks, charts, evening scan, position tracker
+  Watch   — Your personal stock watchlist
+  Paper   — Virtual Rs.5,00,000 practice trading (no real money)
+  Journal — Plan and track your real trade ideas + R:R
+  Alerts  — Price above/below notifications
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TAB 1 — HOME
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+── SEARCH STOCK ──
+  Symbol box          — Type NSE symbol (e.g. TITAN, RELIANCE, M&M)
+  Analyze button      — Runs technical analysis on that stock
+  Quick chips         — One-tap analyze: TITAN, RELIANCE, TCS,
+                        HDFCBANK, INFY, BAJFINANCE
+
+── PRICE CHART (appears after Analyze) ──
+  Shows candlestick chart + volume + EMA lines (like Google Finance)
+
+  Price block (top right):
+    Last price        — Current / latest close
+    Change line       — Green = up, Red = down (for selected period)
+
+  TIMEFRAME BUTTONS — Tap to change chart period:
+    1D   — Today, 5-minute candles (intraday)
+    5D   — Last 5 days, 15-minute candles
+    1M   — 1 month, daily candles
+    3M   — 3 months, daily
+    6M   — 6 months, daily (default)
+    1Y   — 1 year, daily
+    5Y   — 5 years, weekly candles
+    MAX  — Full available history, weekly
+
+  STATS ROW (updates when you change timeframe):
+    Open    — First price in that period
+    High    — Highest price in period (green)
+    Low     — Lowest price in period (red)
+    Close   — Latest price
+    Volume  — Total shares traded (K = thousands, L = lakhs, Cr = crore)
+    RSI     — Relative Strength Index (below 30 oversold, above 70 overbought)
+
+  Chart lines:
+    Green/red candles — Price up / down per bar
+    Volume bars       — Trading activity under price
+    Purple EMA9       — Short trend (intraday / short periods)
+    Blue EMA21        — Medium trend
+    Orange EMA50      — Longer trend
+
+── ANALYSIS RESULT (below chart) ──
+  Symbol + index tag  — Stock name + Nifty 50 / Next 50 / Nifty 500
+  Signal badge        — See "SIGNAL MEANINGS" section below
+  Score bar 0–100     — Higher = stronger swing setup
+  Price               — Live / latest price
+  Target +3%          — Suggested swing profit target (+3% from entry)
+  RSI                 — Momentum indicator
+  Trend               — up / down / sideways
+  EMA21 / EMA50       — Moving average levels
+  Signals list        — Why the app scored this stock
+
+  ACTION BUTTONS:
+    + Watchlist       — Add stock to Watch tab (track later)
+    + Alert           — Jump to Alerts tab with symbol pre-filled
+    Paper Buy         — Instantly paper-buy with suggested qty/price
+                        Green toast = success
+                        Red toast = error (e.g. already holding stock)
+    Journal           — Jump to Journal tab with entry/stop/target filled
+
+── EVENING SWING SCAN ──
+  Auto-runs at 3:45 PM IST on trading days (cloud automation)
+  Scans all Nifty 500 stocks for swing setups
+
+  Run now             — Manually trigger scan (takes a few minutes)
+  Meta line           — Date · number of setups found · stocks scanned
+
+  Strategy filter chips:
+    All               — Every setup found
+    Pullback 21 EMA   — Stock pulled back to 21-day average in uptrend
+    Breakout          — Price breaking out of tight range with volume
+    Oversold Bounce   — RSI low, possible bounce in uptrend
+
+  Tap any stock row   — Opens full analysis on Home tab
+
+── POSITION TRACKER ──
+  Shows your ONE real tracked position (if synced from cloud bot)
+  Displays: symbol, qty, average price, P&L %, sell/average signals
+  Record Average      — Log that you bought more at lower price
+  Record Sell         — Close the tracked position
+  (Empty = no open position — use Paper tab for practice instead)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TAB 2 — WATCH (WATCHLIST)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Purpose: Keep a personal list of stocks to monitor
+
+  Add symbol + Add  — Type symbol and add to list
+  Tap stock row     — Analyze that stock on Home tab
+  Remove            — Delete from watchlist
+
+  Also add from Home: Analyze stock → tap "+ Watchlist"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TAB 3 — PAPER (PAPER TRADING)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Purpose: Practice with Rs.5,00,000 virtual money — NO real broker
+
+  Paper Portfolio:
+    Cash              — Remaining virtual money
+    Open              — Number of open paper positions
+    Position rows     — Symbol, qty, entry price
+    Sell button       — Enter exit price → shows profit/loss
+    Closed list       — Last 5 closed trades with P&L
+
+  Paper Buy form:
+    Symbol            — NSE ticker
+    Qty               — Number of shares
+    Entry             — Buy price
+    Stop              — Optional stop-loss level (for your reference)
+    Target            — Optional target (for your reference)
+    Place buy         — Execute virtual buy
+
+  RULES:
+    • Cannot buy same stock twice — sell first, then buy again
+    • Insufficient cash = buy rejected with red message
+    • Paper Buy on Home tab = one-tap buy from analysis
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TAB 4 — JOURNAL (TRADE PLANNING)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Purpose: Record your trade plan BEFORE you enter — discipline tool
+
+  New Trade Plan form:
+    Symbol            — Stock name
+    Entry             — Planned buy price
+    Stop              — Stop-loss price (max loss level)
+    Target            — Profit target price
+    Qty               — Optional share count
+    Strategy          — Optional note (e.g. "Pullback 21 EMA")
+    Save plan         — Saves with auto R:R calculation
+
+  R:R preview         — Risk:Reward ratio (e.g. 2.5:1 means target gain
+                        is 2.5× bigger than stop loss)
+
+  Journal list:
+    Open entries      — Trades still active → tap Close → enter exit price
+    Closed entries    — Completed trades with final P&L %
+
+  Also fill from Home: Analyze → tap "Journal" button
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TAB 5 — ALERTS (PRICE ALERTS)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Purpose: Get notified when price crosses your level
+
+  Create alert form:
+    Symbol            — Stock to watch
+    Price above/below — Trigger when price goes above OR below level
+    Price level       — Your trigger price (e.g. 3200)
+    Note              — Optional reminder text
+    Create alert      — Saves alert
+
+  Check alerts now    — Manually check all alerts against live prices
+                        (also auto-checked every 30 min on cloud)
+
+  Active Alerts       — List of waiting alerts · Delete to remove
+
+  Alert History       — Past triggers with time and message
+
+  Also create from Home: Analyze → "+ Alert" (pre-fills symbol & target)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SIGNAL MEANINGS (ANALYSIS BADGE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  STRONG BUY  — High score, multiple bullish signals aligned
+  BUY         — Good swing setup, meets strategy rules
+  WATCH       — Interesting but not full entry yet — wait
+  SETUP       — Pattern forming (evening scan)
+  AVOID       — Weak setup or against trend — skip
+
+  Swing score 0–100:
+    70+   — Strong candidate
+    62–69 — Acceptable (app minimum for research picks)
+    Below 62 — Usually filtered out of scans
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3 SWING STRATEGIES (EVENING SCAN)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. PULLBACK 21 EMA
+   Stock in uptrend pulls back near 21-day moving average.
+   RSI 40–55. Good for buying the dip in a strong stock.
+
+2. BREAKOUT
+   Price breaks above 10-day consolidation range with volume.
+   Good for momentum entries after a tight base.
+
+3. OVERSOLD BOUNCE
+   RSI oversold but stock still above long-term trend.
+   Good for quick bounce trades (higher risk).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RECOMMENDED DAILY ROUTINE (IST)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  9:00 AM   — Morning research runs automatically on cloud
+  9:15 AM   — Open app → check Alerts tab
+  10:00 AM  — Review any WATCHLIST stocks with Analyze
+  3:45 PM   — Evening Nifty 500 scan runs automatically
+  4:00 PM   — Home tab → review Evening Swing Scan setups
+  4:30 PM   — Shortlist → Watchlist → Paper trade or Journal plan
+  Any time  — Use chart timeframes (1D–MAX) before deciding
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TOAST MESSAGES (BOTTOM POPUP)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Green  — Success (buy done, added to watchlist, etc.)
+  Red    — Error (duplicate buy, insufficient cash, network)
+  Grey   — Info (scan running, loading)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WHAT IS NOT IN MVP (YET)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✗ Real broker buy/sell (Angel One — Phase 2)
+  ✗ Email alerts (optional — see SETUP_GMAIL_ALERTS.txt)
+  ✗ Telegram (optional — add secrets in GitHub)
+  ✗ Guaranteed NSE live tick-by-tick (uses Yahoo + NSE with fallback)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TIPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  • Use symbols exactly as NSE lists them (M&M not MM)
+  • Paper trading = learning only, not connected to your demat
+  • Journal = your discipline log, separate from paper portfolio
+  • One paper position per symbol — mirrors real trading discipline
+  • Evening scan on free tier: first "Run now" may be slow
+  • Not SEBI-registered advice — all signals are for research only
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SUPPORT FILES (IN PROJECT FOLDER)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  USER-GUIDE.txt         — This file
+  PROJECT-INFO.txt       — Technical feature list
+  SETUP_GMAIL_ALERTS.txt — Enable email on every report
+  README.md              — Developer / deploy info
+
+DISCLAIMER: Vedant Swing is a personal research tool. Not financial
+advice. Not SEBI registered. Trade at your own risk.
