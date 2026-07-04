@@ -1,143 +1,120 @@
 #!/usr/bin/env python3
-"""Generate Vedant Swing USER-GUIDE.pdf without external dependencies."""
+"""Generate Vedant Swing USER-GUIDE.pdf."""
 
 from __future__ import annotations
 
 import re
-import zlib
 from pathlib import Path
+
+from fpdf import FPDF
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "USER-GUIDE.txt"
 OUT = ROOT / "USER-GUIDE.pdf"
 
-PAGE_W, PAGE_H = 612, 842
-MARGIN_X, MARGIN_TOP, MARGIN_BOTTOM = 50, 50, 50
-FONT_SIZE, LEADING = 10, 13
-LINES_PER_PAGE = (PAGE_H - MARGIN_TOP - MARGIN_BOTTOM) // LEADING
 
-
-def _sanitize(text: str) -> str:
+def _clean(text: str) -> str:
     text = text.replace("\u2014", "-").replace("\u2192", "->").replace("\u2022", "-")
     text = text.replace("\u2717", "X").replace("\u2713", "OK").replace("\u00b7", "-")
-    text = re.sub(r"[^\x09\x0a\x0d\x20-\x7e]", "?", text)
-    return text
+    text = text.replace("\u2500", "-").replace("\u2550", "=")
+    return text.encode("latin-1", errors="replace").decode("latin-1")
 
 
-def _escape_pdf(s: str) -> str:
-    return s.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+def _is_rule(line: str) -> bool:
+    s = line.strip()
+    return len(s) >= 8 and len(set(s)) <= 2 and s[0] in "-=_"
 
 
-def _wrap(line: str, width: int = 92) -> list[str]:
+def _wrap_for_pdf(line: str, width: int = 95) -> list[str]:
     if len(line) <= width:
         return [line]
-    words = line.split()
-    rows: list[str] = []
-    cur = ""
-    for w in words:
-        chunk = w if not cur else f"{cur} {w}"
-        if len(chunk) <= width:
-            cur = chunk
-        else:
-            if cur:
-                rows.append(cur)
-            cur = w
-    if cur:
-        rows.append(cur)
-    return rows or [""]
+    parts: list[str] = []
+    while len(line) > width:
+        cut = line.rfind(" ", 0, width)
+        if cut < 20:
+            cut = width
+        parts.append(line[:cut].rstrip())
+        line = line[cut:].lstrip()
+    if line:
+        parts.append(line)
+    return parts or [""]
 
 
-def _flatten_lines(text: str) -> list[str]:
-    out: list[str] = []
-    for raw in text.splitlines():
-        line = _sanitize(raw.rstrip())
-        if not line.strip():
-            out.append("")
-        else:
-            out.extend(_wrap(line))
-    return out
+def _write_lines(pdf: FPDF, lines: list[str], h: float = 5.5) -> None:
+    w = pdf.w - pdf.l_margin - pdf.r_margin
+    for chunk in lines:
+        for row in _wrap_for_pdf(chunk):
+            pdf.multi_cell(w, h, row)
 
 
-def _paginate(lines: list[str]) -> list[list[str]]:
-    pages: list[list[str]] = []
-    cur: list[str] = []
-    for line in lines:
-        if len(cur) >= LINES_PER_PAGE:
-            pages.append(cur)
-            cur = []
-        cur.append(line)
-    if cur:
-        pages.append(cur)
-    return pages or [[""]]
+def build_pdf(text: str) -> FPDF:
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.set_margins(15, 15, 15)
 
+    lines = [_clean(ln.rstrip()) for ln in text.splitlines()]
 
-def _page_stream(page_lines: list[str]) -> bytes:
-    y = PAGE_H - MARGIN_TOP
-    parts = ["BT", f"/F1 {FONT_SIZE} Tf", f"{MARGIN_X} {y} Td", f"{LEADING} TL"]
-    first = True
-    for row in page_lines:
-        if not first:
-            parts.append("T*")
-        parts.append(f"({_escape_pdf(row)}) Tj")
-        first = False
-    parts.append("ET")
-    return "\n".join(parts).encode("latin-1", errors="replace")
+    pdf.add_page()
+    pdf.set_font("Helvetica", "B", 18)
+    pdf.cell(0, 12, "Vedant Swing - User Guide", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_font("Helvetica", "", 10)
+    pdf.set_text_color(80, 80, 80)
+    pdf.cell(0, 6, "https://vedant-swing-web.onrender.com", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_text_color(0, 0, 0)
+    pdf.ln(4)
 
+    for raw in lines:
+        line = raw.strip()
 
-def build_pdf(text: str) -> bytes:
-    page_texts = _paginate(_flatten_lines(text))
-    objects: list[bytes] = []
+        if not line:
+            pdf.ln(3)
+            continue
 
-    # 1: Catalog (placeholder, fixed after pages built)
-    objects.append(b"__CATALOG__")
-    # 2: Pages (placeholder)
-    objects.append(b"__PAGES__")
-    font_id = 3
-    objects.append(b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>")
+        if _is_rule(line):
+            pdf.ln(2)
+            pdf.set_draw_color(180, 180, 180)
+            pdf.line(15, pdf.get_y(), 195, pdf.get_y())
+            pdf.ln(4)
+            continue
 
-    page_ids: list[int] = []
-    for page_lines in page_texts:
-        stream = _page_stream(page_lines)
-        compressed = zlib.compress(stream)
-        content_id = len(objects)
-        objects.append(
-            f"<< /Length {len(compressed)} /Filter /FlateDecode >>\nstream\n".encode()
-            + compressed
-            + b"\nendstream"
-        )
-        page_id = len(objects)
-        objects.append(
-            f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 {PAGE_W} {PAGE_H}] "
-            f"/Contents {content_id} 0 R "
-            f"/Resources << /Font << /F1 {font_id} 0 R >> >> >>".encode()
-        )
-        page_ids.append(page_id)
+        if line.startswith("VEDANT SWING") and "USER GUIDE" in line:
+            continue
+        if line.startswith("===="):
+            continue
 
-    kids = " ".join(f"{pid} 0 R" for pid in page_ids)
-    objects[1] = f"<< /Type /Pages /Kids [{kids}] /Count {len(page_ids)} >>".encode()
-    objects[0] = b"<< /Type /Catalog /Pages 2 0 R >>"
+        if line.isupper() and len(line) < 60 and not line.startswith("HTTP"):
+            pdf.ln(2)
+            pdf.set_font("Helvetica", "B", 12)
+            pdf.set_text_color(20, 60, 140)
+            _write_lines(pdf, [line], 7)
+            pdf.set_font("Helvetica", "", 10)
+            pdf.set_text_color(0, 0, 0)
+            continue
 
-    pdf = bytearray(b"%PDF-1.4\n")
-    offsets = [0]
-    for i, obj in enumerate(objects, start=1):
-        offsets.append(len(pdf))
-        pdf.extend(f"{i} 0 obj\n".encode())
-        pdf.extend(obj)
-        pdf.extend(b"\nendobj\n")
+        if line.startswith("TAB ") or line.startswith("--"):
+            pdf.ln(1)
+            pdf.set_font("Helvetica", "B", 11)
+            pdf.set_text_color(30, 30, 30)
+            _write_lines(pdf, [line.strip("- ").strip()], 6)
+            pdf.set_font("Helvetica", "", 10)
+            pdf.set_text_color(0, 0, 0)
+            continue
 
-    xref_pos = len(pdf)
-    n = len(objects)
-    pdf.extend(f"xref\n0 {n + 1}\n".encode())
-    pdf.extend(b"0000000000 65535 f \n")
-    for off in offsets[1:]:
-        pdf.extend(f"{off:010d} 00000 n \n".encode())
-    pdf.extend(f"trailer\n<< /Size {n + 1} /Root 1 0 R >>\n".encode())
-    pdf.extend(f"startxref\n{xref_pos}\n%%EOF\n".encode())
-    return bytes(pdf)
+        if re.match(r"^\d+\.\s+[A-Z]", line):
+            pdf.set_font("Helvetica", "B", 10)
+            _write_lines(pdf, [line])
+            pdf.set_font("Helvetica", "", 10)
+            continue
+
+        pdf.set_font("Helvetica", "", 10)
+        _write_lines(pdf, [line])
+
+    return pdf
 
 
 def main() -> int:
-    OUT.write_bytes(build_pdf(SRC.read_text(encoding="utf-8")))
+    pdf = build_pdf(SRC.read_text(encoding="utf-8"))
+    pdf.output(str(OUT))
     print(str(OUT))
     return 0
 
