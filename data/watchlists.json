@@ -3,10 +3,11 @@
     "default": {
       "name": "My Watchlist",
       "symbols": [
-        "AMBUJACEM"
+        "AMBUJACEM",
+        "KOTAKBANK"
       ],
       "notes": {},
-      "updated": "2026-07-04T19:13:51"
+      "updated": "2026-07-04T19:50:44"
     }
   }
 }
