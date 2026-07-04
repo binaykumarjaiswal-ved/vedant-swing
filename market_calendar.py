@@ -117,11 +117,6 @@ def is_intraday_window() -> bool:
     return (9 * 60 + 10) <= m <= (15 * 60 + 35)
 
 
-def is_trading_day(day: date | None = None) -> bool:
-    day = day or date.today()
-    return day.weekday() < 5 and not is_nse_holiday(day)
-
-
 def get_market_context() -> dict:
     """IST clock + session status for UI analysis context."""
     now = ist_now()
@@ -233,7 +228,7 @@ def detect_job_mode() -> str:
     return "commands_only"
 
 
-def is_trading_day(*, force: bool = False) -> bool:
+def is_trading_day(day: date | None = None, *, force: bool = False) -> bool:
     """Weekday and not an NSE holiday."""
     import os
 
@@ -244,7 +239,7 @@ def is_trading_day(*, force: bool = False) -> bool:
     if os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch":
         return True
 
-    today = date.today()
+    today = day or date.today()
     if today.weekday() >= 5:
         return False
     if is_nse_holiday(today):
