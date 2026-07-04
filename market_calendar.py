@@ -150,7 +150,7 @@ def get_market_context() -> dict:
 
 
 def morning_already_sent_today() -> bool:
-    today = date.today().isoformat()
+    today = ist_now().date().isoformat()
     if not MORNING_SENT_FILE.exists():
         return False
     return MORNING_SENT_FILE.read_text(encoding="utf-8").strip() == today
@@ -158,7 +158,7 @@ def morning_already_sent_today() -> bool:
 
 def mark_morning_sent() -> None:
     MORNING_SENT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    MORNING_SENT_FILE.write_text(date.today().isoformat(), encoding="utf-8")
+    MORNING_SENT_FILE.write_text(ist_now().date().isoformat(), encoding="utf-8")
 
 
 def is_manual_run() -> bool:

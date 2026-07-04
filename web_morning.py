@@ -23,7 +23,9 @@ _state = {
 
 
 def _today() -> str:
-    return date.today().isoformat()
+    from market_calendar import ist_now
+
+    return ist_now().date().isoformat()
 
 
 def report_exists_for_today() -> bool:
