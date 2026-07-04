@@ -218,6 +218,12 @@ def api_alerts_check():
     return jsonify(check_alerts())
 
 
+@app.route("/api/email/status")
+def api_email_status():
+    from email_notify import is_configured
+    return jsonify({"configured": is_configured()})
+
+
 @app.route("/api/alert-log")
 def api_alert_log():
     from pathlib import Path

@@ -18,3 +18,11 @@ services:
         value: "false"
       - key: STOCK_SCAN_LIMIT
         value: "500"
+      - key: EMAIL_ENABLED
+        value: "false"
+      - key: EMAIL_FROM
+        sync: false
+      - key: EMAIL_TO
+        sync: false
+      - key: EMAIL_APP_PASSWORD
+        sync: false

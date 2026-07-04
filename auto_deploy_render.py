@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Deploy Vedant Swing web app to Render.com (free tier)."""
+"""Deploy Vedant Swing to Render.com (free tier)."""
 
 from __future__ import annotations
 
 import json
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -19,34 +20,37 @@ def _api_key() -> str:
     key = os.environ.get("RENDER_API_KEY", "").strip()
     if key:
         return key
-    f = Path(__file__).parent / "render-api-key.txt"
-    if f.exists():
-        return f.read_text(encoding="utf-8").strip()
+    for path in (
+        Path(__file__).parent / "render-api-key.txt",
+        Path(__file__).parent.parent / "10-Stock-Analyst" / "render-api-key.txt",
+    ):
+        if path.exists():
+            return path.read_text(encoding="utf-8").strip()
     return ""
+
+
+def _gh_token() -> str:
+    try:
+        return subprocess.check_output(["gh", "auth", "token"], text=True, timeout=15).strip()
+    except Exception:
+        return os.environ.get("GITHUB_TOKEN", "").strip()
 
 
 def _headers(key: str) -> dict:
     return {"Authorization": f"Bearer {key}", "Accept": "application/json", "Content-Type": "application/json"}
 
 
-def main() -> int:
-    key = _api_key()
-    if not key:
-        print("Set RENDER_API_KEY env or create render-api-key.txt locally (never commit).")
-        print("Or use Render Dashboard → New → Blueprint → connect", REPO)
-        return 1
+def find_service(api_key: str) -> dict | None:
+    r = requests.get(f"{RENDER_API}/services", headers=_headers(api_key), timeout=30)
+    r.raise_for_status()
+    for item in r.json():
+        svc = item.get("service", {})
+        if svc.get("name") == SERVICE_NAME:
+            return svc
+    return None
 
-    gh = os.environ.get("GITHUB_TOKEN", "")
-    if not gh:
-        import subprocess
-        try:
-            gh = subprocess.check_output(["gh", "auth", "token"], text=True).strip()
-        except Exception:
-            pass
 
-    owners = requests.get(f"{RENDER_API}/owners", headers=_headers(key), timeout=30).json()
-    owner_id = owners[0]["owner"]["id"]
-
+def create_service(api_key: str, owner_id: str) -> dict:
     payload = {
         "type": "web_service",
         "name": SERVICE_NAME,
@@ -58,25 +62,79 @@ def main() -> int:
             "env": "python",
             "plan": "free",
             "region": "singapore",
-            "buildCommand": "pip install -r requirements.txt",
-            "startCommand": "gunicorn webapp.app:app --bind 0.0.0.0:$PORT --timeout 900 --workers 1 --threads 2",
             "healthCheckPath": "/api/health",
-            "envVars": [
-                {"key": "PYTHON_VERSION", "value": "3.11.9"},
-                {"key": "GITHUB_REPO", "value": REPO},
-                {"key": "GITHUB_TOKEN", "value": gh},
-                {"key": "AI_ENABLED", "value": "false"},
-                {"key": "STOCK_SCAN_LIMIT", "value": "500"},
-            ],
+            "envSpecificDetails": {
+                "buildCommand": "pip install -r requirements.txt",
+                "startCommand": "gunicorn webapp.app:app --bind 0.0.0.0:$PORT --timeout 900 --workers 1 --threads 2",
+            },
         },
     }
+    r = requests.post(f"{RENDER_API}/services", headers=_headers(api_key), json=payload, timeout=60)
+    if r.status_code == 409:
+        return find_service(api_key) or {}
+    if r.status_code >= 400:
+        print("Render error:", r.text[:500])
+        r.raise_for_status()
+    return r.json().get("service", r.json())
 
-    r = requests.post(f"{RENDER_API}/services", headers=_headers(key), json=payload, timeout=60)
-    if r.status_code not in (200, 201):
-        print("Render API:", r.status_code, r.text[:500])
+
+def set_env_vars(api_key: str, service_id: str, env: dict) -> None:
+    items = [{"key": k, "value": v} for k, v in env.items() if v is not None]
+    requests.put(
+        f"{RENDER_API}/services/{service_id}/env-vars",
+        headers=_headers(api_key),
+        json=items,
+        timeout=30,
+    ).raise_for_status()
+
+
+def trigger_deploy(api_key: str, service_id: str) -> None:
+    requests.post(f"{RENDER_API}/services/{service_id}/deploys", headers=_headers(api_key), json={}, timeout=30)
+
+
+def main() -> int:
+    api_key = _api_key()
+    if not api_key:
+        print("No RENDER_API_KEY. Use Render Dashboard → Blueprint →", REPO)
         return 1
-    svc = r.json().get("service") or r.json()
-    print(json.dumps({"ok": True, "name": svc.get("name"), "url": f"https://{SERVICE_NAME}.onrender.com"}))
+
+    gh = _gh_token()
+    owners = requests.get(f"{RENDER_API}/owners", headers=_headers(api_key), timeout=30).json()
+    owner_id = owners[0]["owner"]["id"]
+
+    svc = find_service(api_key) or create_service(api_key, owner_id)
+    service_id = svc["id"]
+    url = svc.get("serviceDetails", {}).get("url") or f"https://{SERVICE_NAME}.onrender.com"
+
+    from pa_config import EMAIL_APP_PASSWORD, EMAIL_ENABLED, EMAIL_FROM, EMAIL_TO
+
+    env = {
+        "GITHUB_REPO": REPO,
+        "GITHUB_TOKEN": gh,
+        "AI_ENABLED": "false",
+        "PYTHON_VERSION": "3.11.9",
+        "STOCK_SCAN_LIMIT": "500",
+        "EMAIL_ENABLED": "true" if EMAIL_ENABLED else "false",
+    }
+    if EMAIL_FROM:
+        env["EMAIL_FROM"] = EMAIL_FROM
+    if EMAIL_TO:
+        env["EMAIL_TO"] = EMAIL_TO
+    if EMAIL_APP_PASSWORD:
+        env["EMAIL_APP_PASSWORD"] = EMAIL_APP_PASSWORD
+    set_env_vars(api_key, service_id, env)
+
+    try:
+        trigger_deploy(api_key, service_id)
+    except Exception:
+        pass
+
+    subprocess.run(
+        ["gh", "secret", "set", "WEBAPP_URL", "-R", REPO, "-b", url.rstrip("/")],
+        capture_output=True, text=True, timeout=30,
+    )
+
+    print(json.dumps({"ok": True, "url": url, "service_id": service_id}))
     return 0
 
 

@@ -35,3 +35,8 @@ CLOUD_PROVIDER = os.environ.get("CLOUD_PROVIDER", "github").strip().lower()
 # primary = main alerts | backup = only if other cloud heartbeat is stale
 CLOUD_ROLE = os.environ.get("CLOUD_ROLE", "primary").strip().lower()
 BACKUP_STALE_MINUTES = int(os.environ.get("BACKUP_STALE_MINUTES", "25"))
+
+EMAIL_ENABLED = os.environ.get("EMAIL_ENABLED", "false").lower() in ("1", "true", "yes")
+EMAIL_FROM = os.environ.get("EMAIL_FROM", "").strip()
+EMAIL_TO = os.environ.get("EMAIL_TO", "").strip()
+EMAIL_APP_PASSWORD = os.environ.get("EMAIL_APP_PASSWORD", "").strip()

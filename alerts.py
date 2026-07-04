@@ -79,6 +79,11 @@ def remove_alert(alert_id: str) -> dict:
 
 def _notify(message: str) -> None:
     try:
+        from email_notify import send_alert_email
+        send_alert_email(message)
+    except Exception:
+        pass
+    try:
         from telegram_send import send_message
         if send_message(message):
             _log({"time": datetime.now().isoformat(timespec="seconds"), "message": message, "channel": "telegram"})

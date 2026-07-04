@@ -55,8 +55,8 @@ def save_morning_report(
 
     lines = [
         "=" * 65,
-        f"  STOCK ANALYST — LEVEL 2/3 RESEARCH — {time_str}",
-        "  Nifty 100 scan | Sector filter | PE + S/R + Groq AI",
+        f"  VEDANT SWING — MORNING RESEARCH — {time_str}",
+        "  Nifty 500 scan | Sector filter | PE + S/R",
         "=" * 65,
         f"Market mood: {benchmark.get('mood', 'NEUTRAL')} (Nifty 20d: {benchmark.get('change_20d', 0):+.1f}%)",
         f"Stocks scanned: {len(all_scored)} | News items: {news_stats.get('total', 0)} | Universe: {universe_source}",
@@ -103,6 +103,13 @@ def save_morning_report(
 
     html_path = REPORTS_DIR / f"morning_research_{date_str}.html"
     html_path.write_text(_build_html(picks, benchmark, time_str, market_headlines, ai_summary), encoding="utf-8")
+
+    try:
+        from email_notify import send_morning_report
+        send_morning_report(text, picks, benchmark)
+    except Exception as exc:
+        print(f"EMAIL morning: {exc}")
+
     return txt_path, html_path
 
 

@@ -1,0 +1,56 @@
+VEDANT SWING — GMAIL EMAIL ALERTS SETUP
+=======================================
+
+You get an email for EVERY report automatically:
+  - Evening swing scan (after 3:45 PM IST)
+  - Morning research report
+  - Price alert triggers
+
+STEP 1 — Create a NEW Gmail account (5 minutes, in browser)
+  1. Open https://accounts.google.com/signup
+  2. Create account ONLY for Vedant Swing alerts, e.g.:
+       vedantswing.alerts@gmail.com  (or any name you like)
+  3. Complete phone verification (Google requires this once)
+
+STEP 2 — Turn on 2-Step Verification
+  1. Open https://myaccount.google.com/security
+  2. Enable "2-Step Verification"
+
+STEP 3 — Create App Password (this is NOT your Gmail login password)
+  1. Open https://myaccount.google.com/apppasswords
+  2. App name: Vedant Swing
+  3. Copy the 16-character password (e.g. abcd efgh ijkl mnop)
+
+STEP 4 — Add secrets (NEVER paste in chat — use dashboards only)
+
+  A) GitHub Secrets (for evening scan + alerts on cloud):
+     Repo → Settings → Secrets and variables → Actions → New secret
+       EMAIL_ENABLED = true
+       EMAIL_FROM    = your-new-gmail@gmail.com
+       EMAIL_TO      = your-personal-email@gmail.com
+       EMAIL_APP_PASSWORD = 16-char app password (no spaces)
+
+  B) Render Environment (for web app reports):
+     Render Dashboard → vedant-swing-web → Environment
+       Same 4 variables as above
+
+  C) Local secrets.env (optional, for testing):
+       Copy secrets.example.env → secrets.env and fill values
+
+STEP 5 — Auto-push secrets to GitHub + Render (one command)
+  1. Fill secrets.env (copy from secrets.example.env)
+  2. Run: python scripts/setup_email_secrets.py
+     (Sets all 4 EMAIL_* vars on GitHub Actions + Render — never paste in chat)
+
+STEP 6 — Test email (Cloud Shell or local)
+  python scripts/test_email.py
+
+WHAT YOU RECEIVE:
+  Subject: [Vedant Swing] Evening Scan 2026-07-04 — 12 setups
+  Subject: [Vedant Swing] Morning Research 2026-07-04
+  Subject: [Vedant Swing] Price Alert ...
+
+SECURITY:
+  - Use App Password only — never your main Gmail password
+  - Never commit secrets.env to GitHub
+  - Dedicated Gmail account keeps alerts separate from personal mail

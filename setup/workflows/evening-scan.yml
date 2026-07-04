@@ -20,6 +20,10 @@ jobs:
       - name: Run Nifty 500 evening scan
         env:
           STOCK_SCAN_LIMIT: "500"
+          EMAIL_ENABLED: ${{ secrets.EMAIL_ENABLED }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          EMAIL_APP_PASSWORD: ${{ secrets.EMAIL_APP_PASSWORD }}
         run: python evening_scan.py
       - name: Save results
         run: |

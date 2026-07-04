@@ -56,6 +56,13 @@ def run_evening_scan(limit: int | None = None) -> dict:
     day = datetime.now().strftime("%Y-%m-%d")
     path = OUT_DIR / f"evening_scan_{day}.json"
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+    try:
+        from email_notify import send_evening_report
+        send_evening_report(payload)
+    except Exception as exc:
+        print(f"EMAIL evening: {exc}", flush=True)
+
     return {"ok": True, "file": str(path), **payload}
 
 
