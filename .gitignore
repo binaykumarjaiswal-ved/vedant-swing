@@ -17,3 +17,4 @@ data/paper_portfolio.json
 data/journal.json
 .env
 render-api-key.txt
+cron-secret.txt

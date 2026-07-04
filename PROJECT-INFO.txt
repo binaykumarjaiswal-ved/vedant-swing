@@ -1,36 +1,43 @@
-VEDANT SWING — COMPLETE MVP
+VEDANT SWING — MVP COMPLETE
 ===========================
 
 PRODUCT: Vedant Swing (India Nifty 500 swing trading)
 REPO: https://github.com/binaykumarjaiswal-ved/vedant-swing
+LIVE APP: https://vedant-swing-web.onrender.com
 DATA: Yahoo Finance (yfinance) + NSE quotes
 BROKER: None (Angel One Phase 2)
+EMAIL ALERTS: Skipped for now (see SETUP_GMAIL_ALERTS.txt to enable later)
 
-FEATURES COMPLETE:
+FEATURES:
   [x] Nifty 500 universe
   [x] 3 swing strategies (pullback, breakout, oversold)
   [x] Evening scan (3:45 PM IST)
+  [x] Morning research (Render cloud)
   [x] Daily candlestick charts + EMA 21/50
   [x] Stock search + technical analysis
   [x] Watchlist
-  [x] Price alerts (Telegram if secrets set)
+  [x] Price alerts (in-app; Telegram optional)
   [x] Paper trading (Rs.5L virtual)
   [x] Trade journal + R:R
   [x] Mobile web dashboard (5 tabs)
-  [x] GitHub cloud automation templates
-  [x] Render free deploy (render.yaml)
+  [x] GitHub Actions automation (enabled)
+  [x] Render free deploy
 
 TABS: Home | Watch | Paper | Journal | Alerts
 
-CLOUD:
-  GitHub Actions templates in setup/workflows/
-  Render: dashboard.render.com → Blueprint → vedant-swing
-  Google Cloud Shell: bash gcp/bootstrap.sh
+AUTOMATION (GitHub Actions):
+  evening-scan.yml       — Nifty 500 scan after market close
+  alert-check.yml        — Price alert checks every 30 min
+  webapp-keep-awake.yml    — Keeps Render fast during market hours
+  webapp-morning-boost.yml — Morning research on Render
+  smoke-test.yml           — Runs on every push
 
-EVENING ROUTINE:
-  3:45 PM  Auto scan (enable workflow once)
-  4:00 PM  Review setups in app
-  4:30 PM  Watchlist / journal / paper trade
-  9:15 AM  Check alerts
+DAILY ROUTINE:
+  9:00 AM   Morning research auto-runs on cloud
+  9:15 AM   Check alerts tab in app
+  3:45 PM   Evening scan auto-runs
+  4:00 PM   Review setups in app → watchlist / paper / journal
+
+PHONE: Open https://vedant-swing-web.onrender.com → Add to Home screen
 
 NOT SEBI ADVICE. Trade at your own risk.

@@ -108,6 +108,12 @@ def main() -> int:
 
     from pa_config import EMAIL_APP_PASSWORD, EMAIL_ENABLED, EMAIL_FROM, EMAIL_TO
 
+    cron_secret = os.environ.get("CRON_SECRET", "").strip()
+    if not cron_secret:
+        cron_file = Path(__file__).parent / "cron-secret.txt"
+        if cron_file.exists():
+            cron_secret = cron_file.read_text(encoding="utf-8").strip()
+
     env = {
         "GITHUB_REPO": REPO,
         "GITHUB_TOKEN": gh,
@@ -116,6 +122,8 @@ def main() -> int:
         "STOCK_SCAN_LIMIT": "500",
         "EMAIL_ENABLED": "true" if EMAIL_ENABLED else "false",
     }
+    if cron_secret:
+        env["CRON_SECRET"] = cron_secret
     if EMAIL_FROM:
         env["EMAIL_FROM"] = EMAIL_FROM
     if EMAIL_TO:
