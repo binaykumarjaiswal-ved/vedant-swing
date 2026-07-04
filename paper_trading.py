@@ -49,7 +49,15 @@ def _has_position(data: dict, symbol: str) -> dict | None:
     return next((p for p in data.get("positions", []) if p.get("symbol") == sym), None)
 
 
-def paper_buy(symbol: str, qty: int, price: float, stop: float = 0, target: float = 0) -> dict:
+def paper_buy(
+    symbol: str,
+    qty: int,
+    price: float,
+    stop: float = 0,
+    target: float = 0,
+    link_journal: bool = True,
+    strategy: str = "paper",
+) -> dict:
     symbol = (symbol or "").strip().upper()
     if not symbol:
         return {"ok": False, "error": "Enter a stock symbol"}
@@ -79,7 +87,24 @@ def paper_buy(symbol: str, qty: int, price: float, stop: float = 0, target: floa
         "opened": datetime.now().isoformat(timespec="seconds"),
     })
     _save(data)
-    return {"ok": True, "portfolio": get_portfolio()}
+    journal_entry = None
+    if link_journal and stop > 0 and target > 0:
+        try:
+            from journal import add_entry
+
+            jr = add_entry(
+                symbol,
+                price,
+                stop,
+                target,
+                strategy=strategy or "paper",
+                notes="Auto-linked from paper buy",
+                qty=qty,
+            )
+            journal_entry = jr.get("entry")
+        except Exception:
+            pass
+    return {"ok": True, "portfolio": get_portfolio(), "journal": journal_entry}
 
 
 def paper_sell(position_id: str, price: float) -> dict:

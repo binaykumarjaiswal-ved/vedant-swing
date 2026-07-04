@@ -99,6 +99,13 @@ def _notify(message: str) -> None:
     except Exception:
         pass
     try:
+        from web_notify import send_telegram
+        if send_telegram(message):
+            _log({"time": datetime.now().isoformat(timespec="seconds"), "message": message, "channel": "telegram"})
+            return
+    except Exception:
+        pass
+    try:
         from telegram_send import send_message
         if send_message(message):
             _log({"time": datetime.now().isoformat(timespec="seconds"), "message": message, "channel": "telegram"})

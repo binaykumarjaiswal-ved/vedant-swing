@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, Response, jsonify, render_template, request
 
 from webapp.services import (
     analyze_symbol,
@@ -121,6 +121,8 @@ def api_paper_action(action: str):
             float(body.get("price", 0)),
             float(body.get("stop", 0)),
             float(body.get("target", 0)),
+            link_journal=body.get("link_journal", True),
+            strategy=body.get("strategy", "paper"),
         ))
     if action == "sell":
         return jsonify(paper_sell(body.get("id", ""), float(body.get("price", 0))))
@@ -224,6 +226,47 @@ def api_alerts_check():
 def api_email_status():
     from email_notify import is_configured
     return jsonify({"configured": is_configured()})
+
+
+@app.route("/api/compare")
+def api_compare():
+    from webapp.insights import compare_symbols
+
+    a = request.args.get("a", "").strip()
+    b = request.args.get("b", "").strip()
+    if not a or not b:
+        return jsonify({"ok": False, "error": "Provide ?a=SYMBOL&b=SYMBOL"})
+    return jsonify(compare_symbols(a, b))
+
+
+@app.route("/api/backtest")
+def api_backtest():
+    from webapp.insights import backtest_evening_scan
+
+    days = int(request.args.get("days", 30))
+    return jsonify(backtest_evening_scan(days=min(days, 60)))
+
+
+@app.route("/api/export/pdf/<symbol>")
+def api_export_pdf(symbol: str):
+    from webapp.insights import build_research_pdf
+
+    data = analyze_symbol(symbol, with_ai=True)
+    if not data.get("ok"):
+        return jsonify(data), 404
+    pdf_bytes = build_research_pdf(data)
+    fname = f"{symbol.upper()}_research.pdf"
+    return Response(
+        pdf_bytes,
+        mimetype="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{fname}"'},
+    )
+
+
+@app.route("/api/telegram/status")
+def api_telegram_status():
+    from web_notify import is_telegram_configured
+    return jsonify({"configured": is_telegram_configured()})
 
 
 @app.route("/api/alert-log")

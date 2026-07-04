@@ -58,6 +58,13 @@ def run_evening_scan(limit: int | None = None) -> dict:
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
     try:
+        from webapp.insights import notify_evening_scan_summary
+
+        notify_evening_scan_summary({**payload, "ok": True})
+    except Exception:
+        pass
+
+    try:
         from email_notify import send_evening_report
         send_evening_report(payload)
     except Exception as exc:

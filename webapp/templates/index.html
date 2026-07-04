@@ -38,6 +38,25 @@
 
   <main class="main">
     <div class="tab-panel active" id="panel-home">
+      <section class="card" id="morning-card">
+        <div class="card-head-row">
+          <h2>Morning Briefing</h2>
+          <span class="muted small" id="morning-date"></span>
+        </div>
+        <p class="muted small" id="morning-status">Loading…</p>
+        <div id="morning-picks" class="picks-list"></div>
+        <details class="morning-details" id="morning-details">
+          <summary>Full AI morning report</summary>
+          <pre class="morning-report-text" id="morning-report-text"></pre>
+        </details>
+      </section>
+
+      <section class="card" id="sector-card">
+        <h2>Sector Heatmap (20-day)</h2>
+        <p class="muted small">Top 5 green = strong sectors for swing picks</p>
+        <div id="sector-heatmap" class="sector-heatmap"></div>
+      </section>
+
       <section class="card search-card">
         <h2>Search Stock</h2>
         <form id="search-form" class="search-row">
@@ -45,6 +64,16 @@
           <button type="submit" class="btn btn-primary" id="btn-analyze">Analyze</button>
         </form>
         <div class="chip-row" id="quick-chips"></div>
+      </section>
+
+      <section class="card">
+        <h2>Compare 2 Stocks</h2>
+        <form id="compare-form" class="search-row">
+          <input type="text" id="cmp-a" placeholder="Stock A" required>
+          <input type="text" id="cmp-b" placeholder="Stock B" required>
+          <button type="submit" class="btn btn-primary">Compare</button>
+        </form>
+        <div id="compare-result" class="compare-grid hidden"></div>
       </section>
 
       <section class="card hidden" id="chart-card">
@@ -89,8 +118,14 @@
           <span class="signal-badge" id="res-signal">—</span>
         </div>
         <p class="analysis-time-bar" id="res-time-bar"></p>
+        <div class="stale-banner hidden" id="res-stale-banner"></div>
         <div class="score-bar-wrap"><div class="score-bar" id="res-score-bar"></div></div>
         <p class="score-label"><span id="res-score">0</span>/100</p>
+        <div class="quick-summary" id="res-quick-summary"></div>
+        <div class="checklist-block" id="res-checklist-block">
+          <strong>Pre-buy checklist</strong>
+          <ul class="checklist" id="res-checklist"></ul>
+        </div>
         <div class="stats-grid">
           <div class="stat"><span class="stat-label">Price</span><span class="stat-val" id="res-price">—</span></div>
           <div class="stat"><span class="stat-label">Target +3%</span><span class="stat-val green" id="res-target">—</span></div>
@@ -127,6 +162,7 @@
           <button type="button" class="btn btn-ghost" id="btn-add-alert">+ Alert</button>
           <button type="button" class="btn btn-primary" id="btn-paper-from-result">Paper Buy</button>
           <button type="button" class="btn btn-ghost" id="btn-journal-from-result">Journal</button>
+          <button type="button" class="btn btn-ghost" id="btn-export-pdf">PDF</button>
         </div>
         <p class="disclaimer">Not SEBI-registered advice. Trade at your own risk.</p>
       </section>
@@ -135,6 +171,17 @@
         <div class="spinner"></div>
         <p id="loading-msg">Fetching prices, news &amp; Groq AI research…</p>
       </div>
+
+      <section class="card" id="backtest-card">
+        <h2>Strategy Backtest (Evening picks)</h2>
+        <p class="muted small">Did +3% target hit within 7 days on past evening scan picks?</p>
+        <div id="backtest-stats" class="backtest-hero">
+          <div><span class="muted small">Win rate</span><strong id="bt-win">—</strong></div>
+          <div><span class="muted small">Trades</span><strong id="bt-trades">—</strong></div>
+          <div><span class="muted small">Wins</span><strong id="bt-wins">—</strong></div>
+        </div>
+        <div id="backtest-samples" class="picks-list"></div>
+      </section>
 
       <section class="card">
         <div class="card-head-row">

@@ -143,11 +143,16 @@ def get_dashboard() -> dict:
 
     from market_calendar import get_market_context, ist_now
 
+    from webapp.insights import get_sector_heatmap
+    from web_notify import is_telegram_configured
+
     ctx = get_market_context()
     return {
         "app": CONFIG.get("app_name", "Vedant Swing"),
         "updated": ist_now().strftime("%d %b %Y, %I:%M %p IST"),
         "market": ctx,
+        "sector_heatmap": get_sector_heatmap(),
+        "telegram_configured": is_telegram_configured(),
         "benchmark": benchmark,
         "watchlist_count": watchlist_count,
         "active_alerts": active_alerts,
@@ -301,6 +306,11 @@ def analyze_symbol(symbol: str, with_ai: bool = True) -> dict:
     result["price_label"] = (
         "Live LTP" if ctx["market_open"] else "Close / last price"
     )
+    from webapp.insights import build_checklist, build_quick_summary, price_freshness
+
+    result["quick_summary"] = build_quick_summary(result)
+    result["checklist"] = build_checklist(result)
+    result["price_freshness"] = price_freshness(symbol, ctx["market_open"])
     return result
 
 

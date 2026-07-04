@@ -115,10 +115,101 @@ function renderMarket(benchmark) {
 
 function renderHeaderStats(data) {
   const refreshed = data.updated ? `Data refreshed ${data.updated}` : "";
+  const tg = data.telegram_configured ? " · Telegram on" : "";
   $("header-stats").textContent =
     `Watchlist ${data.watchlist_count ?? 0} · Alerts ${data.active_alerts ?? 0}` +
-    (refreshed ? ` · ${refreshed}` : "");
+    (refreshed ? ` · ${refreshed}` : "") + tg;
   if (data.market) renderDateTimeBar(data.market);
+}
+
+function renderMorningBriefing(data) {
+  const status = $("morning-status");
+  const picks = $("morning-picks");
+  const report = $("morning-report-text");
+  const details = $("morning-details");
+  $("morning-date").textContent = data.report_date || data.market?.today_label || "";
+  if (!data.has_report) {
+    status.textContent = data.scan?.scan_running
+      ? "Morning scan running on cloud…"
+      : "Morning report pending — auto 8:30–10:30 AM IST on trading days";
+    picks.innerHTML = "";
+    if (details) details.classList.add("hidden");
+    return;
+  }
+  status.textContent = `Top ${(data.top_picks || []).length} picks for today`;
+  const rows = data.top_picks || [];
+  picks.innerHTML = rows.length
+    ? rows.map((p) => `
+      <div class="pick-row" data-symbol="${p.symbol}">
+        <div class="pick-mid"><strong>#${p.rank} ${p.symbol}</strong><span>Score ${p.score} · ${p.signal}</span></div>
+        <span class="signal-badge ${signalClass(p.signal)}">${p.signal}</span>
+      </div>`).join("")
+    : '<p class="muted">Open morning report for details.</p>';
+  bindPickClicks(picks);
+  if (report) report.textContent = data.report_preview || "";
+  if (details) details.classList.toggle("hidden", !data.report_preview);
+}
+
+function renderSectorHeatmap(data) {
+  const el = $("sector-heatmap");
+  if (!el) return;
+  const hm = data.sector_heatmap;
+  if (!hm?.ok || !hm.sectors?.length) {
+    el.innerHTML = '<p class="muted">Sector data loading…</p>';
+    return;
+  }
+  el.innerHTML = hm.sectors.map((s) => {
+    const up = s.change_20d >= 0;
+    return `
+      <div class="sector-row ${s.strong ? "strong" : ""}">
+        <span class="sector-name">${escHtml(s.sector)}</span>
+        <div class="sector-bar-wrap"><div class="sector-bar ${up ? "up" : "down"}" style="width:${s.bar_pct}%"></div></div>
+        <span>${up ? "+" : ""}${s.change_20d}%</span>
+      </div>`;
+  }).join("");
+}
+
+function renderCompare(data) {
+  const box = $("compare-result");
+  if (!box) return;
+  if (!data?.ok) {
+    box.classList.remove("hidden");
+    box.innerHTML = `<p class="muted">${escHtml(data?.error || "Compare failed")}</p>`;
+    return;
+  }
+  box.classList.remove("hidden");
+  const col = (row, win) => `
+    <div class="compare-col ${win ? "winner" : ""}">
+      <strong>${escHtml(row.symbol)}</strong> · ${escHtml(row.signal)}<br>
+      Score <strong>${row.score}</strong> · RSI ${row.rsi}<br>
+      ${fmtRs(row.price)} → ${fmtRs(row.target)}<br>
+      <span class="muted small">${escHtml(row.summary || "")}</span>
+    </div>`;
+  box.innerHTML =
+    col(data.a, data.winner === data.a.symbol) +
+    col(data.b, data.winner === data.b.symbol) +
+    `<div class="compare-verdict">${escHtml(data.verdict)}</div>`;
+}
+
+async function loadBacktest() {
+  try {
+    const data = await fetch("/api/backtest?days=30").then((r) => r.json());
+    $("bt-win").textContent = data.ok ? `${data.win_rate}%` : "—";
+    $("bt-trades").textContent = data.trades ?? "—";
+    $("bt-wins").textContent = data.wins ?? "—";
+    const samples = $("backtest-samples");
+    if (!data.samples?.length) {
+      samples.innerHTML = '<p class="muted">Run evening scans to build backtest history.</p>';
+      return;
+    }
+    samples.innerHTML = data.samples.map((s) => `
+      <div class="pick-row">
+        <div class="pick-mid"><strong>${s.symbol}</strong><span>${s.date} · entry ${fmtRs(s.entry)}</span></div>
+        <span class="signal-badge ${s.hit ? "buy" : "watch"}">${s.hit ? "HIT +3%" : s.note}</span>
+      </div>`).join("");
+  } catch (e) {
+    $("backtest-samples").innerHTML = '<p class="muted">Backtest unavailable</p>';
+  }
 }
 
 function escHtml(s) {
@@ -145,6 +236,26 @@ function renderResult(data) {
   const sigEl = $("res-signal");
   sigEl.textContent = data.signal;
   sigEl.className = "signal-badge " + signalClass(data.signal);
+  const stale = $("res-stale-banner");
+  const fresh = data.price_freshness || {};
+  if (stale) {
+    stale.classList.toggle("hidden", !fresh.stale);
+    stale.textContent = fresh.warning || "";
+  }
+
+  const qs = $("res-quick-summary");
+  if (qs) {
+    const lines = data.quick_summary || [];
+    qs.innerHTML = lines.map((l) => `<span class="summary-chip">${escHtml(l)}</span>`).join("");
+  }
+
+  const cl = $("res-checklist");
+  if (cl) {
+    cl.innerHTML = (data.checklist || []).map((item) =>
+      `<li class="${item.pass ? "pass" : "fail"}">${escHtml(item.text)}</li>`
+    ).join("");
+  }
+
   const score = data.swing_score || 0;
   $("res-score").textContent = score;
   $("res-score-bar").style.width = score + "%";
@@ -367,8 +478,10 @@ async function loadDashboard() {
     const evening = await eve.json();
     renderMarket(data.benchmark);
     renderHeaderStats(data);
+    renderMorningBriefing(data);
+    renderSectorHeatmap(data);
     renderEveningScan(evening);
-    await Promise.all([loadWatchlist(), loadPaper(), loadJournal(), loadAlerts()]);
+    await Promise.all([loadWatchlist(), loadPaper(), loadJournal(), loadAlerts(), loadBacktest()]);
   } catch (e) {
     toast("Load failed");
   }
@@ -414,9 +527,10 @@ async function executePaperBuy(body, opts = {}) {
       body: JSON.stringify(body),
     }).then((r) => r.json());
     if (res.ok) {
-      toast(`Bought ${body.qty} ${sym} @ ${fmtRs(body.price)}`, "success");
+      const jMsg = res.journal ? " · Journal linked" : "";
+      toast(`Bought ${body.qty} ${sym} @ ${fmtRs(body.price)}${jMsg}`, "success");
       if (opts.form) opts.form.reset();
-      await loadPaper();
+      await Promise.all([loadPaper(), loadJournal()]);
       loadDashboard();
     } else {
       toast(res.error || "Paper buy failed", "error");
@@ -485,6 +599,19 @@ $("btn-run-evening").addEventListener("click", async () => {
   } finally { $("btn-run-evening").disabled = false; }
 });
 $("btn-paper-from-result").addEventListener("click", quickPaperBuyFromResult);
+$("btn-export-pdf").addEventListener("click", () => {
+  if (!lastResult?.symbol) return toast("Analyze a stock first", "error");
+  window.open(`/api/export/pdf/${encodeURIComponent(lastResult.symbol)}`, "_blank");
+});
+$("compare-form")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const a = $("cmp-a").value.trim();
+  const b = $("cmp-b").value.trim();
+  if (!a || !b) return toast("Enter both symbols");
+  toast("Comparing…");
+  const data = await fetch(`/api/compare?a=${encodeURIComponent(a)}&b=${encodeURIComponent(b)}`).then((r) => r.json());
+  renderCompare(data);
+});
 $("btn-journal-from-result").addEventListener("click", () => fillFromResult("journal"));
 $("btn-add-watch").addEventListener("click", async () => {
   if (!lastResult) return toast("Analyze first");
