@@ -51,6 +51,79 @@ body {
   margin-top: 0.15rem;
 }
 
+.datetime-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+  font-size: 0.76rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.live-clock {
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.datetime-sep {
+  opacity: 0.45;
+}
+
+.market-status-pill {
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  background: var(--card2);
+}
+
+.market-status-pill.open {
+  color: var(--green);
+  border-color: #166534;
+}
+
+.market-status-pill.closed {
+  color: var(--amber);
+  border-color: #92400e;
+}
+
+.market-status-pill.pre_open {
+  color: #93c5fd;
+  border-color: #2563eb;
+}
+
+.market-status-pill.holiday {
+  color: var(--muted);
+}
+
+.session-hint {
+  font-size: 0.72rem;
+}
+
+.analysis-time-bar,
+.chart-time-bar {
+  margin: 0.35rem 0 0.65rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.analysis-time-bar strong,
+.chart-time-bar strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
 .market-pill {
   display: inline-block;
   margin-top: 0.6rem;

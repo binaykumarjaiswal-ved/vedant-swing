@@ -7,6 +7,61 @@ let scanPollTimer = null;
 
 const QUICK = ["TITAN", "RELIANCE", "TCS", "HDFCBANK", "INFY", "BAJFINANCE"];
 const STRATEGY_LABELS = { pullback_21ema: "Pullback 21 EMA", breakout: "Breakout", oversold_bounce: "Oversold Bounce" };
+let marketContext = null;
+let clockTimer = null;
+
+function fmtIstNow(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  }).formatToParts(date);
+  const get = (type) => parts.find((p) => p.type === type)?.value || "";
+  return `${get("weekday")}, ${get("day")} ${get("month")} ${get("year")}, ${get("hour")}:${get("minute")} ${get("dayPeriod")} IST`;
+}
+
+function marketStatusClass(status) {
+  const s = (status || "").toLowerCase();
+  if (s === "open") return "open";
+  if (s === "pre_open") return "pre_open";
+  if (s === "holiday") return "holiday";
+  return "closed";
+}
+
+function marketStatusLabel(status) {
+  const map = {
+    OPEN: "Market Open",
+    CLOSED: "Market Closed",
+    PRE_OPEN: "Pre-Market",
+    HOLIDAY: "Holiday",
+  };
+  return map[status] || status || "—";
+}
+
+function renderDateTimeBar(ctx) {
+  if (ctx) marketContext = ctx;
+  const clock = $("live-clock");
+  if (clock) clock.textContent = fmtIstNow();
+  if (!marketContext) return;
+  const pill = $("market-status-pill");
+  const hint = $("session-hint");
+  if (pill) {
+    pill.textContent = marketStatusLabel(marketContext.market_status);
+    pill.className = "market-status-pill " + marketStatusClass(marketContext.market_status);
+  }
+  if (hint) hint.textContent = marketContext.session_hint || marketContext.market_hours || "";
+}
+
+function startLiveClock() {
+  renderDateTimeBar();
+  if (clockTimer) clearInterval(clockTimer);
+  clockTimer = setInterval(() => renderDateTimeBar(), 30000);
+}
 
 function toast(msg, type = "info") {
   const el = $("toast");
@@ -60,7 +115,8 @@ function renderMarket(benchmark) {
 
 function renderHeaderStats(data) {
   $("header-stats").textContent =
-    `Watchlist ${data.watchlist_count ?? 0} · Alerts ${data.active_alerts ?? 0} · ${data.updated || ""}`;
+    `Watchlist ${data.watchlist_count ?? 0} · Alerts ${data.active_alerts ?? 0} · Refreshed ${data.updated || ""}`;
+  if (data.market) renderDateTimeBar(data.market);
 }
 
 function escHtml(s) {
@@ -73,6 +129,17 @@ function renderResult(data) {
   $("chart-card").classList.remove("hidden");
   $("res-symbol").textContent = data.symbol;
   $("res-index").textContent = data.index_group || "";
+  const timeBar = $("res-time-bar");
+  if (timeBar) {
+    const mkt = data.market || marketContext || {};
+    const priceTag = data.price_label || (mkt.market_open ? "Live LTP" : "Close / last price");
+    const src = (data.live_source || "nse").toUpperCase();
+    timeBar.innerHTML =
+      `<strong>Analyzed:</strong> ${escHtml(data.analyzed_at || "—")} · ` +
+      `<strong>${escHtml(priceTag)}</strong> (${escHtml(src)}) · ` +
+      `${escHtml(marketStatusLabel(mkt.market_status))}` +
+      (mkt.market_hours ? ` · NSE ${escHtml(mkt.market_hours)}` : "");
+  }
   const sigEl = $("res-signal");
   sigEl.textContent = data.signal;
   sigEl.className = "signal-badge " + signalClass(data.signal);
@@ -177,7 +244,8 @@ function renderEveningScan(payload) {
     $("evening-scan-list").innerHTML = '<p class="muted">No setups yet.</p>';
     return;
   }
-  meta.textContent = `${payload.date} · ${payload.hits} setups / ${payload.scanned} stocks`;
+  const scanTime = payload.generated_at || payload.date || "";
+  meta.textContent = `${scanTime} · ${payload.hits} setups / ${payload.scanned} stocks · Evening scan 3:45 PM IST`;
   const strategies = Object.keys(payload.by_strategy || {});
   chips.innerHTML = `<button type="button" class="strategy-chip active" data-strategy="all">All</button>` +
     strategies.map((s) => `<button type="button" class="strategy-chip" data-strategy="${s}">${strategyLabel(s)}</button>`).join("");
@@ -473,4 +541,5 @@ $("btn-check-alerts").addEventListener("click", async () => {
 $("quick-chips").innerHTML = QUICK.map((s) => `<button type="button" class="chip" data-sym="${s}">${s}</button>`).join("");
 document.querySelectorAll(".chip").forEach((c) => c.addEventListener("click", () => { $("symbol-input").value = c.dataset.sym; runAnalyze(c.dataset.sym); }));
 
+startLiveClock();
 loadDashboard();

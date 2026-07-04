@@ -141,9 +141,12 @@ def get_dashboard() -> dict:
         watchlist_count = 0
         active_alerts = 0
 
+    from market_calendar import get_market_context
+
     return {
         "app": CONFIG.get("app_name", "Vedant Swing"),
         "updated": datetime.now().strftime("%Y-%m-%d %H:%M IST"),
+        "market": get_market_context(),
         "benchmark": benchmark,
         "watchlist_count": watchlist_count,
         "active_alerts": active_alerts,
@@ -285,11 +288,18 @@ def analyze_symbol(symbol: str, with_ai: bool = True) -> dict:
         if not ai_note:
             import os
             ai_status = "no_key" if not os.environ.get("GROQ_API_KEY") else "failed"
+    from market_calendar import get_market_context, ist_now
+
+    ctx = get_market_context()
     result["ai_enabled"] = is_ai_enabled()
     result["ai_note"] = ai_note
     result["ai_status"] = ai_status
     result["ok"] = True
-    result["analyzed_at"] = datetime.now().strftime("%Y-%m-%d %H:%M IST")
+    result["analyzed_at"] = ist_now().strftime("%d %b %Y, %I:%M %p IST")
+    result["market"] = ctx
+    result["price_label"] = (
+        "Live LTP" if ctx["market_open"] else "Close / last price"
+    )
     return result
 
 

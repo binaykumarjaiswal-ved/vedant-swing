@@ -18,6 +18,13 @@
       <button type="button" class="icon-btn" id="btn-refresh" title="Refresh">↻</button>
     </div>
     <p class="subtitle" id="header-stats">Nifty 500 · Charts · Screener · Paper · Journal</p>
+    <div class="datetime-bar" id="datetime-bar">
+      <span class="live-clock" id="live-clock">—</span>
+      <span class="datetime-sep">·</span>
+      <span class="market-status-pill" id="market-status-pill">—</span>
+      <span class="datetime-sep">·</span>
+      <span class="session-hint" id="session-hint">—</span>
+    </div>
     <div class="market-pill" id="market-pill">Loading market…</div>
     <div class="scan-banner hidden" id="scan-banner"></div>
     <nav class="tab-nav" id="tab-nav">
@@ -45,6 +52,7 @@
           <div>
             <h2 id="chart-symbol-title">Price Chart</h2>
             <p class="muted small" id="chart-meta">Select a stock to view chart</p>
+            <p class="chart-time-bar muted small" id="chart-time-bar"></p>
           </div>
           <div class="chart-price-block">
             <div class="chart-last-price" id="chart-last-price">—</div>
@@ -80,6 +88,7 @@
           </div>
           <span class="signal-badge" id="res-signal">—</span>
         </div>
+        <p class="analysis-time-bar" id="res-time-bar"></p>
         <div class="score-bar-wrap"><div class="score-bar" id="res-score-bar"></div></div>
         <p class="score-label"><span id="res-score">0</span>/100</p>
         <div class="stats-grid">

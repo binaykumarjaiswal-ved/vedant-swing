@@ -2,14 +2,22 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any
 
 import pandas as pd
 from ta.momentum import RSIIndicator
 from ta.trend import EMAIndicator
 
-from market_calendar import is_intraday_window
+from market_calendar import IST, get_market_context, is_intraday_window, ist_now
 from nse_data import CHART_RANGES, get_chart_history, nse_quote
+
+
+def _fmt_ist_ts(unix_ts: int, with_time: bool = True) -> str:
+    dt = datetime.fromtimestamp(unix_ts, tz=IST)
+    if with_time:
+        return dt.strftime("%d %b %Y, %I:%M %p IST")
+    return dt.strftime("%a, %d %b %Y")
 
 
 def _day_stats_from_candles(candles: list[dict], volumes: list[dict]) -> dict[str, float | int]:
@@ -149,6 +157,13 @@ def get_chart_payload(symbol: str, range_key: str = "6m", days: int | None = Non
             "scope": "today" if range_key == "1d" else "period",
         },
         "market_open": market_open,
+        "time": {
+            "fetched_at": ist_now().strftime("%d %b %Y, %I:%M %p IST"),
+            "last_bar_at": _fmt_ist_ts(last["time"]) if candles else "",
+            "session_date": _fmt_ist_ts(last["time"], with_time=False) if range_key == "1d" and candles else "",
+            "session_hint": get_market_context()["session_hint"],
+            "data_source": (quote or {}).get("source", "yahoo"),
+        },
     }
     if quote:
         payload["quote"] = {

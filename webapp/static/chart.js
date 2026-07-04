@@ -90,6 +90,18 @@ function renderChartStats(data) {
   if (meta && todayScope) {
     meta.textContent = `${data.range_label || "1 Day"}${closedTag} · ${data.interval} candles · ${data.period_days} bars`;
   }
+
+  const timeBar = document.getElementById("chart-time-bar");
+  if (timeBar) {
+    const t = data.time || {};
+    const parts = [];
+    if (t.session_date && todayScope) parts.push(`<strong>Session:</strong> ${t.session_date}`);
+    if (t.last_bar_at) parts.push(`<strong>Last bar:</strong> ${t.last_bar_at}`);
+    if (t.fetched_at) parts.push(`<strong>Fetched:</strong> ${t.fetched_at}`);
+    if (t.data_source) parts.push(`Source: ${String(t.data_source).toUpperCase()}`);
+    if (t.session_hint && todayScope) parts.push(t.session_hint);
+    timeBar.innerHTML = parts.length ? parts.join(" · ") : "";
+  }
 }
 
 function buildChart(wrap, data) {

@@ -117,6 +117,43 @@ def is_intraday_window() -> bool:
     return (9 * 60 + 10) <= m <= (15 * 60 + 35)
 
 
+def is_trading_day(day: date | None = None) -> bool:
+    day = day or date.today()
+    return day.weekday() < 5 and not is_nse_holiday(day)
+
+
+def get_market_context() -> dict:
+    """IST clock + session status for UI analysis context."""
+    now = ist_now()
+    m = ist_minutes()
+    trading_day = is_trading_day(now.date())
+
+    if not trading_day:
+        status = "HOLIDAY"
+        hint = "No NSE session today — last trade day data shown"
+    elif m < (9 * 60 + 15):
+        status = "PRE_OPEN"
+        hint = "Pre-market · NSE opens 9:15 AM IST"
+    elif m <= (15 * 60 + 30):
+        status = "OPEN"
+        hint = "Market open · live NSE prices"
+    else:
+        status = "CLOSED"
+        hint = "Market closed · today's final OHLC (till 3:30 PM)"
+
+    return {
+        "now_ist": now.strftime("%d %b %Y, %I:%M %p IST"),
+        "today_ist": now.strftime("%Y-%m-%d"),
+        "today_label": now.strftime("%a, %d %b %Y"),
+        "market_status": status,
+        "market_open": status == "OPEN",
+        "trading_day": trading_day,
+        "session_hint": hint,
+        "evening_scan_at": "3:45 PM IST",
+        "market_hours": "9:15 AM – 3:30 PM IST",
+    }
+
+
 def morning_already_sent_today() -> bool:
     today = date.today().isoformat()
     if not MORNING_SENT_FILE.exists():
