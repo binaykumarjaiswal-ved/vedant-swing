@@ -1,36 +1,51 @@
 # Vedant Swing
 
-India-focused Nifty 500 swing trading workstation: screener, paper trading, and trade journal.
+India-focused **Nifty 500 swing trading** web app — screener, charts, watchlist, alerts, paper trading, and journal.
 
-Evolved from [stock-analyst-cloud](https://github.com/binaykumarjaiswal-ved/stock-analyst-cloud).
+**Live repo:** https://github.com/binaykumarjaiswal-ved/vedant-swing
 
-## Features (MVP)
+## Features
 
-- Nifty 500 universe
-- 3 swing strategies (pullback, breakout, oversold bounce)
-- Evening scan after market close (GitHub Actions)
-- Paper trading portfolio
-- Trade journal with risk/reward
-- Mobile-friendly web dashboard
+| Feature | Description |
+|---------|-------------|
+| Evening scan | 3 strategies across Nifty 500 after market close |
+| Charts | Daily candles + EMA 21/50 (Lightweight Charts) |
+| Analysis | RSI, MACD, trend, support/resistance |
+| Watchlist | Save symbols from scan or search |
+| Alerts | Price above/below triggers (Telegram optional) |
+| Paper trade | Virtual Rs.5,00,000 portfolio |
+| Journal | Entry/stop/target with R:R calculator |
 
-## Cloud-only workflow
-
-1. Code lives on GitHub
-2. GitHub Actions runs evening scan at 3:45 PM IST
-3. Render hosts the free web app
-4. Optional: develop in Google Cloud Shell via `gcp/bootstrap.sh`
-
-## Local / Cloud Shell quick start
+## Quick start (Cloud Shell)
 
 ```bash
+git clone https://github.com/binaykumarjaiswal-ved/vedant-swing.git
+cd vedant-swing
 pip install -r requirements.txt
-python evening_scan.py
 python -m webapp.app
 ```
 
-## Security
+Open http://127.0.0.1:5050
 
-Never commit `secrets.env` or API keys. Use GitHub Secrets and Render environment variables only.
+## Deploy free (Render)
+
+1. https://dashboard.render.com → **New → Blueprint**
+2. Connect `binaykumarjaiswal-ved/vedant-swing`
+3. Uses `render.yaml` automatically
+
+## GitHub automation
+
+Workflow templates in `setup/workflows/`:
+- `evening-scan.yml` — 3:45 PM IST Nifty 500 scan
+- `alert-check.yml` — price alert checks
+- `smoke-test.yml` — CI on push
+
+Copy to `.github/workflows/` after `gh auth refresh -s workflow`.
+
+## Data
+
+- **Yahoo Finance** via `yfinance` (not Google Finance — no developer API for NSE)
+- **NSE** live quotes as fallback
 
 ## Disclaimer
 

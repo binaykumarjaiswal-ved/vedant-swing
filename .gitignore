@@ -10,5 +10,10 @@ data/reports/*
 data/last_alert.json
 data/telegram_offset.json
 data/trades_log.json
+data/watchlists.json
+data/alerts.json
+data/alert_log.json
+data/paper_portfolio.json
+data/journal.json
 .env
 render-api-key.txt

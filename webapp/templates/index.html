@@ -9,6 +9,7 @@
   <title>Vedant Swing</title>
   <link rel="manifest" href="/static/manifest.json">
   <link rel="stylesheet" href="/static/app.css">
+  <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body>
   <header class="header">
@@ -16,18 +17,19 @@
       <h1>Vedant Swing</h1>
       <button type="button" class="icon-btn" id="btn-refresh" title="Refresh">↻</button>
     </div>
-    <p class="subtitle">Nifty 500 · Evening scan · Paper trade · Journal</p>
+    <p class="subtitle" id="header-stats">Nifty 500 · Charts · Screener · Paper · Journal</p>
     <div class="market-pill" id="market-pill">Loading market…</div>
     <div class="scan-banner hidden" id="scan-banner"></div>
     <nav class="tab-nav" id="tab-nav">
       <button type="button" class="tab active" data-tab="home">Home</button>
+      <button type="button" class="tab" data-tab="watch">Watch</button>
       <button type="button" class="tab" data-tab="paper">Paper</button>
       <button type="button" class="tab" data-tab="journal">Journal</button>
+      <button type="button" class="tab" data-tab="alerts">Alerts</button>
     </nav>
   </header>
 
   <main class="main">
-    <!-- HOME -->
     <div class="tab-panel active" id="panel-home">
       <section class="card search-card">
         <h2>Search Stock</h2>
@@ -38,12 +40,17 @@
         <div class="chip-row" id="quick-chips"></div>
       </section>
 
+      <section class="card hidden" id="chart-card">
+        <h2>Price Chart</h2>
+        <p class="muted small" id="chart-meta">Daily candles + EMA 21/50</p>
+        <div id="chart-wrap" class="chart-wrap"></div>
+      </section>
+
       <section class="card result-card hidden" id="result-card">
         <div class="result-header">
           <div>
             <span class="symbol-big" id="res-symbol">—</span>
             <span class="index-tag" id="res-index"></span>
-            <span class="sector-tag hidden" id="res-sector"></span>
           </div>
           <span class="signal-badge" id="res-signal">—</span>
         </div>
@@ -54,21 +61,15 @@
           <div class="stat"><span class="stat-label">Target +3%</span><span class="stat-val green" id="res-target">—</span></div>
           <div class="stat"><span class="stat-label">RSI</span><span class="stat-val" id="res-rsi">—</span></div>
           <div class="stat"><span class="stat-label">Trend</span><span class="stat-val" id="res-trend">—</span></div>
-          <div class="stat"><span class="stat-label">vs Nifty 20d</span><span class="stat-val" id="res-vs-nifty">—</span></div>
-          <div class="stat"><span class="stat-label">Buy qty</span><span class="stat-val" id="res-qty">—</span></div>
+          <div class="stat"><span class="stat-label">EMA21</span><span class="stat-val" id="res-ema21">—</span></div>
+          <div class="stat"><span class="stat-label">EMA50</span><span class="stat-val" id="res-ema50">—</span></div>
         </div>
-        <div class="fund-block hidden" id="res-fund"></div>
-        <div class="levels-block hidden" id="res-levels"></div>
         <div class="reasons" id="res-reasons"></div>
-        <div class="news-block hidden" id="res-news"></div>
-        <div class="ai-block hidden" id="res-ai"></div>
         <div class="action-row">
+          <button type="button" class="btn btn-ghost" id="btn-add-watch">+ Watchlist</button>
+          <button type="button" class="btn btn-ghost" id="btn-add-alert">+ Alert</button>
           <button type="button" class="btn btn-primary" id="btn-paper-from-result">Paper Buy</button>
-          <button type="button" class="btn btn-ghost" id="btn-journal-from-result">Add Journal</button>
-        </div>
-        <div class="action-row">
-          <button type="button" class="btn btn-share" id="btn-share">Share</button>
-          <button type="button" class="btn btn-ghost" id="btn-copy">Copy</button>
+          <button type="button" class="btn btn-ghost" id="btn-journal-from-result">Journal</button>
         </div>
         <p class="disclaimer">Not SEBI-registered advice. Trade at your own risk.</p>
       </section>
@@ -83,59 +84,55 @@
           <h2>Evening Swing Scan</h2>
           <button type="button" class="btn btn-ghost btn-sm" id="btn-run-evening">Run now</button>
         </div>
-        <p class="muted small" id="evening-scan-meta">Auto after 3:45 PM IST · Nifty 500</p>
+        <p class="muted small" id="evening-scan-meta">Auto after 3:45 PM IST</p>
         <div class="strategy-chips" id="strategy-chips"></div>
         <div id="evening-scan-list" class="picks-list"></div>
       </section>
 
       <section class="card" id="position-card">
-        <h2>Live Position Tracker</h2>
+        <h2>Position Tracker</h2>
         <div id="position-body"><p class="muted">Loading…</p></div>
         <div class="action-row hidden" id="position-actions">
           <button type="button" class="btn btn-warn" data-action="average">Record Average</button>
           <button type="button" class="btn btn-danger" data-action="sell">Record Sell</button>
         </div>
       </section>
+    </div>
 
+    <div class="tab-panel" id="panel-watch">
       <section class="card">
-        <h2>Today&apos;s Top Picks</h2>
-        <p class="muted small" id="picks-date"></p>
-        <div id="picks-list" class="picks-list"></div>
+        <h2>My Watchlist</h2>
+        <form id="watch-add-form" class="search-row">
+          <input type="text" id="watch-symbol" placeholder="Add symbol" required>
+          <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+        <div id="watchlist-body" class="picks-list"></div>
       </section>
     </div>
 
-    <!-- PAPER -->
     <div class="tab-panel" id="panel-paper">
       <section class="card">
         <h2>Paper Portfolio</h2>
         <div class="portfolio-hero">
-          <div>
-            <span class="muted small">Virtual cash</span>
-            <div class="portfolio-cash" id="paper-cash">—</div>
-          </div>
-          <div>
-            <span class="muted small">Open positions</span>
-            <div class="portfolio-count" id="paper-count">0</div>
-          </div>
+          <div><span class="muted small">Cash</span><div class="portfolio-cash" id="paper-cash">—</div></div>
+          <div><span class="muted small">Open</span><div class="portfolio-count" id="paper-count">0</div></div>
         </div>
         <div id="paper-positions" class="picks-list"></div>
         <div id="paper-closed" class="closed-list"></div>
       </section>
-
       <section class="card">
         <h2>Paper Buy</h2>
         <form id="paper-form" class="form-grid">
           <input type="text" id="paper-symbol" placeholder="Symbol" required>
           <input type="number" id="paper-qty" placeholder="Qty" min="1" required>
-          <input type="number" id="paper-price" placeholder="Entry price" step="0.05" required>
-          <input type="number" id="paper-stop" placeholder="Stop loss" step="0.05">
+          <input type="number" id="paper-price" placeholder="Entry" step="0.05" required>
+          <input type="number" id="paper-stop" placeholder="Stop" step="0.05">
           <input type="number" id="paper-target" placeholder="Target" step="0.05">
-          <button type="submit" class="btn btn-primary">Place paper buy</button>
+          <button type="submit" class="btn btn-primary">Place buy</button>
         </form>
       </section>
     </div>
 
-    <!-- JOURNAL -->
     <div class="tab-panel" id="panel-journal">
       <section class="card">
         <h2>New Trade Plan</h2>
@@ -144,22 +141,46 @@
           <input type="number" id="j-entry" placeholder="Entry" step="0.05" required>
           <input type="number" id="j-stop" placeholder="Stop" step="0.05" required>
           <input type="number" id="j-target" placeholder="Target" step="0.05" required>
-          <input type="number" id="j-qty" placeholder="Qty (optional)" min="0">
-          <input type="text" id="j-strategy" placeholder="Strategy e.g. pullback">
-          <input type="text" id="j-notes" placeholder="Notes">
-          <button type="submit" class="btn btn-primary">Save to journal</button>
+          <input type="number" id="j-qty" placeholder="Qty" min="0">
+          <input type="text" id="j-strategy" placeholder="Strategy">
+          <button type="submit" class="btn btn-primary">Save plan</button>
         </form>
-        <p class="muted small" id="j-rr-preview">Risk/Reward will show after entry &amp; stop/target</p>
+        <p class="muted small" id="j-rr-preview">R:R preview</p>
       </section>
-
       <section class="card">
-        <h2>Trade Journal</h2>
+        <h2>Journal</h2>
         <div id="journal-list" class="journal-list"></div>
+      </section>
+    </div>
+
+    <div class="tab-panel" id="panel-alerts">
+      <section class="card">
+        <h2>Price Alerts</h2>
+        <form id="alert-form" class="form-grid">
+          <input type="text" id="a-symbol" placeholder="Symbol" required>
+          <select id="a-condition">
+            <option value="above">Price above</option>
+            <option value="below">Price below</option>
+          </select>
+          <input type="number" id="a-price" placeholder="Price level" step="0.05" required>
+          <input type="text" id="a-note" placeholder="Note (optional)">
+          <button type="submit" class="btn btn-primary">Create alert</button>
+        </form>
+        <button type="button" class="btn btn-ghost btn-sm" id="btn-check-alerts" style="margin-top:0.5rem">Check alerts now</button>
+      </section>
+      <section class="card">
+        <h2>Active Alerts</h2>
+        <div id="alerts-list" class="journal-list"></div>
+      </section>
+      <section class="card">
+        <h2>Alert History</h2>
+        <div id="alert-log" class="closed-list"></div>
       </section>
     </div>
   </main>
 
   <div class="toast hidden" id="toast"></div>
+  <script src="/static/chart.js"></script>
   <script src="/static/app.js"></script>
 </body>
 </html>

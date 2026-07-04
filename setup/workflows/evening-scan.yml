@@ -13,20 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
+      - run: pip install -r requirements.txt
       - name: Run Nifty 500 evening scan
         env:
           STOCK_SCAN_LIMIT: "500"
         run: python evening_scan.py
-
-      - name: Save scan results
+      - name: Save results
         run: |
           git config user.name "vedant-swing-bot"
           git config user.email "bot@users.noreply.github.com"

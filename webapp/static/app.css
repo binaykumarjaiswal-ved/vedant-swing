@@ -564,6 +564,29 @@ input:focus {
 
 .journal-meta span { color: var(--muted); display: block; font-size: 0.68rem; }
 
+.chart-wrap {
+  width: 100%;
+  min-height: 280px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+select {
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.tab-nav {
+  overflow-x: auto;
+  flex-wrap: nowrap;
+}
+
+.tab-nav .tab { flex: 0 0 auto; min-width: 4.5rem; }
+
 .toast {
   position: fixed;
   bottom: 1.5rem;

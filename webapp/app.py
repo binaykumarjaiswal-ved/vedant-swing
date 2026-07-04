@@ -155,6 +155,82 @@ def api_journal_close(entry_id: str):
     return jsonify(close_entry(entry_id, float(body.get("exit", 0))))
 
 
+@app.route("/api/chart/<symbol>")
+def api_chart(symbol: str):
+    from chart_data import get_chart_payload
+    days = int(request.args.get("days", 120))
+    return jsonify(get_chart_payload(symbol, days=days))
+
+
+@app.route("/api/watchlists")
+def api_watchlists():
+    from watchlists import list_watchlists
+    return jsonify(list_watchlists())
+
+
+@app.route("/api/watchlists/<watchlist_id>")
+def api_watchlist_get(watchlist_id: str):
+    from watchlists import get_watchlist
+    return jsonify(get_watchlist(watchlist_id))
+
+
+@app.route("/api/watchlists/<watchlist_id>/add", methods=["POST"])
+def api_watchlist_add(watchlist_id: str):
+    from watchlists import add_symbol
+    body = request.get_json(silent=True) or {}
+    return jsonify(add_symbol(body.get("symbol", ""), watchlist_id, body.get("note", "")))
+
+
+@app.route("/api/watchlists/<watchlist_id>/remove", methods=["POST"])
+def api_watchlist_remove(watchlist_id: str):
+    from watchlists import remove_symbol
+    body = request.get_json(silent=True) or {}
+    return jsonify(remove_symbol(body.get("symbol", ""), watchlist_id))
+
+
+@app.route("/api/alerts")
+def api_alerts_list():
+    from alerts import list_alerts
+    return jsonify({"alerts": list_alerts(active_only=False)})
+
+
+@app.route("/api/alerts", methods=["POST"])
+def api_alerts_add():
+    from alerts import add_alert
+    body = request.get_json(silent=True) or {}
+    return jsonify(add_alert(
+        body.get("symbol", ""),
+        body.get("condition", "above"),
+        float(body.get("price", 0)),
+        body.get("note", ""),
+    ))
+
+
+@app.route("/api/alerts/<alert_id>", methods=["DELETE"])
+def api_alerts_delete(alert_id: str):
+    from alerts import remove_alert
+    return jsonify(remove_alert(alert_id))
+
+
+@app.route("/api/alerts/check")
+def api_alerts_check():
+    from alerts import check_alerts
+    return jsonify(check_alerts())
+
+
+@app.route("/api/alert-log")
+def api_alert_log():
+    from pathlib import Path
+    import json
+    log = Path(__file__).resolve().parent.parent / "data" / "alert_log.json"
+    if not log.exists():
+        return jsonify({"events": []})
+    try:
+        return jsonify(json.loads(log.read_text(encoding="utf-8")))
+    except json.JSONDecodeError:
+        return jsonify({"events": []})
+
+
 def main():
     port = int(os.environ.get("PORT", 5050))
     app.run(host="0.0.0.0", port=port, debug=False, threaded=True)

@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 REPORTS_DIR = DATA_DIR / "reports"
 
-GITHUB_REPO = os.environ.get("GITHUB_REPO", "").strip()
+GITHUB_REPO = os.environ.get("GITHUB_REPO", "binaykumarjaiswal-ved/vedant-swing").strip()
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "").strip()
 CACHE_SEC = int(os.environ.get("SYNC_CACHE_SEC", "90"))
 

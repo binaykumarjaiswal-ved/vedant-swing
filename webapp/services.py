@@ -129,9 +129,22 @@ def get_dashboard() -> dict:
             "signal_reason": signal.get("reason", "") if signal else "",
         }
 
+    try:
+        from watchlists import get_watchlist
+        from alerts import list_alerts
+        wl = get_watchlist("default")
+        watchlist_count = len(wl.get("symbols", [])) if wl.get("ok") else 0
+        active_alerts = len(list_alerts(active_only=True))
+    except Exception:
+        watchlist_count = 0
+        active_alerts = 0
+
     return {
+        "app": CONFIG.get("app_name", "Vedant Swing"),
         "updated": datetime.now().strftime("%Y-%m-%d %H:%M IST"),
         "benchmark": benchmark,
+        "watchlist_count": watchlist_count,
+        "active_alerts": active_alerts,
         "strategy": {
             "profit_target_pct": CONFIG["profit_target_pct"],
             "loss_trigger_pct": CONFIG["loss_trigger_pct"],

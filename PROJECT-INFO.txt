@@ -1,28 +1,36 @@
-VEDANT SWING — Nifty 500 Swing Trading Web App
-==============================================
+VEDANT SWING — COMPLETE MVP
+===========================
 
-PRODUCT: Vedant Swing
-UNIVERSE: Nifty 500 (NSE India)
-DATA: Yahoo Finance (yfinance) + NSE fallback
-BROKER: None in MVP (Angel One noted for Phase 2)
-HOSTING: GitHub + Render (free) + optional Google Cloud Shell
+PRODUCT: Vedant Swing (India Nifty 500 swing trading)
+REPO: https://github.com/binaykumarjaiswal-ved/vedant-swing
+DATA: Yahoo Finance (yfinance) + NSE quotes
+BROKER: None (Angel One Phase 2)
 
-BUILT-IN STRATEGIES:
-  1. Pullback to 21 EMA
-  2. Breakout from consolidation
-  3. Oversold bounce (Nifty 100 quality names)
+FEATURES COMPLETE:
+  [x] Nifty 500 universe
+  [x] 3 swing strategies (pullback, breakout, oversold)
+  [x] Evening scan (3:45 PM IST)
+  [x] Daily candlestick charts + EMA 21/50
+  [x] Stock search + technical analysis
+  [x] Watchlist
+  [x] Price alerts (Telegram if secrets set)
+  [x] Paper trading (Rs.5L virtual)
+  [x] Trade journal + R:R
+  [x] Mobile web dashboard (5 tabs)
+  [x] GitHub cloud automation templates
+  [x] Render free deploy (render.yaml)
 
-EVENING FLOW (automatic on GitHub):
-  3:45 PM IST  GitHub Action runs evening_scan.py
-  4:00 PM IST  Open web app → review setups
-  9:15 AM IST  Paper trade or journal entry
+TABS: Home | Watch | Paper | Journal | Alerts
 
-GITHUB REPO:
-  binaykumarjaiswal-ved/vedant-swing
+CLOUD:
+  GitHub Actions templates in setup/workflows/
+  Render: dashboard.render.com → Blueprint → vedant-swing
+  Google Cloud Shell: bash gcp/bootstrap.sh
 
-GOOGLE CLOUD (optional dev):
-  bash gcp/bootstrap.sh
+EVENING ROUTINE:
+  3:45 PM  Auto scan (enable workflow once)
+  4:00 PM  Review setups in app
+  4:30 PM  Watchlist / journal / paper trade
+  9:15 AM  Check alerts
 
-NO SECRETS IN REPO. Add tokens only in GitHub Secrets / Render dashboard.
-
-NOT SEBI-REGISTERED ADVICE. Trade at your own risk.
+NOT SEBI ADVICE. Trade at your own risk.

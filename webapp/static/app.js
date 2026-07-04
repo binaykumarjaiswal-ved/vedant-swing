@@ -1,18 +1,12 @@
 const $ = (id) => document.getElementById(id);
 
-let lastShareText = "";
 let lastResult = null;
-let scanPollTimer = null;
 let eveningData = null;
 let eveningFilter = "all";
+let scanPollTimer = null;
 
 const QUICK = ["TITAN", "RELIANCE", "TCS", "HDFCBANK", "INFY", "BAJFINANCE"];
-
-const STRATEGY_LABELS = {
-  pullback_21ema: "Pullback 21 EMA",
-  breakout: "Breakout",
-  oversold_bounce: "Oversold Bounce",
-};
+const STRATEGY_LABELS = { pullback_21ema: "Pullback 21 EMA", breakout: "Breakout", oversold_bounce: "Oversold Bounce" };
 
 function toast(msg) {
   const el = $("toast");
@@ -43,95 +37,6 @@ function switchTab(name) {
   document.querySelectorAll(".tab-panel").forEach((p) => p.classList.toggle("active", p.id === `panel-${name}`));
 }
 
-function renderScanBanner(scan) {
-  const el = $("scan-banner");
-  if (!scan) {
-    el.classList.add("hidden");
-    return;
-  }
-  el.classList.remove("hidden", "ready", "error");
-  if (scan.scan_running) {
-    el.textContent = "Cloud scan running… page will refresh.";
-    startScanPoll();
-    return;
-  }
-  if (scan.today_ready || scan.has_report) {
-    el.classList.add("ready");
-    el.textContent = "Today's research report is ready.";
-    stopScanPoll();
-    return;
-  }
-  if (scan.scan_message) el.textContent = scan.scan_message;
-  else el.classList.add("hidden");
-}
-
-function startScanPoll() {
-  if (scanPollTimer) return;
-  scanPollTimer = setInterval(async () => {
-    try {
-      const s = await fetch("/api/scan-status").then((r) => r.json());
-      if (s.today_ready && !s.running) {
-        stopScanPoll();
-        loadDashboard();
-      }
-    } catch (e) { /* ignore */ }
-  }, 15000);
-}
-
-function stopScanPoll() {
-  if (scanPollTimer) {
-    clearInterval(scanPollTimer);
-    scanPollTimer = null;
-  }
-}
-
-function renderMarket(benchmark) {
-  const pill = $("market-pill");
-  const mood = (benchmark.mood || "NEUTRAL").toLowerCase();
-  pill.className = "market-pill " + mood;
-  pill.textContent = `Nifty ${benchmark.mood} · 20d ${benchmark.change_20d >= 0 ? "+" : ""}${benchmark.change_20d}%`;
-}
-
-function renderPosition(pos) {
-  const body = $("position-body");
-  const actions = $("position-actions");
-  if (!pos) {
-    body.innerHTML = '<p class="muted">No tracked position. Use Paper tab for practice trades.</p>';
-    actions.classList.add("hidden");
-    return;
-  }
-  const pnlClass = pos.pnl_pct >= 0 ? "up" : "down";
-  const sig = (pos.signal || "HOLD").toLowerCase();
-  body.innerHTML = `
-    <div class="position-hero">
-      <span class="position-symbol">${pos.symbol}</span>
-      <span class="pnl ${pnlClass}">${pos.pnl_pct >= 0 ? "+" : ""}${pos.pnl_pct}%</span>
-    </div>
-    <span class="signal-pill ${sig}">${pos.signal}</span>
-    <div class="stats-grid">
-      <div class="stat"><span class="stat-label">LTP</span><span class="stat-val">${fmtRs(pos.ltp)}</span></div>
-      <div class="stat"><span class="stat-label">Avg</span><span class="stat-val">${fmtRs(pos.avg_price)}</span></div>
-      <div class="stat"><span class="stat-label">Sell @ +3%</span><span class="stat-val green">${fmtRs(pos.sell_target)}</span></div>
-      <div class="stat"><span class="stat-label">Qty</span><span class="stat-val">${pos.qty}</span></div>
-    </div>`;
-  actions.classList.remove("hidden");
-}
-
-function renderPicks(picks, date) {
-  const list = $("picks-list");
-  $("picks-date").textContent = date ? `From scan: ${date}` : "No morning scan yet";
-  if (!picks?.length) {
-    list.innerHTML = '<p class="muted">Search a stock or wait for evening scan.</p>';
-    return;
-  }
-  list.innerHTML = picks.map((p) => `
-    <div class="pick-item" data-symbol="${p.symbol}">
-      <div class="pick-left"><strong>${p.symbol}</strong><span>${p.index_group} · ${p.signal}</span></div>
-      <div class="pick-right"><div class="pick-score">${p.score}/100</div><div>${fmtRs(p.price)}</div></div>
-    </div>`).join("");
-  bindPickClicks(list);
-}
-
 function bindPickClicks(root) {
   root.querySelectorAll("[data-symbol]").forEach((el) => {
     el.addEventListener("click", () => {
@@ -142,79 +47,27 @@ function bindPickClicks(root) {
   });
 }
 
-function renderEveningScan(payload) {
-  eveningData = payload;
-  const list = $("evening-scan-list");
-  const meta = $("evening-scan-meta");
-  const chips = $("strategy-chips");
-
-  if (!payload?.ok || !payload.top?.length) {
-    meta.textContent = "Evening scan not ready — auto at 3:45 PM IST or tap Run now.";
-    chips.innerHTML = "";
-    list.innerHTML = '<p class="muted">No setups saved yet.</p>';
-    return;
-  }
-
-  meta.textContent = `${payload.date || ""} · ${payload.hits || 0} setups · ${payload.scanned || 0} stocks scanned`;
-  const strategies = Object.keys(payload.by_strategy || {});
-  chips.innerHTML = `<button type="button" class="strategy-chip active" data-strategy="all">All</button>` +
-    strategies.map((s) => `<button type="button" class="strategy-chip" data-strategy="${s}">${strategyLabel(s)}</button>`).join("");
-
-  chips.querySelectorAll(".strategy-chip").forEach((c) => {
-    c.addEventListener("click", () => {
-      eveningFilter = c.dataset.strategy;
-      chips.querySelectorAll(".strategy-chip").forEach((x) => x.classList.toggle("active", x === c));
-      paintEveningList();
-    });
-  });
-
-  paintEveningList();
+function renderMarket(benchmark) {
+  const pill = $("market-pill");
+  const mood = (benchmark?.mood || "NEUTRAL").toLowerCase();
+  pill.className = "market-pill " + mood;
+  pill.textContent = `Nifty ${benchmark?.mood || "NEUTRAL"} · 20d ${benchmark?.change_20d >= 0 ? "+" : ""}${benchmark?.change_20d ?? 0}%`;
 }
 
-function paintEveningList() {
-  const list = $("evening-scan-list");
-  if (!eveningData?.ok) return;
-  let rows = eveningData.top || [];
-  if (eveningFilter !== "all") {
-    rows = (eveningData.by_strategy?.[eveningFilter] || []).slice(0, 15);
-  } else {
-    rows = rows.slice(0, 12);
-  }
-  if (!rows.length) {
-    list.innerHTML = '<p class="muted">No setups for this strategy.</p>';
-    return;
-  }
-  list.innerHTML = rows.map((p) => `
-    <div class="pick-row" data-symbol="${p.symbol}">
-      <div class="pick-mid">
-        <strong>${p.symbol}</strong>
-        <span>${strategyLabel(p.strategy)} · ${p.index_group || "Nifty 500"} · RSI ${p.rsi ?? "—"}</span>
-      </div>
-      <span class="signal-badge ${signalClass(p.signal)}">${p.signal}</span>
-      <span class="pick-score">${p.swing_score}/100</span>
-    </div>`).join("");
-  bindPickClicks(list);
+function renderHeaderStats(data) {
+  $("header-stats").textContent =
+    `Watchlist ${data.watchlist_count ?? 0} · Alerts ${data.active_alerts ?? 0} · ${data.updated || ""}`;
 }
 
 function renderResult(data) {
   lastResult = data;
-  lastShareText = data.share_text || "";
-  const card = $("result-card");
-  card.classList.remove("hidden");
-
+  $("result-card").classList.remove("hidden");
+  $("chart-card").classList.remove("hidden");
   $("res-symbol").textContent = data.symbol;
   $("res-index").textContent = data.index_group || "";
-  const sectorEl = $("res-sector");
-  if (data.sector) {
-    sectorEl.classList.remove("hidden");
-    sectorEl.textContent = data.sector;
-    sectorEl.className = "sector-tag " + (data.sector_strong !== false ? "strong" : "weak");
-  } else sectorEl.classList.add("hidden");
-
   const sigEl = $("res-signal");
   sigEl.textContent = data.signal;
   sigEl.className = "signal-badge " + signalClass(data.signal);
-
   const score = data.swing_score || 0;
   $("res-score").textContent = score;
   $("res-score-bar").style.width = score + "%";
@@ -222,43 +75,203 @@ function renderResult(data) {
   $("res-target").textContent = fmtRs(data.target);
   $("res-rsi").textContent = data.rsi ?? "—";
   $("res-trend").textContent = data.trend ?? "—";
-  $("res-vs-nifty").textContent = data.vs_nifty_20d != null ? `${data.vs_nifty_20d >= 0 ? "+" : ""}${data.vs_nifty_20d}%` : "—";
-  $("res-qty").textContent = data.buy_qty ? `${data.buy_qty} @ ${fmtRs(data.buy_amount)}` : "—";
-
+  $("res-ema21").textContent = data.ema21 ?? "—";
+  $("res-ema50").textContent = data.ema50 ?? "—";
   const reasons = data.reasons || [];
-  $("res-reasons").innerHTML = reasons.length ? "<strong>Technical</strong><ul>" + reasons.map((r) => `<li>${r}</li>`).join("") + "</ul>" : "";
-  $("res-fund").classList.add("hidden");
-  $("res-levels").classList.add("hidden");
-  $("res-news").classList.add("hidden");
-  $("res-ai").classList.add("hidden");
-  card.scrollIntoView({ behavior: "smooth", block: "start" });
+  $("res-reasons").innerHTML = reasons.length ? "<strong>Signals</strong><ul>" + reasons.map((r) => `<li>${r}</li>`).join("") + "</ul>" : "";
+  if (window.renderStockChart) window.renderStockChart(data.symbol);
 }
 
-function fillFromResult(target) {
-  if (!lastResult) {
-    toast("Analyze a stock first");
-    return false;
+async function runAnalyze(symbol) {
+  symbol = (symbol || "").trim().toUpperCase();
+  if (!symbol) return toast("Enter symbol");
+  $("loading").classList.remove("hidden");
+  $("result-card").classList.add("hidden");
+  $("btn-analyze").disabled = true;
+  try {
+    const data = await fetch(`/api/analyze/${encodeURIComponent(symbol)}?ai=0`).then((r) => r.json());
+    if (!data.ok) return toast(data.error || "Failed");
+    renderResult(data);
+  } catch (e) {
+    toast("Network error");
+  } finally {
+    $("loading").classList.add("hidden");
+    $("btn-analyze").disabled = false;
   }
-  const price = lastResult.price || 0;
-  const stop = lastResult.avg_trigger || Math.round(price * 0.97 * 100) / 100;
-  const targetPx = lastResult.target || Math.round(price * 1.03 * 100) / 100;
-  if (target === "paper") {
+}
+
+function paintEveningList() {
+  const list = $("evening-scan-list");
+  if (!eveningData?.ok) return;
+  let rows = eveningFilter === "all" ? (eveningData.top || []).slice(0, 12) : (eveningData.by_strategy?.[eveningFilter] || []).slice(0, 15);
+  if (!rows.length) {
+    list.innerHTML = '<p class="muted">No setups.</p>';
+    return;
+  }
+  list.innerHTML = rows.map((p) => `
+    <div class="pick-row" data-symbol="${p.symbol}">
+      <div class="pick-mid"><strong>${p.symbol}</strong><span>${strategyLabel(p.strategy)} · ${p.swing_score}/100</span></div>
+      <span class="signal-badge ${signalClass(p.signal)}">${p.signal}</span>
+    </div>`).join("");
+  bindPickClicks(list);
+}
+
+function renderEveningScan(payload) {
+  eveningData = payload;
+  const meta = $("evening-scan-meta");
+  const chips = $("strategy-chips");
+  if (!payload?.ok || !payload.top?.length) {
+    meta.textContent = "Evening scan pending — auto 3:45 PM IST or Run now";
+    chips.innerHTML = "";
+    $("evening-scan-list").innerHTML = '<p class="muted">No setups yet.</p>';
+    return;
+  }
+  meta.textContent = `${payload.date} · ${payload.hits} setups / ${payload.scanned} stocks`;
+  const strategies = Object.keys(payload.by_strategy || {});
+  chips.innerHTML = `<button type="button" class="strategy-chip active" data-strategy="all">All</button>` +
+    strategies.map((s) => `<button type="button" class="strategy-chip" data-strategy="${s}">${strategyLabel(s)}</button>`).join("");
+  chips.querySelectorAll(".strategy-chip").forEach((c) => {
+    c.addEventListener("click", () => {
+      eveningFilter = c.dataset.strategy;
+      chips.querySelectorAll(".strategy-chip").forEach((x) => x.classList.toggle("active", x === c));
+      paintEveningList();
+    });
+  });
+  paintEveningList();
+}
+
+async function loadWatchlist() {
+  const data = await fetch("/api/watchlists/default").then((r) => r.json());
+  const body = $("watchlist-body");
+  if (!data.ok || !data.symbols?.length) {
+    body.innerHTML = '<p class="muted">Watchlist empty — add from analysis or above.</p>';
+    return;
+  }
+  body.innerHTML = data.symbols.map((s) => `
+    <div class="pick-row" data-symbol="${s}">
+      <div class="pick-mid"><strong>${s}</strong><span>${data.notes?.[s] || "Tap to analyze"}</span></div>
+      <button type="button" class="btn btn-danger btn-sm" data-rm-watch="${s}">Remove</button>
+    </div>`).join("");
+  bindPickClicks(body);
+  body.querySelectorAll("[data-rm-watch]").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      await fetch("/api/watchlists/default/remove", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ symbol: btn.dataset.rmWatch }) });
+      loadWatchlist();
+      loadDashboard();
+    });
+  });
+}
+
+async function loadPaper() {
+  const data = await fetch("/api/paper").then((r) => r.json());
+  $("paper-cash").textContent = fmtRs(data.cash);
+  $("paper-count").textContent = String((data.positions || []).length);
+  const pos = $("paper-positions");
+  if (!data.positions?.length) pos.innerHTML = '<p class="muted">No paper positions.</p>';
+  else {
+    pos.innerHTML = data.positions.map((p) => `
+      <div class="pick-row">
+        <div class="pick-mid"><strong>${p.symbol}</strong><span>${p.qty} @ ${fmtRs(p.entry)}</span></div>
+        <button type="button" class="btn btn-danger btn-sm" data-sell-paper="${p.id}">Sell</button>
+      </div>`).join("");
+    pos.querySelectorAll("[data-sell-paper]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const price = prompt("Exit price?");
+        if (!price) return;
+        const res = await fetch("/api/paper/sell", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: btn.dataset.sellPaper, price: parseFloat(price) }) }).then((r) => r.json());
+        toast(res.ok ? `P&L ${fmtRs(res.pnl)}` : res.error);
+        loadPaper();
+      });
+    });
+  }
+  $("paper-closed").innerHTML = (data.closed || []).slice(0, 5).map((c) => `${c.symbol} ${fmtRs(c.pnl)}`).join("<br>") || "";
+}
+
+async function loadJournal() {
+  const data = await fetch("/api/journal").then((r) => r.json());
+  const list = $("journal-list");
+  if (!data.entries?.length) return list.innerHTML = '<p class="muted">No entries.</p>';
+  list.innerHTML = data.entries.map((e) => `
+    <div class="journal-item ${e.status}">
+      <div class="journal-top"><strong>${e.symbol}</strong><span>${e.status}</span></div>
+      <div class="journal-meta">
+        <div><span>Entry</span>${fmtRs(e.entry)}</div>
+        <div><span>Stop</span>${fmtRs(e.stop)}</div>
+        <div><span>Target</span>${fmtRs(e.target)}</div>
+      </div>
+      <p class="muted small">R:R ${e.rr}:1 · ${e.date}</p>
+      ${e.status === "open" ? `<button class="btn btn-ghost btn-sm" data-close-j="${e.id}">Close</button>` : ""}
+    </div>`).join("");
+  list.querySelectorAll("[data-close-j]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const exit = prompt("Exit price?");
+      if (!exit) return;
+      const res = await fetch(`/api/journal/${btn.dataset.closeJ}/close`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ exit: parseFloat(exit) }) }).then((r) => r.json());
+      toast(res.ok ? `Closed ${res.entry.pnl_pct}%` : res.error);
+      loadJournal();
+    });
+  });
+}
+
+async function loadAlerts() {
+  const [alerts, log] = await Promise.all([
+    fetch("/api/alerts").then((r) => r.json()),
+    fetch("/api/alert-log").then((r) => r.json()),
+  ]);
+  const list = $("alerts-list");
+  const rows = (alerts.alerts || []).filter((a) => a.status === "active");
+  if (!rows.length) list.innerHTML = '<p class="muted">No active alerts.</p>';
+  else {
+    list.innerHTML = rows.map((a) => `
+      <div class="journal-item open">
+        <div class="journal-top"><strong>${a.symbol}</strong><button class="btn btn-danger btn-sm" data-del-alert="${a.id}">Delete</button></div>
+        <p class="muted small">${a.condition} Rs.${a.price} · ${a.note || ""}</p>
+      </div>`).join("");
+    list.querySelectorAll("[data-del-alert]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        await fetch(`/api/alerts/${btn.dataset.delAlert}`, { method: "DELETE" });
+        loadAlerts();
+        loadDashboard();
+      });
+    });
+  }
+  $("alert-log").innerHTML = (log.events || []).slice(0, 8).map((e) => `${e.time?.slice(0, 16)} — ${e.message}`).join("<br>") || "No triggers yet";
+}
+
+async function loadDashboard() {
+  try {
+    const [dash, eve] = await Promise.all([fetch("/api/dashboard"), fetch("/api/evening-scan/latest")]);
+    const data = await dash.json();
+    const evening = await eve.json();
+    renderMarket(data.benchmark);
+    renderHeaderStats(data);
+    renderEveningScan(evening);
+    await Promise.all([loadWatchlist(), loadPaper(), loadJournal(), loadAlerts()]);
+  } catch (e) {
+    toast("Load failed");
+  }
+}
+
+function fillFromResult(mode) {
+  if (!lastResult) return toast("Analyze first");
+  const p = lastResult.price || 0;
+  const stop = lastResult.avg_trigger || Math.round(p * 0.97 * 100) / 100;
+  const target = lastResult.target || Math.round(p * 1.03 * 100) / 100;
+  if (mode === "paper") {
     $("paper-symbol").value = lastResult.symbol;
-    $("paper-price").value = price;
+    $("paper-price").value = p;
     $("paper-stop").value = stop;
-    $("paper-target").value = targetPx;
+    $("paper-target").value = target;
     $("paper-qty").value = lastResult.buy_qty || 10;
     switchTab("paper");
-    return true;
+  } else {
+    $("j-symbol").value = lastResult.symbol;
+    $("j-entry").value = p;
+    $("j-stop").value = stop;
+    $("j-target").value = target;
+    switchTab("journal");
   }
-  $("j-symbol").value = lastResult.symbol;
-  $("j-entry").value = price;
-  $("j-stop").value = stop;
-  $("j-target").value = targetPx;
-  $("j-qty").value = lastResult.buy_qty || "";
-  updateRrPreview();
-  switchTab("journal");
-  return true;
 }
 
 function updateRrPreview() {
@@ -266,226 +279,76 @@ function updateRrPreview() {
   const stop = parseFloat($("j-stop").value);
   const target = parseFloat($("j-target").value);
   if (!entry || !stop || !target || entry <= stop) {
-    $("j-rr-preview").textContent = "Enter entry, stop, and target for R:R";
+    $("j-rr-preview").textContent = "Enter entry, stop, target";
     return;
   }
-  const rr = ((target - entry) / (entry - stop)).toFixed(2);
-  $("j-rr-preview").textContent = `Risk/Reward: ${rr}:1 ${rr >= 2 ? "✓ Good" : "— aim for 2:1+"}`;
-}
-
-async function loadPaper() {
-  try {
-    const data = await fetch("/api/paper").then((r) => r.json());
-    $("paper-cash").textContent = fmtRs(data.cash);
-    $("paper-count").textContent = String((data.positions || []).length);
-    const pos = $("paper-positions");
-    if (!data.positions?.length) {
-      pos.innerHTML = '<p class="muted">No open paper positions.</p>';
-    } else {
-      pos.innerHTML = data.positions.map((p) => `
-        <div class="pick-row" data-paper-id="${p.id}">
-          <div class="pick-mid"><strong>${p.symbol}</strong><span>${p.qty} @ ${fmtRs(p.entry)} · Stop ${fmtRs(p.stop)}</span></div>
-          <button type="button" class="btn btn-danger btn-sm" data-sell-paper="${p.id}">Sell</button>
-        </div>`).join("");
-      pos.querySelectorAll("[data-sell-paper]").forEach((btn) => {
-        btn.addEventListener("click", async (e) => {
-          e.stopPropagation();
-          const price = prompt("Exit price?");
-          if (!price) return;
-          const res = await fetch("/api/paper/sell", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: btn.dataset.sellPaper, price: parseFloat(price) }),
-          }).then((r) => r.json());
-          toast(res.ok ? `Closed · P&L ${fmtRs(res.pnl)}` : (res.error || "Failed"));
-          loadPaper();
-        });
-      });
-    }
-    const closed = data.closed || [];
-    $("paper-closed").innerHTML = closed.length
-      ? "<strong>Recent closed</strong><br>" + closed.slice(0, 5).map((c) =>
-          `${c.symbol} ${c.qty}@${c.entry} → ${c.exit} · ${fmtRs(c.pnl)}`).join("<br>")
-      : "";
-  } catch (e) {
-    toast("Could not load paper portfolio");
-  }
-}
-
-async function loadJournal() {
-  try {
-    const data = await fetch("/api/journal").then((r) => r.json());
-    const list = $("journal-list");
-    const entries = data.entries || [];
-    if (!entries.length) {
-      list.innerHTML = '<p class="muted">No journal entries yet.</p>';
-      return;
-    }
-    list.innerHTML = entries.map((e) => `
-      <div class="journal-item ${e.status}">
-        <div class="journal-top">
-          <strong>${e.symbol}</strong>
-          <span class="signal-badge ${e.status === "open" ? "buy" : "watch"}">${e.status.toUpperCase()}</span>
-        </div>
-        <div class="journal-meta">
-          <div><span>Entry</span>${fmtRs(e.entry)}</div>
-          <div><span>Stop</span>${fmtRs(e.stop)}</div>
-          <div><span>Target</span>${fmtRs(e.target)}</div>
-        </div>
-        <p class="muted small">${strategyLabel(e.strategy)} · R:R ${e.rr}:1 · ${e.date}${e.pnl_pct != null ? ` · ${e.pnl_pct}%` : ""}</p>
-        ${e.status === "open" ? `<button type="button" class="btn btn-ghost btn-sm" data-close-journal="${e.id}" style="margin-top:0.5rem">Close trade</button>` : ""}
-      </div>`).join("");
-    list.querySelectorAll("[data-close-journal]").forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const exit = prompt("Exit price?");
-        if (!exit) return;
-        const res = await fetch(`/api/journal/${btn.dataset.closeJournal}/close`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ exit: parseFloat(exit) }),
-        }).then((r) => r.json());
-        toast(res.ok ? `Closed · ${res.entry.pnl_pct}%` : (res.error || "Failed"));
-        loadJournal();
-      });
-    });
-  } catch (e) {
-    toast("Could not load journal");
-  }
-}
-
-async function loadDashboard() {
-  try {
-    const [dashRes, eveRes] = await Promise.all([
-      fetch("/api/dashboard"),
-      fetch("/api/evening-scan/latest"),
-    ]);
-    const data = await dashRes.json();
-    const evening = await eveRes.json();
-    renderMarket(data.benchmark);
-    renderScanBanner({ ...data.scan, has_report: data.has_report });
-    renderPosition(data.position);
-    renderPicks(data.top_picks, data.report_date);
-    renderEveningScan(evening);
-    await Promise.all([loadPaper(), loadJournal()]);
-  } catch (e) {
-    toast("Could not load dashboard");
-  }
-}
-
-async function runAnalyze(symbol) {
-  symbol = (symbol || "").trim().toUpperCase();
-  if (!symbol) return toast("Enter a stock symbol");
-  $("loading").classList.remove("hidden");
-  $("result-card").classList.add("hidden");
-  $("btn-analyze").disabled = true;
-  try {
-    const res = await fetch(`/api/analyze/${encodeURIComponent(symbol)}?ai=0`);
-    const data = await res.json();
-    if (!data.ok) return toast(data.error || "Analysis failed");
-    renderResult(data);
-  } catch (e) {
-    toast("Network error — cloud may be waking up");
-  } finally {
-    $("loading").classList.add("hidden");
-    $("btn-analyze").disabled = false;
-  }
-}
-
-async function runEveningScan() {
-  $("btn-run-evening").disabled = true;
-  $("evening-scan-meta").textContent = "Running Nifty 500 evening scan on server…";
-  toast("Scan started — may take several minutes");
-  try {
-    const data = await fetch("/api/evening-scan").then((r) => r.json());
-    if (data.ok) {
-      renderEveningScan({ ok: true, date: new Date().toISOString().slice(0, 10), ...data });
-      toast(`${data.hits || 0} setups found`);
-    } else {
-      toast(data.error || "Scan failed");
-    }
-  } catch (e) {
-    toast("Scan request failed");
-  } finally {
-    $("btn-run-evening").disabled = false;
-  }
-}
-
-function initChips() {
-  const row = $("quick-chips");
-  row.innerHTML = QUICK.map((s) => `<button type="button" class="chip" data-sym="${s}">${s}</button>`).join("");
-  row.querySelectorAll(".chip").forEach((c) => {
-    c.addEventListener("click", () => {
-      $("symbol-input").value = c.dataset.sym;
-      runAnalyze(c.dataset.sym);
-    });
-  });
+  $("j-rr-preview").textContent = `R:R ${((target - entry) / (entry - stop)).toFixed(2)}:1`;
 }
 
 $("search-form").addEventListener("submit", (e) => { e.preventDefault(); runAnalyze($("symbol-input").value); });
-$("btn-share").addEventListener("click", async () => {
-  if (!lastShareText) return toast("Run analysis first");
-  if (navigator.share) {
-    try { await navigator.share({ title: "Vedant Swing", text: lastShareText }); return; } catch (e) { if (e.name === "AbortError") return; }
-  }
-  await navigator.clipboard.writeText(lastShareText);
-  toast("Copied");
-});
-$("btn-copy").addEventListener("click", async () => {
-  if (!lastShareText) return toast("Run analysis first");
-  await navigator.clipboard.writeText(lastShareText);
-  toast("Copied");
-});
 $("btn-refresh").addEventListener("click", loadDashboard);
+$("btn-run-evening").addEventListener("click", async () => {
+  $("btn-run-evening").disabled = true;
+  toast("Scan running…");
+  try {
+    const d = await fetch("/api/evening-scan").then((r) => r.json());
+    renderEveningScan({ ok: true, date: new Date().toISOString().slice(0, 10), ...d });
+    toast(`${d.hits || 0} setups`);
+  } finally { $("btn-run-evening").disabled = false; }
+});
 $("btn-paper-from-result").addEventListener("click", () => fillFromResult("paper"));
 $("btn-journal-from-result").addEventListener("click", () => fillFromResult("journal"));
-$("btn-run-evening").addEventListener("click", runEveningScan);
-
-$("tab-nav").addEventListener("click", (e) => {
-  const tab = e.target.closest(".tab");
-  if (tab) switchTab(tab.dataset.tab);
+$("btn-add-watch").addEventListener("click", async () => {
+  if (!lastResult) return toast("Analyze first");
+  const res = await fetch("/api/watchlists/default/add", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ symbol: lastResult.symbol }) }).then((r) => r.json());
+  toast(res.ok ? `${lastResult.symbol} added` : res.error);
+  loadWatchlist();
+  loadDashboard();
 });
-
+$("btn-add-alert").addEventListener("click", () => {
+  if (!lastResult) return toast("Analyze first");
+  $("a-symbol").value = lastResult.symbol;
+  $("a-price").value = lastResult.target || lastResult.price;
+  $("a-condition").value = "above";
+  switchTab("alerts");
+});
+$("tab-nav").addEventListener("click", (e) => { const t = e.target.closest(".tab"); if (t) switchTab(t.dataset.tab); });
+$("watch-add-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const sym = $("watch-symbol").value.trim().toUpperCase();
+  const res = await fetch("/api/watchlists/default/add", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ symbol: sym }) }).then((r) => r.json());
+  toast(res.ok ? "Added" : res.error);
+  if (res.ok) { e.target.reset(); loadWatchlist(); loadDashboard(); }
+});
 $("paper-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const body = {
-    symbol: $("paper-symbol").value.trim().toUpperCase(),
-    qty: parseInt($("paper-qty").value, 10),
-    price: parseFloat($("paper-price").value),
-    stop: parseFloat($("paper-stop").value) || 0,
-    target: parseFloat($("paper-target").value) || 0,
-  };
+  const body = { symbol: $("paper-symbol").value, qty: +$("paper-qty").value, price: +$("paper-price").value, stop: +$("paper-stop").value || 0, target: +$("paper-target").value || 0 };
   const res = await fetch("/api/paper/buy", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then((r) => r.json());
-  toast(res.ok ? "Paper buy placed" : (res.error || "Failed"));
+  toast(res.ok ? "Paper buy done" : res.error);
   if (res.ok) { e.target.reset(); loadPaper(); }
 });
-
 $("journal-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const body = {
-    symbol: $("j-symbol").value.trim().toUpperCase(),
-    entry: parseFloat($("j-entry").value),
-    stop: parseFloat($("j-stop").value),
-    target: parseFloat($("j-target").value),
-    qty: parseInt($("j-qty").value, 10) || 0,
-    strategy: $("j-strategy").value.trim(),
-    notes: $("j-notes").value.trim(),
-  };
+  const body = { symbol: $("j-symbol").value, entry: +$("j-entry").value, stop: +$("j-stop").value, target: +$("j-target").value, qty: +$("j-qty").value || 0, strategy: $("j-strategy").value };
   const res = await fetch("/api/journal", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then((r) => r.json());
-  toast(res.ok ? `Saved · R:R ${res.entry.rr}:1` : (res.error || "Failed"));
-  if (res.ok) { e.target.reset(); updateRrPreview(); loadJournal(); }
+  toast(res.ok ? `Saved R:R ${res.entry.rr}` : res.error);
+  if (res.ok) { e.target.reset(); loadJournal(); }
 });
-
+$("alert-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const body = { symbol: $("a-symbol").value, condition: $("a-condition").value, price: +$("a-price").value, note: $("a-note").value };
+  const res = await fetch("/api/alerts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then((r) => r.json());
+  toast(res.ok ? "Alert created" : res.error);
+  if (res.ok) { e.target.reset(); loadAlerts(); loadDashboard(); }
+});
+$("btn-check-alerts").addEventListener("click", async () => {
+  const res = await fetch("/api/alerts/check").then((r) => r.json());
+  toast(res.triggered ? `${res.triggered} alert(s) fired` : "No triggers");
+  loadAlerts();
+});
 ["j-entry", "j-stop", "j-target"].forEach((id) => $(id).addEventListener("input", updateRrPreview));
 
-$("position-actions").addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-action]");
-  if (!btn) return;
-  const action = btn.dataset.action;
-  if (action === "sell" && !confirm("Record sell in broker?")) return;
-  fetch(`/api/position/${action}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
-    .then((r) => r.json())
-    .then((d) => { toast(d.ok ? "Recorded" : (d.error || "Failed")); if (d.ok) loadDashboard(); });
-});
+$("quick-chips").innerHTML = QUICK.map((s) => `<button type="button" class="chip" data-sym="${s}">${s}</button>`).join("");
+document.querySelectorAll(".chip").forEach((c) => c.addEventListener("click", () => { $("symbol-input").value = c.dataset.sym; runAnalyze(c.dataset.sym); }));
 
-initChips();
 loadDashboard();
