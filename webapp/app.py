@@ -158,8 +158,10 @@ def api_journal_close(entry_id: str):
 @app.route("/api/chart/<symbol>")
 def api_chart(symbol: str):
     from chart_data import get_chart_payload
-    days = int(request.args.get("days", 120))
-    return jsonify(get_chart_payload(symbol, days=days))
+    range_key = request.args.get("range", request.args.get("period", "6m")).lower()
+    days_raw = request.args.get("days")
+    days = int(days_raw) if days_raw else None
+    return jsonify(get_chart_payload(symbol, range_key=range_key, days=days))
 
 
 @app.route("/api/watchlists")

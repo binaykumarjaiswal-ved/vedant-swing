@@ -109,28 +109,56 @@ def _yahoo_quote(symbol: str) -> dict | None:
         return None
 
 
-def get_history(symbol: str, days: int = 60):
+CHART_RANGES = {
+    "1d": {"period": "1d", "interval": "5m", "label": "1 Day"},
+    "5d": {"period": "5d", "interval": "15m", "label": "5 Days"},
+    "1m": {"period": "1mo", "interval": "1d", "label": "1 Month"},
+    "3m": {"period": "3mo", "interval": "1d", "label": "3 Months"},
+    "6m": {"period": "6mo", "interval": "1d", "label": "6 Months"},
+    "1y": {"period": "1y", "interval": "1d", "label": "1 Year"},
+    "5y": {"period": "5y", "interval": "1wk", "label": "5 Years"},
+    "max": {"period": "max", "interval": "1wk", "label": "Max"},
+}
+
+
+def _ticker_for(symbol: str) -> str:
     if symbol.startswith("^"):
-        ticker = symbol
-    else:
-        ticker = YAHOO_MAP.get(symbol, f"{symbol}.NS")
-        if not ticker.endswith(".NS"):
-            ticker = f"{ticker}.NS"
-    period = "6mo" if days <= 120 else "1y"
+        return symbol
+    ticker = YAHOO_MAP.get(symbol, f"{symbol}.NS")
+    return ticker if ticker.endswith(".NS") else f"{ticker}.NS"
+
+
+def _normalize_history_df(df):
+    if df is None or df.empty:
+        return None
+    if hasattr(df.columns, "levels"):
+        df.columns = df.columns.get_level_values(0)
+    df = df.rename(columns=str.title)
+    if "Close" not in df.columns:
+        return None
+    return df.dropna(subset=["Close"])
+
+
+def get_chart_history(symbol: str, period: str = "6mo", interval: str = "1d"):
+    ticker = _ticker_for(symbol)
     for attempt in range(2):
         try:
-            df = yf.Ticker(ticker).history(period=period, interval="1d", auto_adjust=True)
+            df = yf.Ticker(ticker).history(period=period, interval=interval, auto_adjust=True)
+            df = _normalize_history_df(df)
             if df is None or df.empty:
                 if attempt == 0:
                     time.sleep(1)
                     continue
                 return None
-            if hasattr(df.columns, "levels"):
-                df.columns = df.columns.get_level_values(0)
-            return df.rename(columns=str.title)
+            return df
         except Exception:
             if attempt == 0:
                 time.sleep(1)
             else:
                 return None
     return None
+
+
+def get_history(symbol: str, days: int = 60):
+    period = "6mo" if days <= 120 else "1y"
+    return get_chart_history(symbol, period=period, interval="1d")
