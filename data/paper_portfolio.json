@@ -1,6 +1,7 @@
 {
-  "cash": 470292.2,
-  "positions": [
+  "cash": 499330.0,
+  "positions": [],
+  "closed": [
     {
       "id": "51010611",
       "symbol": "AMBUJACEM",
@@ -8,8 +9,10 @@
       "entry": 443.4,
       "stop": 430.1,
       "target": 456.7,
-      "opened": "2026-07-04T19:13:59"
+      "opened": "2026-07-04T19:13:59",
+      "exit": 433.4,
+      "pnl": -670.0,
+      "closed": "2026-07-04T20:40:24"
     }
-  ],
-  "closed": []
+  ]
 }
