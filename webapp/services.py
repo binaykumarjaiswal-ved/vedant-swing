@@ -40,8 +40,71 @@ def _benchmark() -> dict:
 
 
 def _latest_report_path() -> Path | None:
+    from market_calendar import ist_now
+
+    today = ist_now().strftime("%Y-%m-%d")
+    today_file = REPORTS_DIR / f"morning_research_{today}.txt"
+    if today_file.exists():
+        return today_file
     files = sorted(REPORTS_DIR.glob("morning_research_*.txt"), reverse=True)
     return files[0] if files else None
+
+
+def _report_meta(report_date: str) -> dict:
+    from datetime import datetime as dt
+
+    from market_calendar import get_market_context, ist_now
+
+    today = ist_now().strftime("%Y-%m-%d")
+    if not report_date:
+        return {
+            "report_date": "",
+            "report_display": "",
+            "is_today": False,
+            "age_days": 0,
+            "stale": False,
+            "next_auto": "Mon–Fri 8:30–10:30 AM IST",
+        }
+    try:
+        rd = dt.strptime(report_date, "%Y-%m-%d").date()
+        td = dt.strptime(today, "%Y-%m-%d").date()
+        age = (td - rd).days
+    except ValueError:
+        age = 0
+    ctx = get_market_context()
+    is_today = report_date == today
+    return {
+        "report_date": report_date,
+        "report_display": dt.strptime(report_date, "%Y-%m-%d").strftime("%d %b %Y"),
+        "is_today": is_today,
+        "age_days": age,
+        "stale": age > 0,
+        "next_auto": "Next trading day 8:30 AM IST" if not ctx.get("trading_day") else (
+            "Today 8:30–10:30 AM IST" if not is_today else "Ready for today"
+        ),
+    }
+
+
+def _evening_fallback_picks() -> dict | None:
+    eve = get_latest_evening_scan()
+    if not eve.get("ok"):
+        return None
+    picks = []
+    for i, p in enumerate((eve.get("top") or [])[:5], 1):
+        picks.append({
+            "rank": i,
+            "symbol": p.get("symbol"),
+            "signal": p.get("signal", "—"),
+            "score": int(p.get("swing_score") or 0),
+            "strategy": p.get("strategy", ""),
+            "price": p.get("price") or p.get("entry"),
+        })
+    return {
+        "date": eve.get("date", ""),
+        "date_display": _report_meta(eve.get("date", "")).get("report_display", eve.get("date")),
+        "picks": picks,
+        "hits": eve.get("hits", 0),
+    }
 
 
 def _parse_top_picks(text: str) -> list[dict]:
@@ -103,11 +166,16 @@ def get_dashboard() -> dict:
     report_preview = ""
     top_picks: list[dict] = []
 
+    report_meta = _report_meta("")
+    evening_fallback = None
     if report_path:
         report_date = report_path.stem.replace("morning_research_", "")
+        report_meta = _report_meta(report_date)
         text = report_path.read_text(encoding="utf-8")
         report_preview = text[:1200]
         top_picks = _parse_top_picks(text)
+    if not report_meta.get("is_today"):
+        evening_fallback = _evening_fallback_picks()
 
     position_data = None
     pos = load_position()
@@ -163,11 +231,19 @@ def get_dashboard() -> dict:
         },
         "position": position_data,
         "report_date": report_date,
+        "report_meta": report_meta,
         "report_preview": report_preview,
         "top_picks": top_picks,
         "has_report": bool(report_path),
+        "evening_fallback": evening_fallback,
         "scan": scan_info,
     }
+
+
+def run_morning_scan_api(force: bool = False) -> dict:
+    from web_morning import run_morning_manual
+
+    return run_morning_manual(force=force, background=True)
 
 
 def get_scan_status_api() -> dict:

@@ -127,27 +127,77 @@ function renderMorningBriefing(data) {
   const picks = $("morning-picks");
   const report = $("morning-report-text");
   const details = $("morning-details");
-  $("morning-date").textContent = data.report_date || data.market?.today_label || "";
-  if (!data.has_report) {
-    status.textContent = data.scan?.scan_running
-      ? "Morning scan running on cloud…"
-      : "Morning report pending — auto 8:30–10:30 AM IST on trading days";
-    picks.innerHTML = "";
-    if (details) details.classList.add("hidden");
+  const staleBanner = $("morning-stale-banner");
+  const meta = data.report_meta || {};
+  const todayLabel = data.market?.today_label || "";
+
+  $("morning-date").textContent = meta.report_display
+    ? `Report date: ${meta.report_display}${meta.is_today ? " (today)" : ""}`
+    : `Today: ${todayLabel}`;
+
+  if (data.scan?.scan_running) {
+    status.textContent = "Morning scan running on cloud (8–12 min)…";
+    if (staleBanner) staleBanner.classList.add("hidden");
     return;
   }
-  status.textContent = `Top ${(data.top_picks || []).length} picks for today`;
+
+  if (meta.stale && staleBanner) {
+    staleBanner.classList.remove("hidden");
+    staleBanner.textContent =
+      `Last morning report is ${meta.age_days} day(s) old. ` +
+      `${meta.next_auto}. Showing fresh evening scan picks below.`;
+  } else if (staleBanner) {
+    staleBanner.classList.add("hidden");
+  }
+
+  if (!data.has_report) {
+    status.textContent = "No morning report yet — auto Mon–Fri 8:30–10:30 AM IST";
+    picks.innerHTML = "";
+    if (details) details.classList.add("hidden");
+    _renderEveningFallbackPicks(data.evening_fallback, picks);
+    return;
+  }
+
+  if (meta.is_today) {
+    status.textContent = `Today's top ${(data.top_picks || []).length} picks`;
+  } else {
+    status.textContent = `Archived picks from ${meta.report_display} (use evening scan for latest)`;
+  }
+
   const rows = data.top_picks || [];
-  picks.innerHTML = rows.length
+  let html = rows.length
     ? rows.map((p) => `
       <div class="pick-row" data-symbol="${p.symbol}">
         <div class="pick-mid"><strong>#${p.rank} ${p.symbol}</strong><span>Score ${p.score} · ${p.signal}</span></div>
         <span class="signal-badge ${signalClass(p.signal)}">${p.signal}</span>
       </div>`).join("")
-    : '<p class="muted">Open morning report for details.</p>';
+    : "";
+
+  if (meta.stale && data.evening_fallback?.picks?.length) {
+    html += `<p class="muted small" style="margin:0.5rem 0 0.25rem"><strong>Latest evening scan (${data.evening_fallback.date_display})</strong></p>`;
+    html += data.evening_fallback.picks.map((p) => `
+      <div class="pick-row" data-symbol="${p.symbol}">
+        <div class="pick-mid"><strong>${p.symbol}</strong><span>${p.strategy || "setup"} · ${p.score}/100</span></div>
+        <span class="signal-badge ${signalClass(p.signal)}">${p.signal}</span>
+      </div>`).join("");
+  }
+
+  picks.innerHTML = html || '<p class="muted">Tap Run now on Monday morning for fresh report.</p>';
   bindPickClicks(picks);
   if (report) report.textContent = data.report_preview || "";
   if (details) details.classList.toggle("hidden", !data.report_preview);
+}
+
+function _renderEveningFallbackPicks(fallback, picksEl) {
+  if (!fallback?.picks?.length || !picksEl) return;
+  picksEl.innerHTML =
+    `<p class="muted small"><strong>Evening scan ${fallback.date_display}</strong> (${fallback.hits} setups)</p>` +
+    fallback.picks.map((p) => `
+      <div class="pick-row" data-symbol="${p.symbol}">
+        <div class="pick-mid"><strong>${p.symbol}</strong><span>${p.score}/100 · ${p.signal}</span></div>
+        <span class="signal-badge ${signalClass(p.signal)}">${p.signal}</span>
+      </div>`).join("");
+  bindPickClicks(picksEl);
 }
 
 function renderSectorHeatmap(data) {
@@ -589,6 +639,21 @@ function updateRrPreview() {
 
 $("search-form").addEventListener("submit", (e) => { e.preventDefault(); runAnalyze($("symbol-input").value); });
 $("btn-refresh").addEventListener("click", loadDashboard);
+$("btn-run-morning")?.addEventListener("click", async () => {
+  const force = confirm("Run morning scan now? On weekends this uses Force mode (8–12 min on cloud).");
+  if (!force) return;
+  $("btn-run-morning").disabled = true;
+  toast("Morning scan starting…");
+  try {
+    const url = "/api/morning-scan?force=1";
+    const d = await fetch(url).then((r) => r.json());
+    toast(d.message || (d.started ? "Scan started" : "Could not start"));
+    if (d.started) setTimeout(loadDashboard, 15000);
+    else loadDashboard();
+  } finally {
+    $("btn-run-morning").disabled = false;
+  }
+});
 $("btn-run-evening").addEventListener("click", async () => {
   $("btn-run-evening").disabled = true;
   toast("Scan running…");

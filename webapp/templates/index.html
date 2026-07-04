@@ -41,9 +41,11 @@
       <section class="card" id="morning-card">
         <div class="card-head-row">
           <h2>Morning Briefing</h2>
-          <span class="muted small" id="morning-date"></span>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-run-morning">Run now</button>
         </div>
+        <p class="muted small" id="morning-date"></p>
         <p class="muted small" id="morning-status">Loading…</p>
+        <p class="stale-banner hidden" id="morning-stale-banner"></p>
         <div id="morning-picks" class="picks-list"></div>
         <details class="morning-details" id="morning-details">
           <summary>Full AI morning report</summary>

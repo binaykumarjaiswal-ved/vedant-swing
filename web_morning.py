@@ -151,3 +151,53 @@ def run_morning_force() -> dict:
         return {**get_scan_status(), "started": False, "message": "Already have today's report"}
 
     return run_morning_if_needed(background=False)
+
+
+def run_morning_manual(force: bool = False, background: bool = True) -> dict:
+    """User-triggered morning scan from app UI."""
+    from market_calendar import get_market_context, is_trading_day
+
+    if _state["running"]:
+        return {**get_scan_status(), "started": False, "message": "Morning scan already running"}
+
+    if not force and not is_trading_day():
+        ctx = get_market_context()
+        return {
+            **get_scan_status(),
+            "started": False,
+            "message": f"No NSE session today ({ctx.get('today_label')}). Use evening scan picks or tap Force run.",
+        }
+
+    if not force and report_exists_for_today():
+        return {**get_scan_status(), "started": False, "message": "Today's morning report is already ready"}
+
+    if force:
+        if DONE_FILE.exists():
+            try:
+                DONE_FILE.unlink()
+            except OSError:
+                pass
+
+    def _worker():
+        _state["running"] = True
+        _state["last_error"] = ""
+        try:
+            _run_scan_sync()
+        except Exception as exc:
+            _state["last_error"] = str(exc)[:200]
+        finally:
+            _state["running"] = False
+
+    if background:
+        threading.Thread(target=_worker, daemon=True).start()
+        return {**get_scan_status(), "started": True, "message": "Morning scan started (8–12 min)"}
+
+    try:
+        _state["running"] = True
+        _run_scan_sync()
+        return {**get_scan_status(), "started": True, "message": "Morning scan complete"}
+    except Exception as exc:
+        _state["last_error"] = str(exc)[:200]
+        return {**get_scan_status(), "started": False, "message": str(exc)}
+    finally:
+        _state["running"] = False

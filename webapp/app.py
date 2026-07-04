@@ -108,6 +108,14 @@ def api_evening_scan():
     return jsonify(run_evening_scan())
 
 
+@app.route("/api/morning-scan")
+def api_morning_scan():
+    from webapp.services import run_morning_scan_api
+
+    force = request.args.get("force", "0") in ("1", "true", "yes")
+    return jsonify(run_morning_scan_api(force=force))
+
+
 @app.route("/api/evening-scan/latest")
 def api_evening_scan_latest():
     from webapp.services import get_latest_evening_scan
