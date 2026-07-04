@@ -68,6 +68,17 @@ function renderChartStats(data) {
     const el = document.getElementById(id);
     if (el) el.textContent = val;
   };
+  const todayScope = data.range === "1d" || stats.scope === "today";
+  const closedTag = todayScope && data.market_open === false ? " (closed)" : "";
+  const label = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  };
+  label("cs-open-label", todayScope ? "Today Open" : "Open");
+  label("cs-high-label", todayScope ? "Today High" : "High");
+  label("cs-low-label", todayScope ? "Today Low" : "Low");
+  label("cs-close-label", todayScope ? "Today Close" : "Close");
+
   set("cs-open", fmtRs(stats.open));
   set("cs-high", fmtRs(stats.high));
   set("cs-low", fmtRs(stats.low));
@@ -75,6 +86,10 @@ function renderChartStats(data) {
   set("cs-volume", fmtVol(stats.volume));
   const rsiLast = (data.rsi || []).at(-1);
   set("cs-rsi", rsiLast ? rsiLast.value.toFixed(1) : "—");
+
+  if (meta && todayScope) {
+    meta.textContent = `${data.range_label || "1 Day"}${closedTag} · ${data.interval} candles · ${data.period_days} bars`;
+  }
 }
 
 function buildChart(wrap, data) {

@@ -8,7 +8,33 @@ import pandas as pd
 from ta.momentum import RSIIndicator
 from ta.trend import EMAIndicator
 
+from market_calendar import is_intraday_window
 from nse_data import CHART_RANGES, get_chart_history, nse_quote
+
+
+def _day_stats_from_candles(candles: list[dict], volumes: list[dict]) -> dict[str, float | int]:
+    """Today's OHLCV from intraday candles (works after market close)."""
+    if not candles:
+        return {}
+    return {
+        "open": candles[0]["open"],
+        "high": max(c["high"] for c in candles),
+        "low": min(c["low"] for c in candles),
+        "close": candles[-1]["close"],
+        "volume": sum(v["value"] for v in volumes),
+    }
+
+
+def _merge_nse_day_stats(day: dict, quote: dict | None) -> dict:
+    """Prefer NSE official day OHLC when live API responds."""
+    if not quote or quote.get("source") != "nse":
+        return day
+    out = dict(day)
+    for key, qkey in (("open", "open"), ("high", "high"), ("low", "low"), ("close", "ltp")):
+        val = float(quote.get(qkey) or 0)
+        if val > 0:
+            out[key] = round(val, 2)
+    return out
 
 
 def _series_points(df: pd.DataFrame, col: pd.Series) -> list[dict]:
@@ -67,12 +93,35 @@ def get_chart_payload(symbol: str, range_key: str = "6m", days: int | None = Non
     change_pct = round((change / ref_price) * 100, 2) if ref_price else 0.0
 
     quote = nse_quote(symbol)
-    if quote and range_key in ("1d", "5d"):
+    market_open = is_intraday_window()
+    prev_close = round(float(quote.get("prev_close", ref_price)), 2) if quote else ref_price
+
+    if range_key == "1d":
+        day = _merge_nse_day_stats(_day_stats_from_candles(candles, volumes), quote)
+        stat_open = day.get("open", first["open"])
+        stat_high = day.get("high", period_high)
+        stat_low = day.get("low", period_low)
+        stat_close = day.get("close", last["close"])
+        stat_volume = day.get("volume", total_volume)
+        ref_price = float(quote.get("prev_close") or stat_open or ref_price) if quote else stat_open
+        change = round(stat_close - ref_price, 2)
+        change_pct = round((change / ref_price) * 100, 2) if ref_price else 0.0
+        if quote and quote.get("change_pct") is not None:
+            change_pct = round(float(quote["change_pct"]), 2)
+            change = round(stat_close - prev_close, 2)
+    elif quote and range_key == "5d":
         if quote.get("change_pct") is not None:
             change_pct = round(float(quote["change_pct"]), 2)
         if quote.get("ltp"):
             last["close"] = round(float(quote["ltp"]), 2)
             change = round(last["close"] - float(quote.get("prev_close") or ref_price), 2)
+        stat_open, stat_high, stat_low, stat_close, stat_volume = (
+            first["open"], period_high, period_low, last["close"], total_volume
+        )
+    else:
+        stat_open, stat_high, stat_low, stat_close, stat_volume = (
+            first["open"], period_high, period_low, last["close"], total_volume
+        )
 
     payload: dict[str, Any] = {
         "ok": True,
@@ -89,21 +138,24 @@ def get_chart_payload(symbol: str, range_key: str = "6m", days: int | None = Non
         "last_price": last["close"],
         "period_days": len(candles),
         "stats": {
-            "open": first["open"],
-            "high": period_high,
-            "low": period_low,
-            "close": last["close"],
-            "volume": total_volume,
+            "open": stat_open,
+            "high": stat_high,
+            "low": stat_low,
+            "close": stat_close,
+            "volume": stat_volume,
             "change": change,
             "change_pct": change_pct,
-            "prev_close": round(float(quote.get("prev_close", ref_price)), 2) if quote else ref_price,
+            "prev_close": prev_close,
+            "scope": "today" if range_key == "1d" else "period",
         },
+        "market_open": market_open,
     }
     if quote:
         payload["quote"] = {
             "ltp": quote.get("ltp"),
             "day_high": quote.get("high"),
             "day_low": quote.get("low"),
+            "open": quote.get("open"),
             "source": quote.get("source"),
         }
     return payload
