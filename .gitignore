@@ -1,5 +1,5 @@
 secrets.env
-local-secrets/
+local-secrets/*
 !local-secrets/groq-key-PASTE-HERE.txt
 data/_test_*.json
 __pycache__/

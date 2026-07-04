@@ -1,0 +1,10 @@
+================================================================================
+  KEY ACTIVATED — paste again here only if you need to change the key
+================================================================================
+
+Paste a new Groq key on the line below, save, then run ACTIVATE-GROQ.bat
+
+PASTE_YOUR_KEY_ON_THE_LINE_BELOW
+
+
+================================================================================
