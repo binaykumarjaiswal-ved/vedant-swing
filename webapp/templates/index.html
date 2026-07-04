@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-title" content="Vedant Swing">
   <title>Vedant Swing</title>
   <link rel="manifest" href="/static/manifest.json">
-  <link rel="stylesheet" href="/static/app.css">
+  <link rel="stylesheet" href="/static/app.css?v={{ build_ver }}">
   <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 </head>
 <body>
@@ -284,7 +284,7 @@
   </main>
 
   <div class="toast hidden" id="toast"></div>
-  <script src="/static/chart.js"></script>
-  <script src="/static/app.js"></script>
+  <script src="/static/chart.js?v={{ build_ver }}"></script>
+  <script src="/static/app.js?v={{ build_ver }}"></script>
 </body>
 </html>

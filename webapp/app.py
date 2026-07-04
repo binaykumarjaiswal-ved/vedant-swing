@@ -29,10 +29,20 @@ app = Flask(
     static_folder=str(Path(__file__).parent / "static"),
 )
 
+# Bump when UI changes — forces browsers to load new JS/CSS after deploy
+BUILD_VERSION = os.environ.get("RENDER_GIT_COMMIT", "a3e1300")[:7]
+
+
+@app.after_request
+def _no_cache_html(response):
+    if request.path == "/" or request.path.endswith(".html"):
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    return response
+
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", build_ver=BUILD_VERSION)
 
 
 @app.route("/api/health")
