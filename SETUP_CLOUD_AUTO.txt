@@ -1,0 +1,37 @@
+VEDANT SWING — AUTOMATIC CLOUD SETUP (no secrets in chat)
+=========================================================
+
+DONE FOR YOU:
+  GitHub repo: https://github.com/binaykumarjaiswal-ved/vedant-swing
+  Code pushed from your previous stock-analyst-cloud project
+  Nifty 500 + 3 strategies + paper trading + journal added
+
+YOU DO NOTHING MANUAL except optional one-time browser clicks below.
+
+OPTION A — Google Cloud Shell (recommended for coding)
+  1. Open https://console.cloud.google.com → Cloud Shell (terminal icon)
+  2. Run: bash gcp/bootstrap.sh
+  3. Edit code in Cloud Shell Editor — all changes via git push
+
+OPTION B — Free web app on Render
+  1. Open https://dashboard.render.com → New → Blueprint
+  2. Connect repo: binaykumarjaiswal-ved/vedant-swing
+  3. Render reads render.yaml automatically (free tier)
+
+OPTION C — Enable evening scan (GitHub Actions)
+  Workflow files are in setup/workflows/ (not active yet — GitHub security).
+  One-time in Cloud Shell or any terminal where you are logged into GitHub:
+    gh auth refresh -h github.com -s workflow
+    mkdir -p .github/workflows
+    cp setup/workflows/evening-scan.yml .github/workflows/
+    git add .github/workflows/evening-scan.yml
+    git commit -m "ci: enable evening scan"
+    git push
+
+SECRETS (never share in chat — add only in GitHub/Render dashboards):
+  TELEGRAM_BOT_TOKEN  → optional alerts
+  GITHUB_TOKEN        → Render sync only if you use private state
+
+DATA SOURCE: Yahoo Finance via yfinance (free, NSE .NS symbols)
+
+BROKER: Not connected. Angel One SmartAPI planned for Phase 2.
