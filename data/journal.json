@@ -1,6 +1,19 @@
 {
   "entries": [
     {
+      "id": "18880acd",
+      "date": "2026-07-06",
+      "symbol": "RECLTD",
+      "entry": 363.95,
+      "stop": 353.03,
+      "target": 374.87,
+      "rr": 1.0,
+      "strategy": "paper",
+      "notes": "Auto-linked from paper buy",
+      "qty": 82,
+      "status": "open"
+    },
+    {
       "id": "b96a96ee",
       "date": "2026-07-06",
       "symbol": "SBIN",
