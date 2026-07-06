@@ -1,13 +1,3 @@
 {
-  "alerts": [
-    {
-      "id": "0bcdb63b",
-      "symbol": "SBIN",
-      "condition": "above",
-      "price": 1085.0,
-      "note": "",
-      "status": "active",
-      "created": "2026-07-06T03:42:10"
-    }
-  ]
+  "alerts": []
 }
