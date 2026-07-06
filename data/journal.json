@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "id": "b96a96ee",
+      "date": "2026-07-06",
+      "symbol": "SBIN",
+      "entry": 1041.9,
+      "stop": 1010.64,
+      "target": 1073.16,
+      "rr": 1.0,
+      "strategy": "paper",
+      "notes": "Auto-linked from paper buy",
+      "qty": 28,
+      "status": "open"
+    }
+  ]
+}
