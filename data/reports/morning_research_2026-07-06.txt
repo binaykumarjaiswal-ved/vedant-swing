@@ -1,54 +1,57 @@
 =================================================================
-  VEDANT SWING — MORNING RESEARCH — 06 Jul 2026 08:39 AM IST
+  VEDANT SWING — MORNING RESEARCH — 06 Jul 2026 09:07 AM IST
   Groq AI brain + Nifty 500 scan | Sector filter | PE + S/R + RSS news
 =================================================================
 Market mood: BULLISH (Nifty 20d: +4.0%)
-Stocks scanned: 32 | News items: 68 | Universe: fallback list
+Stocks scanned: 32 | News items: 69 | Universe: fallback list
 
 
 ── GROQ AI MORNING BRAIN ──
 [Groq AI Morning Brain — llama-3.3-70b-versatile]
 **MORNING GROQ RESEARCH REPORT**
 
-1. **MARKET VERDICT** — **BULLISH** for swing buys today. The overall market sentiment remains positive, with the Nifty 20-day return at +4.0%, indicating a strong uptrend. However, traders should remain cautious and focus on strong sectors and stocks with robust fundamentals to maximize gains.
+**1. MARKET VERDICT**
+The market mood is **BULLISH**, with the Nifty 20-day return at +4.0%. This indicates a positive trend, and swing traders can look to capitalize on this momentum. However, it's essential to remain cautious and selective in stock picks, as the market can be volatile.
 
-2. **NEWS & MACRO** — Recent headlines suggest a positive outlook for the market. For instance, **"HFCL among 3 stocks flashing bullish signals, hinting at a possible uptrend"** and **"HCL Technologies among 5 stocks showing bullish RSI upswing"** indicate a bullish trend in specific stocks. Additionally, **"Healthy credit cycle set to keep NBFCs on growth track in Q1"** suggests a positive outlook for the NBFC sector, which is one of the strong sectors currently. However, **"Oil Price Today (July 6): Crude oil extends fall, hovers below $72. Here are 2 major reasons for the decline"** may have a negative impact on energy-related stocks.
+**2. NEWS & MACRO**
+Recent headlines, such as "Yes Bank shares in focus after Q1 advances rise 18% to Rs 2.85 lakh crore, deposits up 14%" and "Vedanta Power shares in focus after Q1 power sales jump 38%. Should you buy, sell or hold?" suggest that the market is responding to positive earnings reports. Additionally, "HCL Technologies among 5 stocks showing bullish RSI upswing" indicates that some stocks are exhibiting technical strength. These headlines suggest that the market is focused on earnings and technical trends, which can impact swing trading decisions.
 
-3. **STRONG SECTORS** — The following sectors are currently strong:
-* Pharma: +6.8% 20d return
-* Healthcare: +6.8% 20d return
-* Banking: +6.6% 20d return
-* NBFC: +6.6% 20d return
-* Insurance: +6.6% 20d return
-These sectors should be favored, while others like FMCG, Energy, and Metal, with relatively lower returns, should be avoided.
+**3. STRONG SECTORS**
+* Pharma: +6.8% 20d STRONG
+* Healthcare: +6.8% 20d STRONG
+* Banking: +6.6% 20d STRONG
+* NBFC: +6.6% 20d STRONG
+* Insurance: +6.6% 20d STRONG
+These sectors have shown strong momentum over the past 20 days and are likely to continue their upward trend. In contrast, sectors like FMCG, Energy, and Metal have shown relatively weaker returns and may be avoided.
 
-4. **TOP 3 STOCKS FOR TODAY** — 
-* **SBIN**: Verdict — **BUY**. Why — Strong sector, robust technicals (RSI 57.3), and average fundamentals. Entry zone: Rs.1008.8, Target: Rs.1071.20, Stop/Average trigger: Rs.1008.8.
-* **LICI**: Verdict — **BUY**. Why — Strong sector, robust technicals (RSI 63.7), and strong fundamentals. Entry zone: Rs.417.34, Target: Rs.443.16, Stop/Average trigger: Rs.417.34.
-* **HDFCBANK**: Verdict — **WATCH**. Why — Strong sector, but testing resistance (Rs.807.0), and average fundamentals. Entry zone: Rs.777.02, Target: Rs.825.08, Stop/Average trigger: Rs.777.02.
+**4. TOP 3 STOCKS FOR TODAY**
+* **SBIN**: Verdict - BUY. Why - Strong sector, technical trend, and average fundamentals. Entry zone: Rs.1008.8 - Rs.1040.0, Target: Rs.1071.20, Stop/Average trigger: Rs.1008.8.
+* **LICI**: Verdict - BUY. Why - Strong sector, technical trend, and strong fundamentals. Entry zone: Rs.417.34 - Rs.430.25, Target: Rs.443.16, Stop/Average trigger: Rs.417.34.
+* **HDFCBANK**: Verdict - WATCH. Why - Strong sector, but near resistance levels and average fundamentals. Entry zone: Rs.777.02 - Rs.801.05, Target: Rs.825.08, Stop/Average trigger: Rs.777.02.
 
-5. **STOCKS TO AVOID TODAY** — 
-* **SUNPHARMA**: Due to its high PE ratio (39.9) and testing resistance (Rs.1925.1), making it a risky buy.
-* **DRREDDY**: Due to its weak fundamentals (EPS growth -86.2%) and near resistance (Rs.1414.9), making it a less attractive option.
+**5. STOCKS TO AVOID TODAY**
+* **SBILIFE**: Due to weak fundamentals and high PE ratio, making it a less attractive pick.
+* **ICICIPRULI**: Due to weak technical trend and high PE ratio, making it a less attractive pick.
 
-6. **RISKS** — 
-* Market risk: A sudden change in market sentiment can impact stock prices.
-* Global risk: Global economic events, such as changes in oil prices, can affect the Indian market.
+**6. RISKS**
+* Market risk: A sudden change in market sentiment can impact swing trading decisions.
+* Global risk: Global economic trends and events can impact the Indian market.
 * Sector risk: A downturn in a specific sector can impact related stocks.
-* Event risk: Unexpected events, such as changes in government policies, can impact the market.
-* Liquidity risk: Low liquidity in a stock can make it difficult to buy or sell.
+* Event risk: Unexpected events, such as earnings reports or economic data, can impact the market.
+* Liquidity risk: Low liquidity in certain stocks can make it difficult to enter or exit trades.
 
-7. **PRE-MARKET CHECKLIST** — 
+**7. PRE-MARKET CHECKLIST**
 1. Is the market trend bullish? Yes/No
-2. Are you focusing on strong sectors? Yes/No
-3. Have you checked the stock's technicals? Yes/No
-4. Have you evaluated the stock's fundamentals? Yes/No
-5. Have you set a stop-loss and average trigger? Yes/No
-6. Are you aware of the market risks? Yes/No
-7. Have you checked the news and macro updates? Yes/No
-8. Are you sticking to your trading plan? Yes/No
+2. Are the strong sectors aligned with the market trend? Yes/No
+3. Are the top stocks for today in strong sectors? Yes/No
+4. Are the entry zones and targets clearly defined? Yes/No
+5. Are the stop/average triggers in place? Yes/No
+6. Are the risks assessed and managed? Yes/No
+7. Is the trading plan clear and disciplined? Yes/No
+8. Are the trading limits and position sizes defined? Yes/No
 
-8. **FINAL CALL** — **LICI** is the top pick for today's 3% swing, due to its strong sector, robust technicals, and strong fundamentals. However, traders should remain cautious and follow their trading plan to minimize risks.
+**8. FINAL CALL**
+Based on the analysis, **LICI** is the top pick for today's 3% swing, due to its strong sector, technical trend, and strong fundamentals. The entry zone is between Rs.417.34 and Rs.430.25, with a target of Rs.443.16.
 
 Not SEBI-registered advice. Trade at your own risk.
 
@@ -65,13 +68,13 @@ Not SEBI-registered advice. Trade at your own risk.
 ── TOP RESEARCH PICKS (technical scan) ──
 
 #1  SBIN  (Nifty 50 | Banking)  —  Rs.1040.00
-     Signal: STRONG BUY  |  Score: 93/100
+     Signal: STRONG BUY  |  Score: 86/100
      Best buy: Rs.1040.00  |  Qty: 28  |  Target +3%: Rs.1071.20
      Technical: RSI 57.3 | Trend up | vs Nifty +2.4%
      Fundamentals: PE 11.4 | EPS growth +0.2% | Average fundamentals
      Support Rs.933.9 | Resistance Rs.1101.1 | S 934 / R 1101
      TA: RSI 57 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
-     News: F&amp;O Talk: Smallcap index better placed than Nifty, says Sudeep Sha
+     News: SBI Share Price Live Updates: SBI Trading Metrics | SBI Life Share Price Live Updates: SBI Life's Recent Trading Perform
 
 #2  RECLTD  (Nifty Next 50 | NBFC)  —  Rs.365.15
      Signal: STRONG BUY  |  Score: 78/100
@@ -90,13 +93,13 @@ Not SEBI-registered advice. Trade at your own risk.
      TA: RSI 64 mild momentum, MACD bullish crossover, Above 20 EMA
 
 #4  HDFCBANK  (Nifty 50 | Banking)  —  Rs.801.05
-     Signal: BUY  |  Score: 73/100
+     Signal: BUY  |  Score: 72/100
      Best buy: Rs.801.05  |  Qty: 37  |  Target +3%: Rs.825.08
      Technical: RSI 65.4 | Trend up | vs Nifty +5.0%
      Fundamentals: PE 17.9 | EPS growth +8.0% | Average fundamentals
      Support Rs.720.39 | Resistance Rs.807.0 | Near resistance Rs.807 | Testing resistance
      TA: RSI 65 mild momentum, MACD bullish crossover, Above 20 EMA
-     News: Stocks in news: HDFC Bank, Vedanta Power, YES Bank, Sun Pharma, Waaree | HDFC Bank share price to be in focus on Monday 
+     News: HDFC Bank share price to be in focus on Monday as lender reports stron | HDFC Bank Share Price Live Updates: HDFC Bank's
 
 #5  SBILIFE  (Nifty 50 | Insurance)  —  Rs.1788.70
      Signal: BUY  |  Score: 66/100
@@ -114,16 +117,7 @@ Not SEBI-registered advice. Trade at your own risk.
      Support Rs.459.5 | Resistance Rs.582.73 | S 460 / R 583
      TA: RSI 44 ideal for 3% bounce, MACD bullish crossover, 5d move -1.2% — room for 3%
 
-#7  SUNPHARMA  (Nifty 50 | Pharma)  —  Rs.1904.80
-     Signal: WATCH  |  Score: 55/100
-     Best buy: Rs.1904.80  |  Qty: 15  |  Target +3%: Rs.1961.94
-     Technical: RSI 70.2 | Trend up | vs Nifty +2.9%
-     Fundamentals: PE 39.9 | EPS growth +26.2% | Strong fundamentals
-     Support Rs.1613.6 | Resistance Rs.1925.1 | Near resistance Rs.1925 | Testing resistance
-     TA: MACD bullish crossover, Above 20 EMA, Uptrend intact
-     News: Dividend alert! Last day to buy JSW Steel, Sun Pharma, 4 more stocks t
-
-#8  DRREDDY  (Nifty 50 | Pharma)  —  Rs.1374.10
+#7  DRREDDY  (Nifty 50 | Pharma)  —  Rs.1374.10
      Signal: WATCH  |  Score: 55/100
      Best buy: Rs.1374.10  |  Qty: 21  |  Target +3%: Rs.1415.32
      Technical: RSI 67.1 | Trend up | vs Nifty +3.5%
@@ -131,7 +125,7 @@ Not SEBI-registered advice. Trade at your own risk.
      Support Rs.1195.4 | Resistance Rs.1414.9 | Near resistance Rs.1415
      TA: RSI 67 mild momentum, MACD bullish crossover, Above 20 EMA
 
-#9  DIVISLAB  (Nifty 50 | Pharma)  —  Rs.6757.00
+#8  DIVISLAB  (Nifty 50 | Pharma)  —  Rs.6757.00
      Signal: WATCH  |  Score: 54/100
      Best buy: Rs.6757.00  |  Qty: 4  |  Target +3%: Rs.6959.71
      Technical: RSI 55.5 | Trend up | vs Nifty -1.9%
@@ -139,7 +133,7 @@ Not SEBI-registered advice. Trade at your own risk.
      Support Rs.5852.0 | Resistance Rs.6968.0 | S 5852 / R 6968
      TA: RSI 56 ideal for 3% bounce, Above 20 EMA, Uptrend intact
 
-#10  BAJAJFINSV  (Nifty 50 | NBFC)  —  Rs.1895.60
+#9  BAJAJFINSV  (Nifty 50 | NBFC)  —  Rs.1895.60
      Signal: WATCH  |  Score: 54/100
      Best buy: Rs.1895.60  |  Qty: 15  |  Target +3%: Rs.1952.47
      Technical: RSI 70.9 | Trend up | vs Nifty +7.4%
@@ -148,16 +142,16 @@ Not SEBI-registered advice. Trade at your own risk.
      TA: MACD bullish crossover, Above 20 EMA, Uptrend intact
 
 ── MARKET HEADLINES (RSS) ──
+  - [Economic Times Markets] Yes Bank shares in focus after Q1 advances rise 18% to Rs 2.85 lakh crore, deposits up 14%
+  - [Economic Times Markets] Vedanta Power shares in focus after Q1 power sales jump 38%. Should you buy, sell or hold?
   - [Economic Times Markets] HFCL among 3 stocks flashing bullish signals, hinting at a possible uptrend
   - [Economic Times Markets] HCL Technologies among 5 stocks showing bullish RSI upswing
-  - [Economic Times Markets] Oil Price Today (July 6): Crude oil extends fall, hovers below $72. Here are 2 major reasons for the decline
-  - [Economic Times Markets] Aastha Spintex shares to list today. Check GMP ahead of debut
-  - [Economic Times Markets] Bonus issue alert! Last day to buy this Ashish Kacholia-backed multibagger stock for 5:1 bonus reward. Do you 
-  - [Economic Times Markets] Sensex Today | Nifty 50 | Stock Market Live Updates: GIFT Nifty signals a muted start; Asian shares trade high
-  - [Economic Times Markets] Positive Breakout: These 12 stocks cross above their 200 DMAs
-  - [Economic Times Markets] Dollar near two-week lows as rate-hike bets recede, embattled yen in focus
-  - [Economic Times Markets] Global Market Today: Shares edge higher in Asia as oil dips, earnings loom
-  - [Economic Times Markets] Oil slips after OPEC+ agrees to raise output targets
+  - [Economic Times Markets] Tech Mahindra Share Price Live Updates: Tech Mahindra's Volume Performance
+  - [Economic Times Markets] Dr Reddys Share Price Live Updates: Dr. Reddys trading volume highlights market engagement
+  - [Economic Times Markets] Asian Paints Share Price Live Updates: Asian Paints volume statistics
+  - [Economic Times Markets] Coal India Share Price Live Updates: Coal India  Trading Volume Analysis
+  - [Economic Times Markets] Tata Motors PV Share Price Live Updates: Tata Motors PV market activity report
+  - [Economic Times Markets] Power Grid Share Price Live Updates: Power Grid's Trading Volume Insights
 
 ── DISCLAIMER ──
 Automated research only. NOT financial advice. Not SEBI-registered.
