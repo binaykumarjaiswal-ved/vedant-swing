@@ -1,6 +1,16 @@
 {
-  "cash": 499330.0,
-  "positions": [],
+  "cash": 470156.8,
+  "positions": [
+    {
+      "id": "e7498964",
+      "symbol": "SBIN",
+      "qty": 28,
+      "entry": 1041.9,
+      "stop": 1010.64,
+      "target": 1073.16,
+      "opened": "2026-07-06T03:40:43"
+    }
+  ],
   "closed": [
     {
       "id": "51010611",
