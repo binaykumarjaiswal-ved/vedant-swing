@@ -261,8 +261,11 @@ def api_compare():
 def api_backtest():
     from webapp.insights import backtest_evening_scan
 
-    days = int(request.args.get("days", 30))
-    return jsonify(backtest_evening_scan(days=min(days, 60)))
+    try:
+        days = int(request.args.get("days", 30))
+        return jsonify(backtest_evening_scan(days=min(days, 60)))
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)[:200]}), 500
 
 
 @app.route("/api/export/pdf/<symbol>")

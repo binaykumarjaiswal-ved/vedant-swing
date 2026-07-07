@@ -145,7 +145,13 @@ def backtest_evening_scan(days: int = 30) -> dict:
         return {"ok": False, "error": "No scan reports"}
 
     files = sorted(REPORTS.glob("evening_scan_*.json"), reverse=True)[:days]
+    if not files:
+        return {"ok": True, "trades": 0, "wins": 0, "win_rate": 0, "samples": [], "note": "No evening scans yet"}
+
     trades = []
+    ohlcv_cache: dict[str, object] = {}
+    hold_days = 7
+
     for path in files:
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
@@ -158,12 +164,22 @@ def backtest_evening_scan(days: int = 30) -> dict:
             target = float(pick.get("target") or entry * 1.03)
             if not sym or entry <= 0:
                 continue
-            outcome = _simulate_target(sym, scan_date, entry, target, hold_days=7)
+            if sym not in ohlcv_cache:
+                try:
+                    ohlcv_cache[sym] = fetch_ohlcv(sym, days=hold_days + 30)
+                except Exception:
+                    ohlcv_cache[sym] = None
+            try:
+                outcome = _simulate_target(
+                    ohlcv_cache[sym], scan_date, entry, target, hold_days=hold_days,
+                )
+            except Exception as exc:
+                outcome = {"hit": False, "note": str(exc)[:40]}
             trades.append({
                 "date": scan_date,
                 "symbol": sym,
-                "entry": entry,
-                "target": target,
+                "entry": round(entry, 2),
+                "target": round(target, 2),
                 **outcome,
             })
 
@@ -173,35 +189,50 @@ def backtest_evening_scan(days: int = 30) -> dict:
     wins = sum(1 for t in trades if t.get("hit"))
     return {
         "ok": True,
-        "days": days,
+        "days": len(files),
         "trades": len(trades),
         "wins": wins,
         "win_rate": round(wins / len(trades) * 100, 1),
         "target_pct": 3.0,
-        "hold_days": 7,
+        "hold_days": hold_days,
         "samples": trades[:12],
     }
 
 
-def _simulate_target(symbol: str, start: str, entry: float, target: float, hold_days: int = 7) -> dict:
+def _normalize_ohlcv_index(df):
     import pandas as pd
 
-    from technical import fetch_ohlcv
+    if df is None or df.empty:
+        return df
+    out = df.copy()
+    idx = pd.to_datetime(out.index)
+    if getattr(idx, "tz", None) is not None:
+        idx = idx.tz_convert("Asia/Kolkata").tz_localize(None)
+    out.index = idx.normalize()
+    return out
+
+
+def _simulate_target(df, start: str, entry: float, target: float, hold_days: int = 7) -> dict:
+    import pandas as pd
 
     try:
-        start_ts = pd.Timestamp(start)
+        # Evening picks — measure from next session after scan date
+        start_ts = pd.Timestamp(start) + pd.Timedelta(days=1)
     except ValueError:
         return {"hit": False, "note": "bad date"}
 
-    df = fetch_ohlcv(symbol, days=hold_days + 30)
-    if df is None or df.empty:
+    if df is None or getattr(df, "empty", True):
         return {"hit": False, "note": "no data"}
 
-    df = df[df.index >= start_ts]
-    if df.empty:
+    df = _normalize_ohlcv_index(df)
+    forward = df[df.index >= start_ts.normalize()]
+    if forward.empty:
         return {"hit": False, "note": "no forward data"}
 
-    window = df.head(hold_days + 1)
+    window = forward.head(hold_days)
+    if window.empty:
+        return {"hit": False, "note": "no forward data"}
+
     hit = bool((window["High"] >= target).any())
     max_high = float(window["High"].max())
     return {
