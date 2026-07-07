@@ -1,5 +1,5 @@
 =================================================================
-  VEDANT SWING — MORNING RESEARCH — 07 Jul 2026 09:24 AM IST
+  VEDANT SWING — MORNING RESEARCH — 07 Jul 2026 09:27 AM IST
   Groq AI brain + Nifty 500 scan | Sector filter | PE + S/R + RSS news
 =================================================================
 Market mood: BULLISH (Nifty 20d: +5.8%)
@@ -10,48 +10,45 @@ Stocks scanned: 32 | News items: 77 | Universe: fallback list
 [Groq AI Morning Brain — llama-3.3-70b-versatile]
 **MORNING GROQ RESEARCH REPORT**
 
-**1. MARKET VERDICT**
-The market mood is **BULLISH**, with the Nifty 20-day return at +5.8%, indicating a positive trend. However, it's essential to remain cautious and selective in our stock picks. The strong sector performance, particularly in Banking, NBFC, and Insurance, suggests that these sectors may continue to drive the market momentum.
+1. **MARKET VERDICT** — **BULLISH** for swing buys today. The overall market mood remains bullish, with the Nifty 20-day return at +5.8%, indicating a strong uptrend. However, traders should remain cautious and focus on strong sectors and stocks with solid fundamentals to maximize gains.
 
-**2. NEWS & MACRO**
-The news headlines suggest a mixed sentiment, with some positive and negative cues. The article "IndusInd Bank among 5 stocks flashing bullish signals, hinting at a possible uptrend" (Economic Times Markets) indicates a positive outlook for the banking sector. On the other hand, "Kospi tumbles 6% as AI investors fear rally may be overblown. A bigger crash coming closer?" (Economic Times Markets) and "Japan's Nikkei falls as Samsung-led chip selloff weighs on regional tech stocks" (Economic Times Markets) suggest a cautious approach due to global market volatility. Additionally, "IT stocks are beginning to offer bank FD-like dividend yields. But is that a trap for investors?" (Economic Times Markets) highlights the need to carefully evaluate investment opportunities.
+2. **NEWS & MACRO** — The recent headlines suggest a mixed sentiment in the market. The article "IndusInd Bank among 5 stocks flashing bullish signals, hinting at a possible uptrend" from Economic Times Markets is a positive indicator for the banking sector. On the other hand, "Kospi tumbles 6% as AI investors fear rally may be overblown. A bigger crash coming closer?" from Economic Times Markets indicates a potential risk in the global markets. Additionally, "IT stocks are beginning to offer bank FD-like dividend yields. But is that a trap for investors?" from Economic Times Markets suggests that investors should be cautious when investing in IT stocks. These headlines imply that traders should be selective and focus on strong sectors and stocks.
 
-**3. STRONG SECTORS**
-* Banking: +8.3% 20d return, strong sector
-* NBFC: +8.3% 20d return, strong sector
-* Insurance: +8.3% 20d return, strong sector
-* Pharma: +7.3% 20d return, strong sector
-* Healthcare: +7.3% 20d return, strong sector
-We should favour the strong sectors, particularly Banking, NBFC, and Insurance, while being cautious of the Pharma and Healthcare sectors due to mixed earnings performance.
+3. **STRONG SECTORS** — 
+* Banking: +8.3% 20d return
+* NBFC: +8.3% 20d return
+* Insurance: +8.3% 20d return
+* Pharma: +7.3% 20d return
+* Healthcare: +7.3% 20d return
+These sectors have shown strong returns over the past 20 days and are likely to continue their uptrend. Traders should focus on these sectors for potential swing buys.
 
-**4. TOP 3 STOCKS FOR TODAY**
-* **SBIN**: Verdict - BUY, Why - Strong sector, decent fundamentals (PE 11.5, EPS growth 0.2%), and a positive technical trend (RSI 59.5). Entry zone: Rs.1015.69 - Rs.1047.10, Target: Rs.1078.51, Stop/Average trigger: Rs.1015.69.
-* **MUTHOOTFIN**: Verdict - BUY, Why - Strong sector, robust earnings growth (EPS growth 126.7%, Revenue growth 53.7%), and a reasonable valuation (PE 11.5). Entry zone: Rs.3017.86 - Rs.3111.20, Target: Rs.3204.54, Stop/Average trigger: Rs.3017.86.
-* **LICI**: Verdict - WATCH, Why - Strong sector, decent earnings growth (EPS growth 55.1%, Revenue growth 14.8%), but near resistance (Rs.440) and a relatively low news sentiment. Entry zone: Rs.419.23 - Rs.432.20, Target: Rs.445.17, Stop/Average trigger: Rs.419.23.
+4. **TOP 3 STOCKS FOR TODAY** — 
+* **SBIN**: Verdict — **BUY**. Why — Strong technicals (RSI 59.7), decent fundamentals (PE 11.5, EPS growth 0.2%), and a strong sector (Banking). Entry zone — Rs.1016.07, Target — Rs.1078.92 (+3%), Stop/Average trigger — Rs.1016.07.
+* **MUTHOOTFIN**: Verdict — **BUY**. Why — Strong fundamentals (PE 11.5, EPS growth 126.7%), a strong sector (NBFC), and decent technicals (RSI 48.9). Entry zone — Rs.3003.02, Target — Rs.3188.78 (+3%), Stop/Average trigger — Rs.3003.02.
+* **LICI**: Verdict — **WATCH**. Why — Decent technicals (RSI 64.3), strong fundamentals (PE 9.5, EPS growth 55.1%), and a strong sector (Insurance). However, the stock is near its resistance level (Rs.440), making it a watch candidate. Entry zone — Rs.418.85, Target — Rs.444.75 (+3%), Stop/Average trigger — Rs.418.85.
 
-**5. STOCKS TO AVOID TODAY**
-* **BIOCON**: Due to weak fundamentals (PE 151.3, EPS growth -63.5%, Revenue growth 2.3%) and a high valuation.
-* **DRREDDY**: Due to weak fundamentals (PE 26.7, EPS growth -86.2%, Revenue growth -11.6%) and a negative earnings trend.
+5. **STOCKS TO AVOID TODAY** — 
+* **BIOCON**: Weak fundamentals (PE 151.3, EPS growth -63.5%) and a high PE ratio make it a stock to avoid.
+* **AUROPHARMA**: Although it has decent technicals (RSI 63.9) and average fundamentals, its high PE ratio (26.4) and proximity to resistance (Rs.1637) make it a stock to avoid for now.
 
-**6. RISKS**
-* Market risk: A sudden change in market sentiment could impact our trades.
-* Global risk: Global market volatility, particularly in the tech sector, could affect our investments.
-* Sector risk: A downturn in the strong sectors, such as Banking or NBFC, could negatively impact our trades.
-* Event risk: Unexpected events, such as a change in government policies or economic data, could affect the market.
-* Liquidity risk: Insufficient liquidity in our chosen stocks could make it difficult to enter or exit trades.
+6. **RISKS** — 
+* Market risk: A sudden change in market sentiment could lead to a downturn.
+* Global risk: Global market volatility, such as the Kospi crash, could impact Indian markets.
+* Sector risk: A downturn in strong sectors like Banking or NBFC could impact overall market performance.
+* Event risk: Unexpected events, such as a change in government policies or economic data, could impact market sentiment.
+* Liquidity risk: Low liquidity in certain stocks could lead to high volatility and impact trading decisions.
 
-**7. PRE-MARKET CHECKLIST**
-1. Is the market mood bullish? Yes/No
-2. Are the strong sectors aligned with our investment goals? Yes/No
-3. Have we evaluated the news and macro trends? Yes/No
-4. Are our chosen stocks in the strong sectors? Yes/No
-5. Have we checked the technical trends and valuations? Yes/No
-6. Are we aware of the potential risks? Yes/No
-7. Have we set our entry and exit strategies? Yes/No
-8. Are we prepared to adjust our trades based on market developments? Yes/No
+7. **PRE-MARKET CHECKLIST** — 
+1. Is the market mood bullish? — Yes/No
+2. Are you focusing on strong sectors? — Yes/No
+3. Have you checked the technicals of the stock? — Yes/No
+4. Are the fundamentals of the stock strong? — Yes/No
+5. Is the stock near its support or resistance level? — Yes/No
+6. Have you set a stop-loss and average trigger? — Yes/No
+7. Are you aware of the potential risks? — Yes/No
+8. Have you checked the news and macro updates? — Yes/No
 
-**8. FINAL CALL**
-Our top pick for today's 3% swing is **SBIN**, due to its strong sector performance, decent fundamentals, and positive technical trend. However, we must remain cautious and monitor the market developments closely.
+8. **FINAL CALL** — **SBIN** is the top pick for today's 3% swing, given its strong technicals, decent fundamentals, and a strong sector. However, traders should remain cautious and keep an eye on market sentiment and global events.
 
 Not SEBI-registered advice. Trade at your own risk.
 
@@ -67,86 +64,85 @@ Not SEBI-registered advice. Trade at your own risk.
 
 ── TOP RESEARCH PICKS (technical scan) ──
 
-#1  SBIN  (Nifty 50 | Banking)  —  Rs.1047.10
+#1  SBIN  (Nifty 50 | Banking)  —  Rs.1047.50
      Signal: STRONG BUY  |  Score: 86/100
-     Best buy: Rs.1047.10  |  Qty: 28  |  Target +3%: Rs.1078.51
-     Technical: RSI 59.5 | Trend up | vs Nifty -1.3%
+     Best buy: Rs.1047.50  |  Qty: 28  |  Target +3%: Rs.1078.92
+     Technical: RSI 59.7 | Trend up | vs Nifty -1.3%
      Fundamentals: PE 11.5 | EPS growth +0.2% | Average fundamentals
      Support Rs.933.9 | Resistance Rs.1101.1 | S 934 / R 1101
      TA: RSI 60 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
 
-#2  MUTHOOTFIN  (Nifty Next 50 | NBFC)  —  Rs.3111.20
+#2  MUTHOOTFIN  (Nifty Next 50 | NBFC)  —  Rs.3095.90
      Signal: STRONG BUY  |  Score: 75/100
-     Best buy: Rs.3111.20  |  Qty: 9  |  Target +3%: Rs.3204.54
-     Technical: RSI 49.9 | Trend sideways | vs Nifty -1.8%
+     Best buy: Rs.3095.90  |  Qty: 9  |  Target +3%: Rs.3188.78
+     Technical: RSI 48.9 | Trend sideways | vs Nifty -2.3%
      Fundamentals: PE 11.5 | EPS growth +126.7% | Strong fundamentals
      Support Rs.2822.6 | Resistance Rs.3647.66 | S 2823 / R 3648
-     TA: RSI 50 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+     TA: RSI 49 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
 
-#3  SBILIFE  (Nifty 50 | Insurance)  —  Rs.1813.50
+#3  SBILIFE  (Nifty 50 | Insurance)  —  Rs.1812.70
      Signal: BUY  |  Score: 74/100
-     Best buy: Rs.1813.50  |  Qty: 16  |  Target +3%: Rs.1867.90
-     Technical: RSI 55.9 | Trend sideways | vs Nifty -3.0%
+     Best buy: Rs.1812.70  |  Qty: 16  |  Target +3%: Rs.1867.08
+     Technical: RSI 55.8 | Trend sideways | vs Nifty -3.0%
      Fundamentals: PE 73.5 | EPS growth -1.1% | Weak fundamentals
      Support Rs.1700.4 | Resistance Rs.1990.9 | S 1700 / R 1991
      TA: RSI 56 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
 
-#4  LICI  (Nifty Next 50 | Insurance)  —  Rs.432.20
+#4  LICI  (Nifty Next 50 | Insurance)  —  Rs.431.80
      Signal: BUY  |  Score: 70/100
-     Best buy: Rs.432.20  |  Qty: 69  |  Target +3%: Rs.445.17
-     Technical: RSI 64.5 | Trend up | vs Nifty +3.8%
+     Best buy: Rs.431.80  |  Qty: 69  |  Target +3%: Rs.444.75
+     Technical: RSI 64.3 | Trend up | vs Nifty +3.6%
      Fundamentals: PE 9.5 | EPS growth +55.1% | Strong fundamentals
      Support Rs.379.14 | Resistance Rs.440.0 | Near resistance Rs.440 | Testing resistance
-     TA: RSI 65 mild momentum, MACD bullish crossover, Above 20 EMA
+     TA: RSI 64 mild momentum, MACD bullish crossover, Above 20 EMA
 
-#5  BIOCON  (Nifty Next 50 | Pharma)  —  Rs.423.70
+#5  BIOCON  (Nifty Next 50 | Pharma)  —  Rs.423.50
      Signal: BUY  |  Score: 64/100
-     Best buy: Rs.423.70  |  Qty: 70  |  Target +3%: Rs.436.41
-     Technical: RSI 59.0 | Trend up | vs Nifty -3.9%
+     Best buy: Rs.423.50  |  Qty: 70  |  Target +3%: Rs.436.20
+     Technical: RSI 58.7 | Trend up | vs Nifty -3.9%
      Fundamentals: PE 151.3 | EPS growth -63.5% | Weak fundamentals
      Support Rs.346.59 | Resistance Rs.439.87 | S 347 / R 440
      TA: RSI 59 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
 
-#6  AUROPHARMA  (Nifty Next 50 | Pharma)  —  Rs.1588.50
+#6  BAJAJFINSV  (Nifty 50 | NBFC)  —  Rs.1879.70
      Signal: WATCH  |  Score: 57/100
-     Best buy: Rs.1588.50  |  Qty: 18  |  Target +3%: Rs.1636.15
-     Technical: RSI 63.7 | Trend up | vs Nifty +3.6%
+     Best buy: Rs.1879.70  |  Qty: 15  |  Target +3%: Rs.1936.09
+     Technical: RSI 67.2 | Trend up | vs Nifty +6.6%
+     Fundamentals: PE 30.9 | EPS growth +5.0% | Average fundamentals
+     Support Rs.1639.1 | Resistance Rs.1916.0 | Near resistance Rs.1916 | Testing resistance
+     TA: RSI 67 mild momentum, MACD bullish crossover, Above 20 EMA
+
+#7  AUROPHARMA  (Nifty Next 50 | Pharma)  —  Rs.1589.40
+     Signal: WATCH  |  Score: 57/100
+     Best buy: Rs.1589.40  |  Qty: 18  |  Target +3%: Rs.1637.08
+     Technical: RSI 63.9 | Trend up | vs Nifty +3.7%
      Fundamentals: PE 26.4 | EPS growth +2.0% | Average fundamentals
-     Support Rs.1333.0 | Resistance Rs.1636.8 | S 1333 / R 1637
+     Support Rs.1333.0 | Resistance Rs.1636.8 | Near resistance Rs.1637
      TA: RSI 64 mild momentum, MACD bullish crossover, Above 20 EMA
 
-#7  ICICIGI  (Nifty Next 50 | Insurance)  —  Rs.1792.20
+#8  ICICIGI  (Nifty Next 50 | Insurance)  —  Rs.1792.40
      Signal: WATCH  |  Score: 56/100
-     Best buy: Rs.1792.20  |  Qty: 16  |  Target +3%: Rs.1845.97
+     Best buy: Rs.1792.40  |  Qty: 16  |  Target +3%: Rs.1846.17
      Technical: RSI 51.2 | Trend sideways | vs Nifty -2.7%
      Fundamentals: PE 32.4 | EPS growth +7.3% | Strong fundamentals
      Support Rs.1671.8 | Resistance Rs.1901.68 | S 1672 / R 1902
      TA: RSI 51 ideal for 3% bounce, Above 20 EMA, 5d move +1.4% — room for 3%
 
-#8  DRREDDY  (Nifty 50 | Pharma)  —  Rs.1363.60
+#9  DRREDDY  (Nifty 50 | Pharma)  —  Rs.1366.20
      Signal: WATCH  |  Score: 55/100
-     Best buy: Rs.1363.60  |  Qty: 22  |  Target +3%: Rs.1404.51
-     Technical: RSI 63.1 | Trend up | vs Nifty +1.7%
+     Best buy: Rs.1366.20  |  Qty: 21  |  Target +3%: Rs.1407.19
+     Technical: RSI 64.1 | Trend up | vs Nifty +1.9%
      Fundamentals: PE 26.7 | EPS growth -86.2% | Weak fundamentals
      Support Rs.1195.4 | Resistance Rs.1414.9 | S 1195 / R 1415
-     TA: RSI 63 mild momentum, MACD bullish crossover, Above 20 EMA
+     TA: RSI 64 mild momentum, MACD bullish crossover, Above 20 EMA
 
-#9  ICICIPRULI  (Nifty Next 50 | Insurance)  —  Rs.488.05
+#10  ICICIPRULI  (Nifty Next 50 | Insurance)  —  Rs.487.60
      Signal: WATCH  |  Score: 55/100
-     Best buy: Rs.488.05  |  Qty: 61  |  Target +3%: Rs.502.69
-     Technical: RSI 45.7 | Trend down | vs Nifty -3.0%
+     Best buy: Rs.487.60  |  Qty: 61  |  Target +3%: Rs.502.23
+     Technical: RSI 45.4 | Trend down | vs Nifty -3.1%
      Fundamentals: PE 44.1 | EPS growth +61.9% | Average fundamentals
      Support Rs.459.5 | Resistance Rs.582.73 | S 460 / R 583
-     TA: RSI 46 ideal for 3% bounce, MACD bullish crossover, 5d move +0.0% — room for 3%
-
-#10  AXISBANK  (Nifty 50 | Banking)  —  Rs.1345.10
-     Signal: WATCH  |  Score: 53/100
-     Best buy: Rs.1345.10  |  Qty: 22  |  Target +3%: Rs.1385.45
-     Technical: RSI 52.4 | Trend up | vs Nifty -1.7%
-     Fundamentals: PE 15.9 | EPS growth +1.7% | Weak fundamentals
-     Support Rs.1222.1 | Resistance Rs.1400.1 | S 1222 / R 1400
-     TA: RSI 52 ideal for 3% bounce, Above 20 EMA, Uptrend intact
-     News: Axis Bank Share Price Live Updates: Axis Bank Sees Weekly Decline in R
+     TA: RSI 45 ideal for 3% bounce, MACD bullish crossover, 5d move -0.1% — room for 3%
 
 ── MARKET HEADLINES (RSS) ──
   - [Economic Times Markets] Atharva Polyplast, Seemax Resources among 6 SME IPOs set to debut on bourses today. Check details
