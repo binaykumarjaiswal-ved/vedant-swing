@@ -1,0 +1,161 @@
+=================================================================
+  VEDANT SWING — MORNING RESEARCH — 08 Jul 2026 10:47 AM IST
+  Groq AI brain + Nifty 500 scan | Sector filter | PE + S/R + RSS news
+=================================================================
+Market mood: BULLISH (Nifty 20d: +4.8%)
+Stocks scanned: 32 | News items: 76 | Universe: fallback list
+
+
+── GROQ AI MORNING BRAIN ──
+[Groq AI Morning Brain — llama-3.3-70b-versatile]
+**MORNING GROQ RESEARCH REPORT**
+
+1. **MARKET VERDICT** — **BULLISH** for swing buys today. The overall market mood remains bullish, with the Nifty 20-day return at +4.8%, indicating a positive trend. However, traders should remain cautious and focus on strong sectors and stocks with good fundamentals to maximize gains.
+
+2. **NEWS & MACRO** — The recent headlines suggest a mixed bag of news, with some positive and some negative developments. For instance, the **RCF shares jump 3% after board approves Rs 1,500 crore FPO** is a positive news, indicating investor confidence in the company. On the other hand, the **Sensex tumbles over 550 points, Nifty falls below 24,250 as Iran-US conflict escalates** is a negative news, indicating global uncertainty and its impact on the Indian market. The **US Stock Market: Starship, AI ambitions fuel bullish Wall Street outlook on newly listed SpaceX** is another positive news, indicating a bullish outlook in the US market. Overall, these headlines suggest that traders should be cautious and focus on strong sectors and stocks with good fundamentals.
+
+3. **STRONG SECTORS** — 
+* Pharma: +6.2% 20d STRONG
+* Healthcare: +6.2% 20d STRONG
+* Banking: +5.8% 20d STRONG
+* NBFC: +5.8% 20d STRONG
+* Insurance: +5.8% 20d STRONG
+These sectors have shown strong performance in the last 20 days and are likely to continue their upward trend. Traders should focus on these sectors for swing buys.
+
+4. **TOP 3 STOCKS FOR TODAY** — 
+* **HDFCAMC**: Verdict — **BUY**. Why — The stock has a strong buy score of 83.4, with a positive trend and a reasonable PE of 41.4. The company has average fundamentals, but the sector is strong. Entry zone — Rs.2671.96, Target — Rs.2837.24, Stop/Average trigger — Rs.2671.96.
+* **MUTHOOTFIN**: Verdict — **BUY**. Why — The stock has a strong buy score of 76.7, with a sideways trend and a reasonable PE of 12.0. The company has strong fundamentals, with a high EPS growth of 126.7%. Entry zone — Rs.3058.12, Target — Rs.3247.28, Stop/Average trigger — Rs.3058.12.
+* **ICICIGI**: Verdict — **WATCH**. Why — The stock has a buy score of 71.3, with a sideways trend and a reasonable PE of 33.2. The company has strong fundamentals, but the sector is not as strong as the top two stocks. Entry zone — Rs.1778.49, Target — Rs.1888.51, Stop/Average trigger — Rs.1778.49.
+
+5. **STOCKS TO AVOID TODAY** — 
+* **SBILIFE**: The stock has weak fundamentals, with a negative EPS growth of -1.1% and a negative revenue growth of -82.2%.
+* **DRREDDY**: The stock has weak fundamentals, with a negative EPS growth of -86.2% and a negative revenue growth of -11.6%.
+
+6. **RISKS** — 
+* Market risk — The market is volatile, and a sudden downturn can affect all stocks.
+* Global risk — The Iran-US conflict can escalate and affect the global market.
+* Sector risk — The strong sectors can become weak if there are negative developments in those sectors.
+* Event risk — Any unexpected event can affect the market and the stocks.
+* Liquidity risk — The market can become illiquid, making it difficult to buy or sell stocks.
+
+7. **PRE-MARKET CHECKLIST** — 
+1. Is the market trend positive? — Yes/No
+2. Are the strong sectors showing an upward trend? — Yes/No
+3. Are the top stocks showing a positive trend? — Yes/No
+4. Are the fundamentals of the top stocks strong? — Yes/No
+5. Is the entry zone reasonable? — Yes/No
+6. Is the target price achievable? — Yes/No
+7. Is the stop/average trigger reasonable? — Yes/No
+8. Are the risks manageable? — Yes/No
+
+8. **FINAL CALL** — The best stock for today's 3% swing is **HDFCAMC**, with a strong buy score of 83.4 and a positive trend. The stock has average fundamentals, but the sector is strong, and the entry zone is reasonable. However, traders should be cautious and manage their risks.
+
+Not SEBI-registered advice. Trade at your own risk.
+
+── SECTOR STRENGTH (20-day) ──
+  #1 Pharma: +6.2% 20d STRONG
+  #2 Healthcare: +6.2% 20d STRONG
+  #3 Banking: +5.8% 20d STRONG
+  #4 NBFC: +5.8% 20d STRONG
+  #5 Insurance: +5.8% 20d STRONG
+  #6 Auto: +5.5% 20d 
+  #7 FMCG: +4.8% 20d 
+  #8 Energy: +4.8% 20d 
+
+── TOP RESEARCH PICKS (technical scan) ──
+
+#1  HDFCAMC  (Nifty Next 50 | Other)  —  Rs.2754.60
+     Signal: STRONG BUY  |  Score: 83/100
+     Best buy: Rs.2754.60  |  Qty: 10  |  Target +3%: Rs.2837.24
+     Technical: RSI 59.2 | Trend up | vs Nifty +5.2%
+     Fundamentals: PE 41.4 | EPS growth -2.5% | Average fundamentals
+     Support Rs.2380.8 | Resistance Rs.2838.4 | S 2381 / R 2838
+     TA: RSI 59 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#2  MUTHOOTFIN  (Nifty Next 50 | NBFC)  —  Rs.3152.70
+     Signal: STRONG BUY  |  Score: 77/100
+     Best buy: Rs.3152.70  |  Qty: 9  |  Target +3%: Rs.3247.28
+     Technical: RSI 52.7 | Trend sideways | vs Nifty +4.0%
+     Fundamentals: PE 12.0 | EPS growth +126.7% | Strong fundamentals
+     Support Rs.2822.6 | Resistance Rs.3646.0 | S 2823 / R 3646
+     TA: RSI 53 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#3  ICICIGI  (Nifty Next 50 | Insurance)  —  Rs.1833.50
+     Signal: BUY  |  Score: 71/100
+     Best buy: Rs.1833.50  |  Qty: 16  |  Target +3%: Rs.1888.51
+     Technical: RSI 57.8 | Trend sideways | vs Nifty -1.7%
+     Fundamentals: PE 33.2 | EPS growth +7.3% | Strong fundamentals
+     Support Rs.1671.8 | Resistance Rs.1901.68 | S 1672 / R 1902
+     TA: RSI 58 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#4  BAJAJFINSV  (Nifty 50 | NBFC)  —  Rs.1883.30
+     Signal: BUY  |  Score: 64/100
+     Best buy: Rs.1883.30  |  Qty: 15  |  Target +3%: Rs.1939.80
+     Technical: RSI 66.5 | Trend up | vs Nifty +8.5%
+     Fundamentals: PE 30.6 | EPS growth +5.0% | Average fundamentals
+     Support Rs.1639.1 | Resistance Rs.1916.0 | Near resistance Rs.1916 | Testing resistance
+     TA: RSI 67 mild momentum, MACD bullish crossover, Above 20 EMA
+
+#5  SBIN  (Nifty 50 | Banking)  —  Rs.1032.20
+     Signal: BUY  |  Score: 64/100
+     Best buy: Rs.1032.20  |  Qty: 29  |  Target +3%: Rs.1063.17
+     Technical: RSI 53.7 | Trend up | vs Nifty -1.9%
+     Fundamentals: PE 11.3 | EPS growth +0.2% | Average fundamentals
+     Support Rs.933.9 | Resistance Rs.1101.1 | S 934 / R 1101
+     TA: RSI 54 ideal for 3% bounce, Above 20 EMA, Uptrend intact
+
+#6  SBILIFE  (Nifty 50 | Insurance)  —  Rs.1835.70
+     Signal: BUY  |  Score: 63/100
+     Best buy: Rs.1835.70  |  Qty: 16  |  Target +3%: Rs.1890.77
+     Technical: RSI 60.5 | Trend sideways | vs Nifty +1.4%
+     Fundamentals: PE 72.6 | EPS growth -1.1% | Weak fundamentals
+     Support Rs.1700.4 | Resistance Rs.1990.9 | S 1700 / R 1991
+     TA: RSI 61 mild momentum, MACD bullish crossover, Above 20 EMA
+
+#7  AUROPHARMA  (Nifty Next 50 | Pharma)  —  Rs.1601.90
+     Signal: WATCH  |  Score: 57/100
+     Best buy: Rs.1601.90  |  Qty: 18  |  Target +3%: Rs.1649.96
+     Technical: RSI 65.9 | Trend up | vs Nifty +5.8%
+     Fundamentals: PE 26.6 | EPS growth +2.0% | Average fundamentals
+     Support Rs.1345.8 | Resistance Rs.1636.8 | Near resistance Rs.1637
+     TA: RSI 66 mild momentum, MACD bullish crossover, Above 20 EMA
+
+#8  DRREDDY  (Nifty 50 | Pharma)  —  Rs.1366.00
+     Signal: WATCH  |  Score: 55/100
+     Best buy: Rs.1366.00  |  Qty: 21  |  Target +3%: Rs.1406.98
+     Technical: RSI 62.5 | Trend up | vs Nifty +2.6%
+     Fundamentals: PE 26.8 | EPS growth -86.2% | Weak fundamentals
+     Support Rs.1208.1 | Resistance Rs.1414.9 | S 1208 / R 1415
+     TA: RSI 62 mild momentum, MACD bullish crossover, Above 20 EMA
+
+#9  ICICIPRULI  (Nifty Next 50 | Insurance)  —  Rs.488.60
+     Signal: WATCH  |  Score: 55/100
+     Best buy: Rs.488.60  |  Qty: 61  |  Target +3%: Rs.503.26
+     Technical: RSI 46.0 | Trend down | vs Nifty -1.9%
+     Fundamentals: PE 44.2 | EPS growth +61.9% | Average fundamentals
+     Support Rs.459.5 | Resistance Rs.582.73 | S 460 / R 583
+     TA: RSI 46 ideal for 3% bounce, MACD bullish crossover, 5d move +0.1% — room for 3%
+
+#10  DIVISLAB  (Nifty 50 | Pharma)  —  Rs.6855.00
+     Signal: WATCH  |  Score: 54/100
+     Best buy: Rs.6855.00  |  Qty: 4  |  Target +3%: Rs.7060.65
+     Technical: RSI 58.8 | Trend up | vs Nifty -1.5%
+     Fundamentals: PE 71.8 | EPS growth +13.4% | Average fundamentals
+     Support Rs.6101.0 | Resistance Rs.6968.0 | Near resistance Rs.6968 | Testing resistance
+     TA: RSI 59 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+── MARKET HEADLINES (RSS) ──
+  - [Economic Times Markets] RCF shares jump 3% after board approves Rs 1,500 crore FPO
+  - [Economic Times Markets] Global Market: Japan weighs revised monetary policy language in economic blueprint to reinforce BOJ independen
+  - [Economic Times Markets] PC Jeweller jumps 6% after repaying 2 consortium banks; eyes debt-free status by Q2 FY27
+  - [Economic Times Markets] Global Market: Samsung, SK Hynix rebound as bargain buying offsets AI chip selloff fears
+  - [Economic Times Markets] Gold prices fall for 3rd straight session; silver dips to Rs 2.30 lakh/kg as rising oil prices fuel rate hike 
+  - [Economic Times Markets] Are bluechip stocks cheap and safe to invest in now? Radhika Gupta explains why the answer isn't so simple
+  - [Economic Times Markets] Sensex tumbles over 550 points, Nifty falls below 24,250 as Iran-US conflict escalates
+  - [Economic Times Markets] US Stock Market: Starship, AI ambitions fuel bullish Wall Street outlook on newly listed SpaceX
+  - [Economic Times Markets] Japan's Nikkei falls in volatile trade as tech tracks Nasdaq selloff
+  - [Economic Times Markets] Himadri Speciality among 4 stocks that closed below VWAP
+
+── DISCLAIMER ──
+Automated research only. NOT financial advice. Not SEBI-registered.
+=================================================================
