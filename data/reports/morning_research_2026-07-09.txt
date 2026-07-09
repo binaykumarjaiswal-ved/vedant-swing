@@ -1,0 +1,166 @@
+=================================================================
+  VEDANT SWING — MORNING RESEARCH — 09 Jul 2026 11:07 AM IST
+  Groq AI brain + Nifty 500 scan | Sector filter | PE + S/R + RSS news
+=================================================================
+Market mood: BULLISH (Nifty 20d: +4.0%)
+Stocks scanned: 32 | News items: 76 | Universe: fallback list
+
+
+── GROQ AI MORNING BRAIN ──
+[Groq AI Morning Brain — llama-3.3-70b-versatile]
+**MORNING GROQ RESEARCH REPORT**
+
+**1. MARKET VERDICT**
+The market mood is **BULLISH** as the Nifty has shown a 20-day gain of 4.0%. This uptrend is expected to continue, making it a favorable day for swing buys. However, it's essential to remain cautious and selective in stock picks, as the market can be volatile.
+
+**2. NEWS & MACRO**
+Recent headlines, such as "Sensex jumps over 600 points, Nifty reclaims 24,000. 5 key factors behind today's sharp D-Street rebound" and "Dixon Tech, Syrma SGS, Amber shares surge up to 6%. What does customs duty relief mean?" indicate a positive sentiment in the market. Additionally, "Kalyan Jewellers shares jump 9%, extend two-day rally to over 15% after robust Q1 business update" suggests that companies with strong quarterly performances are being rewarded by the market. However, "Gold prices fall to Rs 1.43 lakh/10 grams, silver dips Rs 15,000 in 4 days as Iran war raises inflation worries" and "Graphite India shares in focus as firm shuts German divisions amid Russia-Ukraine war" remind us of the potential risks and uncertainties in the global economy.
+
+**3. STRONG SECTORS**
+* Pharma: +6.5% 20d STRONG
+* Healthcare: +6.5% 20d STRONG
+* Banking: +4.0% 20d STRONG
+* NBFC: +4.0% 20d STRONG
+* Insurance: +4.0% 20d STRONG
+We should favor these strong sectors, particularly Pharma and Healthcare, which have shown significant gains over the past 20 days.
+
+**4. TOP 3 STOCKS FOR TODAY**
+* **BAJFINANCE**: Verdict - BUY. Why - Strong technicals (RSI 58.5, Trend up), favorable PE (33.8) and earnings growth (22.0%). News sentiment is neutral, but the company's strong fundamentals and sector performance make it an attractive pick. Entry zone: Rs.969.81 - Rs.999.80, Target: Rs.1029.79, Stop/Average trigger: Rs.969.81.
+* **HDFCBANK**: Verdict - BUY. Why - Positive technicals (RSI 64.3, Trend up), reasonable PE (18.7) and earnings growth (8.0%). The company's strong quarterly performance and favorable sector trend make it a good pick. Entry zone: Rs.793.46 - Rs.818.00, Target: Rs.842.54, Stop/Average trigger: Rs.793.46.
+* **CHOLAFIN**: Verdict - WATCH. Why - Strong technicals (RSI 58.5, Trend up) and favorable earnings growth (30.6%), but the stock is near its resistance level (Rs.1875). We should wait for a breakout or a pullback before entering. Entry zone: Rs.1718.45 - Rs.1771.60, Target: Rs.1824.75, Stop/Average trigger: Rs.1718.45.
+
+**5. STOCKS TO AVOID TODAY**
+* **SBILIFE**: The company's weak fundamentals (EPS growth -1.1%, Revenue growth -82.2%) and high PE (75.6) make it an unattractive pick.
+* **AUROPHARMA**: The stock is near its resistance level (Rs.1636.8), and its earnings growth (2.0%) is relatively low compared to its PE (26.8).
+
+**6. RISKS**
+* Market risk: A sudden change in market sentiment can affect the overall trend.
+* Global risk: Geopolitical tensions, such as the Russia-Ukraine war, can impact the global economy.
+* Sector risk: A downturn in a specific sector, such as Banking or NBFC, can affect the overall market.
+* Event risk: Unexpected events, such as a change in government policies or natural disasters, can impact the market.
+* Liquidity risk: A lack of liquidity in a particular stock can make it difficult to enter or exit a trade.
+
+**7. PRE-MARKET CHECKLIST**
+1. Is the market trend bullish? Yes/No
+2. Are the strong sectors aligned with our stock picks? Yes/No
+3. Are the technicals favorable for our stock picks? Yes/No
+4. Are the fundamentals strong for our stock picks? Yes/No
+5. Is the news sentiment positive for our stock picks? Yes/No
+6. Are the entry and exit zones clearly defined? Yes/No
+7. Is the stop/average trigger in place? Yes/No
+8. Are we prepared for potential risks? Yes/No
+
+**8. FINAL CALL**
+Our top pick for today's 3% swing is **BAJFINANCE**, given its strong technicals, favorable fundamentals, and positive sector trend. However, we must remain cautious and be prepared for potential risks.
+
+Not SEBI-registered advice. Trade at your own risk.
+
+── SECTOR STRENGTH (20-day) ──
+  #1 Pharma: +6.5% 20d STRONG
+  #2 Healthcare: +6.5% 20d STRONG
+  #3 Banking: +4.0% 20d STRONG
+  #4 NBFC: +4.0% 20d STRONG
+  #5 Insurance: +4.0% 20d STRONG
+  #6 FMCG: +4.0% 20d 
+  #7 Energy: +4.0% 20d 
+  #8 Metal: +4.0% 20d 
+
+── TOP RESEARCH PICKS (technical scan) ──
+
+#1  BAJFINANCE  (Nifty 50 | NBFC)  —  Rs.999.80
+     Signal: STRONG BUY  |  Score: 90/100
+     Best buy: Rs.999.80  |  Qty: 30  |  Target +3%: Rs.1029.79
+     Technical: RSI 58.5 | Trend up | vs Nifty +11.6%
+     Fundamentals: PE 33.8 | EPS growth +22.0% | Strong fundamentals
+     Support Rs.855.19 | Resistance Rs.1052.9 | S 855 / R 1053
+     TA: RSI 58 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#2  SBILIFE  (Nifty 50 | Insurance)  —  Rs.1814.00
+     Signal: STRONG BUY  |  Score: 82/100
+     Best buy: Rs.1814.00  |  Qty: 16  |  Target +3%: Rs.1868.42
+     Technical: RSI 54.5 | Trend sideways | vs Nifty +1.6%
+     Fundamentals: PE 75.6 | EPS growth -1.1% | Weak fundamentals
+     Support Rs.1700.4 | Resistance Rs.1989.6 | S 1700 / R 1990
+     TA: RSI 55 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#3  BAJAJFINSV  (Nifty 50 | NBFC)  —  Rs.1871.80
+     Signal: STRONG BUY  |  Score: 76/100
+     Best buy: Rs.1871.80  |  Qty: 16  |  Target +3%: Rs.1927.95
+     Technical: RSI 62.7 | Trend up | vs Nifty +9.9%
+     Fundamentals: PE 31.2 | EPS growth +5.0% | Average fundamentals
+     Support Rs.1639.1 | Resistance Rs.1916.0 | Near resistance Rs.1916
+     TA: RSI 63 mild momentum, MACD bullish crossover, Above 20 EMA
+
+#4  HDFCAMC  (Nifty Next 50 | Other)  —  Rs.2704.20
+     Signal: STRONG BUY  |  Score: 76/100
+     Best buy: Rs.2704.20  |  Qty: 11  |  Target +3%: Rs.2785.33
+     Technical: RSI 53.2 | Trend up | vs Nifty +9.2%
+     Fundamentals: PE 42.5 | EPS growth -2.5% | Average fundamentals
+     Support Rs.2380.8 | Resistance Rs.2838.4 | S 2381 / R 2838
+     TA: RSI 53 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#5  HDFCBANK  (Nifty 50 | Banking)  —  Rs.818.00
+     Signal: BUY  |  Score: 73/100
+     Best buy: Rs.818.00  |  Qty: 36  |  Target +3%: Rs.842.54
+     Technical: RSI 64.3 | Trend up | vs Nifty +7.7%
+     Fundamentals: PE 18.7 | EPS growth +8.0% | Average fundamentals
+     Support Rs.720.39 | Resistance Rs.843.0 | S 720 / R 843
+     TA: RSI 64 mild momentum, MACD bullish crossover, Above 20 EMA
+     News: HDFC Bank Share Price Live Updates: HDFC Bank's Price Update
+
+#6  CHOLAFIN  (Nifty Next 50 | NBFC)  —  Rs.1771.60
+     Signal: BUY  |  Score: 68/100
+     Best buy: Rs.1771.60  |  Qty: 16  |  Target +3%: Rs.1824.75
+     Technical: RSI 58.5 | Trend up | vs Nifty +17.9%
+     Fundamentals: PE 30.0 | EPS growth +30.6% | Strong fundamentals
+     Support Rs.1444.6 | Resistance Rs.1875.0 | S 1445 / R 1875
+     TA: RSI 58 ideal for 3% bounce, Above 20 EMA, Uptrend intact
+
+#7  ICICIBANK  (Nifty 50 | Banking)  —  Rs.1389.00
+     Signal: BUY  |  Score: 62/100
+     Best buy: Rs.1389.00  |  Qty: 21  |  Target +3%: Rs.1430.67
+     Technical: RSI 59.5 | Trend up | vs Nifty +1.5%
+     Fundamentals: PE 19.0 | EPS growth +9.3% | Strong fundamentals
+     Support Rs.1213.7 | Resistance Rs.1433.0 | S 1214 / R 1433
+     TA: RSI 59 ideal for 3% bounce, Above 20 EMA, Uptrend intact
+     News: ICICI Bank Share Price Live Updates: ICICI Bank's Current Market Posit
+
+#8  AUROPHARMA  (Nifty Next 50 | Pharma)  —  Rs.1589.40
+     Signal: WATCH  |  Score: 61/100
+     Best buy: Rs.1589.40  |  Qty: 18  |  Target +3%: Rs.1637.08
+     Technical: RSI 61.5 | Trend up | vs Nifty +4.6%
+     Fundamentals: PE 26.8 | EPS growth +2.0% | Average fundamentals
+     Support Rs.1363.5 | Resistance Rs.1636.8 | Near resistance Rs.1637
+     TA: RSI 61 mild momentum, MACD bullish crossover, Above 20 EMA
+
+#9  MUTHOOTFIN  (Nifty Next 50 | NBFC)  —  Rs.3062.70
+     Signal: WATCH  |  Score: 57/100
+     Best buy: Rs.3062.70  |  Qty: 9  |  Target +3%: Rs.3154.58
+     Technical: RSI 46.6 | Trend down | vs Nifty +1.7%
+     Fundamentals: PE 11.6 | EPS growth +126.7% | Strong fundamentals
+     Support Rs.2822.6 | Resistance Rs.3646.0 | S 2823 / R 3646
+     TA: RSI 47 ideal for 3% bounce, MACD bullish crossover, Beating Nifty by +1.7%
+
+#10  ICICIGI  (Nifty Next 50 | Insurance)  —  Rs.1794.90
+     Signal: WATCH  |  Score: 56/100
+     Best buy: Rs.1794.90  |  Qty: 16  |  Target +3%: Rs.1848.75
+     Technical: RSI 51.8 | Trend sideways | vs Nifty -0.3%
+     Fundamentals: PE 32.5 | EPS growth +7.3% | Strong fundamentals
+     Support Rs.1671.8 | Resistance Rs.1901.68 | S 1672 / R 1902
+     TA: RSI 52 ideal for 3% bounce, Above 20 EMA, 5d move +2.1% — room for 3%
+
+── MARKET HEADLINES (RSS) ──
+  - [Economic Times Markets] Dixon Tech, Syrma SGS, Amber shares surge up to 6%.  What does customs duty relief mean?
+  - [Economic Times Markets] Kalyan Jewellers shares jump 9%, extend two-day rally to over 15% after robust Q1 business update
+  - [Economic Times Markets] Global Market: Japan's 10-year bond yield hits 30-year high as inflation, fiscal concerns weigh
+  - [Economic Times Markets] SK Hynix's $28 billion US share sale draws more than seven times demand: Reports
+  - [Economic Times Markets] 33% upside! Motilal Oswal adds 10 stocks to model portfolio as markets gear up for Q1
+  - [Economic Times Markets] Gold prices fall to Rs 1.43 lakh/10 grams, silver dips Rs 15,000 in 4 days as Iran war raises inflation worrie
+  - [Economic Times Markets] Sensex jumps over 600 points, Nifty reclaims 24,000. 5 key factors behind today's sharp D-Street rebound
+  - [Economic Times Markets] Graphite India shares in focus as firm shuts German divisions amid Russia-Ukraine war. What will be the impact
+  - [Economic Times Markets] Antony Waste shares tumble 5% after waste mound collapse at Pune facility; workers feared trapped
+  - [Economic Times Markets] Ather Energy among 4 stocks closed above VWAP, signalling bullish shift
+
+── DISCLAIMER ──
+Automated research only. NOT financial advice. Not SEBI-registered.
+=================================================================
