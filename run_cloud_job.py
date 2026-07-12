@@ -103,29 +103,42 @@ def run_morning_research(cfg: dict, benchmark: dict) -> tuple[list, list, dict, 
 
 
 def build_position_signal(benchmark: dict, news: dict | None = None) -> str:
-    from ai_analyst import analyze_position
+    """Summarize all open multi-holdings for morning briefing."""
     from nse_data import nse_quote
-    from strategy import evaluate_position, load_position
+    from strategy import evaluate_position, list_positions
     from telegram_notify import format_position
 
-    pos = load_position()
-    if not pos:
+    positions = list_positions()
+    if not positions:
         return ""
 
-    quote = nse_quote(pos.symbol)
-    if not quote or quote.get("ltp", 0) <= 0:
-        return f"Could not fetch price for {pos.symbol}"
+    chunks = []
+    action_needed = []
+    for pos in positions:
+        quote = nse_quote(pos.symbol)
+        if not quote or quote.get("ltp", 0) <= 0:
+            chunks.append(f"{pos.symbol}: price unavailable")
+            continue
+        signal = evaluate_position(float(quote["ltp"]), pos)
+        sig = signal.get("signal", "HOLD")
+        if sig in ("SELL", "STOP", "AVERAGE"):
+            action_needed.append(format_position(signal, pos.symbol))
+        else:
+            chunks.append(
+                f"{pos.symbol} HOLD {signal.get('pnl_pct', 0):+.1f}% "
+                f"(tgt Rs.{pos.sell_target():.0f} stop Rs.{pos.hard_stop():.0f})"
+            )
 
-    signal = evaluate_position(quote["ltp"], pos)
-    ai_note = analyze_position(signal, pos.symbol)
-    msg = format_position(signal, pos.symbol)
-    if ai_note:
-        msg += f"\n\nAI: {ai_note}"
+    lines = [f"HOLDINGS ({len(positions)})"]
+    if action_needed:
+        lines.append("\n── ACTION ──\n" + "\n\n".join(action_needed))
+    if chunks:
+        lines.append("\n── HOLD ──\n" + "\n".join(chunks))
     if news and news.get("market_headlines"):
-        msg += "\n\nMarket headlines:"
+        lines.append("\nMarket headlines:")
         for h in news["market_headlines"][:3]:
-            msg += f"\n  - {h.get('title', '')[:80]}"
-    return msg
+            lines.append(f"  - {h.get('title', '')[:80]}")
+    return "\n".join(lines)
 
 
 def build_buy_signal(benchmark: dict, cfg: dict, all_scored: list) -> str:
@@ -209,8 +222,14 @@ def main() -> int:
 
         all_scored, research_picks, news, ai_summary = run_morning_research(cfg, benchmark)
 
-        if load_position():
+        from strategy import list_positions
+
+        if list_positions():
+            # Holdings status + still allow buy research when room for more
             trading_signal = build_position_signal(benchmark, news)
+            from holdings import max_holdings
+            if len(list_positions()) < max_holdings():
+                trading_signal = (trading_signal + "\n\n" + build_buy_signal(benchmark, cfg, all_scored)).strip()
         else:
             trading_signal = build_buy_signal(benchmark, cfg, all_scored)
 

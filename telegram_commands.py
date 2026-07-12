@@ -1,4 +1,4 @@
-"""Process /buy /sell /average /status from Telegram (no 24/7 listener needed)."""
+"""Process /buy /sell /average /status /holdings from Telegram (multi-stock)."""
 
 from __future__ import annotations
 
@@ -13,8 +13,9 @@ from strategy import (
     CONFIG,
     add_average,
     calc_best_buy_price,
-    calc_buy_order,
     close_position,
+    get_position,
+    list_positions,
     load_position,
     open_position,
 )
@@ -41,6 +42,7 @@ def _save_offset(offset: int) -> None:
 def process_commands() -> int:
     """Poll Telegram once; return number of commands handled."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        print("TELEGRAM: not configured (set TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID)")
         return 0
 
     offset = _load_offset()
@@ -48,10 +50,12 @@ def process_commands() -> int:
     try:
         resp = requests.get(url, params={"offset": offset, "timeout": 5}, timeout=15)
         data = resp.json()
-    except Exception:
+    except Exception as exc:
+        print("TELEGRAM poll error:", exc)
         return 0
 
     if not data.get("ok"):
+        print("TELEGRAM getUpdates failed:", data.get("description", data))
         return 0
 
     handled = 0
@@ -78,97 +82,159 @@ def _handle_command(text: str) -> bool:
     cmd = parts[0].lower().split("@")[0]
 
     if cmd in ("/help", "/start"):
+        max_h = CONFIG.get("max_holdings", 10)
         send_message(
-            "Stock Analyst Commands:\n"
-            "/buy SYMBOL — record purchase (e.g. /buy TITAN)\n"
-            "/average — record averaging down\n"
-            "/sell — close position\n"
-            "/status — show open position\n"
-            "/help — this message"
+            "Vedant Swing — multi holdings\n\n"
+            f"/buy SYMBOL [price] [qty] — add holding (max {max_h})\n"
+            "  e.g. /buy TITAN\n"
+            "  e.g. /buy RELIANCE 1400 20\n"
+            "/sell SYMBOL — close that holding\n"
+            "/average SYMBOL — record optional average\n"
+            "/status — all holdings + SELL/HOLD/STOP\n"
+            "/holdings — same as /status\n"
+            "/help — this message\n\n"
+            "Bot does NOT place broker orders. You trade, then /buy or /sell."
         )
         return True
 
-    if cmd == "/status":
-        pos = load_position()
-        if not pos:
-            send_message("No open position.")
-            return True
-        q = nse_quote(pos.symbol)
-        ltp = q["ltp"] if q else 0
-        send_message(
-            f"Position: {pos.symbol}\n"
-            f"Qty: {pos.total_qty}\n"
-            f"Avg: Rs.{pos.avg_price:.2f}\n"
-            f"LTP: Rs.{ltp:.2f}\n"
-            f"P&L: {pos.pnl_pct(ltp):+.2f}%\n"
-            f"Sell target: Rs.{pos.sell_target():.2f}\n"
-            f"Avg trigger: Rs.{pos.next_avg_trigger():.2f}\n"
-            f"Averages: {pos.average_count}/5"
-        )
-        return True
+    if cmd in ("/status", "/holdings"):
+        return _cmd_status()
 
     if cmd == "/sell":
-        pos = load_position()
-        if not pos:
-            send_message("No open position to sell.")
-            return True
-        sym = pos.symbol
-        close_position()
+        if len(parts) < 2:
+            open_list = list_positions()
+            if len(open_list) == 1:
+                symbol = open_list[0].symbol
+            elif not open_list:
+                send_message("No open holdings.")
+                return True
+            else:
+                syms = ", ".join(p.symbol for p in open_list)
+                send_message(f"Multiple holdings. Use /sell SYMBOL\nOpen: {syms}")
+                return True
+        else:
+            symbol = parts[1].upper()
         try:
-            from alert_state import clear_on_close
-            clear_on_close()
-        except ImportError:
+            if not close_position(symbol):
+                send_message(f"No open holding for {symbol}.")
+                return True
+        except ValueError as exc:
+            send_message(str(exc))
+            return True
+        try:
+            from alert_state import clear_symbol
+            clear_symbol(symbol)
+        except Exception:
             pass
-        send_message(f"Position closed: {sym}. Ready for next BUY signal.")
+        send_message(f"Closed tracking for {symbol}. (Sell in broker yourself if not done.)")
         return True
 
     if cmd == "/average":
-        pos = load_position()
+        if len(parts) < 2:
+            open_list = list_positions()
+            if len(open_list) == 1:
+                symbol = open_list[0].symbol
+            else:
+                send_message("Usage: /average SYMBOL")
+                return True
+        else:
+            symbol = parts[1].upper()
+        pos = get_position(symbol)
         if not pos:
-            send_message("No open position.")
+            send_message(f"No open holding for {symbol}.")
             return True
         if not pos.can_average():
-            send_message("Max 5 averages already used.")
-            return True
-        q = nse_quote(pos.symbol)
-        if not q:
-            send_message(f"Could not get price for {pos.symbol}")
-            return True
-        best = calc_best_buy_price(q)
-        add_budget = pos.initial_amount * CONFIG["average_fraction"]
-        order = calc_buy_order(add_budget, best)
-        pos = add_average(pos, best)
-        send_message(
-            f"Averaged {pos.symbol}\n"
-            f"Best price: Rs.{best:.2f}\n"
-            f"Added: {order['qty']} shares | Rs.{order['amount']:,.2f}\n"
-            f"New avg Rs.{pos.avg_price:.2f}\n"
-            f"Sell target Rs.{pos.sell_target():.2f}"
-        )
-        return True
-
-    if cmd == "/buy":
-        if len(parts) < 2:
-            send_message("Usage: /buy SYMBOL (e.g. /buy TITAN)")
-            return True
-        symbol = parts[1].upper()
-        if load_position():
-            send_message(f"Already holding {load_position().symbol}. /sell first.")
+            send_message(f"{symbol}: max averages reached.")
             return True
         q = nse_quote(symbol)
         if not q:
             send_message(f"Could not get price for {symbol}")
             return True
-        best = calc_best_buy_price(q)
-        pos = open_position(symbol, best)
+        price = calc_best_buy_price(q)
+        if len(parts) >= 3:
+            try:
+                price = float(parts[2])
+            except ValueError:
+                pass
+        pos = add_average(pos, price)
         send_message(
-            f"BUY recorded: {symbol}\n"
-            f"Best buy price: Rs.{best:.2f}\n"
-            f"Qty: {pos.total_qty} shares\n"
-            f"Invested: Rs.{pos.total_invested:,.2f} (budget Rs.{CONFIG['default_investment']:,.0f})\n"
-            f"Sell target: Rs.{pos.sell_target():.2f}\n"
-            f"Avg trigger: Rs.{pos.next_avg_trigger():.2f}"
+            f"AVERAGE recorded: {symbol}\n"
+            f"Add @ Rs.{price:.2f}\n"
+            f"New avg Rs.{pos.avg_price:.2f}\n"
+            f"Qty {pos.total_qty} | Target Rs.{pos.sell_target():.2f} | Stop Rs.{pos.hard_stop():.2f}"
+        )
+        return True
+
+    if cmd == "/buy":
+        if len(parts) < 2:
+            send_message("Usage: /buy SYMBOL [price] [qty]\ne.g. /buy DABUR")
+            return True
+        symbol = parts[1].upper()
+        if get_position(symbol):
+            send_message(f"Already tracking {symbol}. /sell {symbol} first to reset.")
+            return True
+        price = 0.0
+        qty = None
+        if len(parts) >= 3:
+            try:
+                price = float(parts[2])
+            except ValueError:
+                price = 0
+        if len(parts) >= 4:
+            try:
+                qty = int(float(parts[3]))
+            except ValueError:
+                qty = None
+        if price <= 0:
+            q = nse_quote(symbol)
+            if not q:
+                send_message(f"Could not get price for {symbol}")
+                return True
+            price = calc_best_buy_price(q)
+        try:
+            pos = open_position(symbol, price, qty=qty)
+        except ValueError as exc:
+            send_message(str(exc))
+            return True
+        send_message(
+            f"HOLDING added: {symbol}\n"
+            f"Entry Rs.{price:.2f} | Qty {pos.total_qty}\n"
+            f"Invested Rs.{pos.total_invested:,.0f}\n"
+            f"Target Rs.{pos.sell_target():.2f} | Stop Rs.{pos.hard_stop():.2f}\n"
+            f"Open holdings: {len(list_positions())}/{CONFIG.get('max_holdings', 10)}\n"
+            "You will get SELL/STOP/AVERAGE alerts on cloud checks."
         )
         return True
 
     return False
+
+
+def _cmd_status() -> bool:
+    from strategy import evaluate_position
+
+    positions = list_positions()
+    if not positions:
+        send_message("No open holdings.\nAdd with /buy SYMBOL after you buy in broker.")
+        return True
+
+    lines = [f"HOLDINGS ({len(positions)}/{CONFIG.get('max_holdings', 10)})", ""]
+    for pos in positions:
+        q = nse_quote(pos.symbol)
+        ltp = float(q["ltp"]) if q and q.get("ltp") else 0
+        if ltp > 0:
+            sig = evaluate_position(ltp, pos)
+            signal = sig.get("signal", "—")
+            pnl = sig.get("pnl_pct", pos.pnl_pct(ltp))
+            reason = (sig.get("reason") or "")[:80]
+        else:
+            signal, pnl, reason = "?", 0, "No price"
+        lines.append(
+            f"{pos.symbol} [{signal}]\n"
+            f"  Qty {pos.total_qty} @ Rs.{pos.avg_price:.2f} | LTP Rs.{ltp:.2f} | P&L {pnl:+.2f}%\n"
+            f"  Target Rs.{pos.sell_target():.2f} | Stop Rs.{pos.hard_stop():.2f}\n"
+            f"  {reason}"
+        )
+        lines.append("")
+    lines.append("Not SEBI advice. Trade manually in broker.")
+    send_message("\n".join(lines))
+    return True

@@ -32,6 +32,7 @@
   "auto_paper_trade": true,
   "auto_paper_min_confidence": 72,
   "max_paper_positions": 3,
+  "max_holdings": 10,
   "regime_filter_enabled": true,
   "regime_min_score": 45,
   "regime_strict": true,

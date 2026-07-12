@@ -26,6 +26,7 @@ USER_DATA_FILES = (
     "alert_log.json",
     "paper_portfolio.json",
     "journal.json",
+    "holdings.json",
 )
 
 

@@ -173,27 +173,51 @@ def get_dashboard() -> dict:
         report_preview = ai_morning_briefing or text[:1200]
         top_picks = _parse_top_picks(text)
 
+    # Multi-holdings portfolio
     position_data = None
-    pos = load_position()
-    if pos:
-        quote = nse_quote(pos.symbol)
-        ltp = quote.get("ltp", 0) if quote else 0
-        signal = evaluate_position(ltp, pos) if ltp > 0 else None
-        position_data = {
-            "symbol": pos.symbol,
-            "qty": pos.total_qty,
-            "avg_price": round(pos.avg_price, 2),
-            "invested": round(pos.total_invested, 2),
-            "opened": pos.opened,
-            "averages": f"{pos.average_count}/{STRAT_CFG['max_averages']}",
-            "sell_target": pos.sell_target(),
-            "avg_trigger": pos.next_avg_trigger(),
-            "ltp": ltp,
-            "change_pct": quote.get("change_pct", 0) if quote else 0,
-            "pnl_pct": round(pos.pnl_pct(ltp), 2) if ltp else 0,
-            "signal": signal["signal"] if signal else "—",
-            "signal_reason": signal.get("reason", "") if signal else "",
-        }
+    holdings_data = {"count": 0, "positions": [], "max_holdings": STRAT_CFG.get("max_holdings", 10)}
+    try:
+        from holdings import portfolio_summary
+        holdings_data = portfolio_summary()
+        # Legacy single-position field = first holding for older UI bits
+        if holdings_data.get("positions"):
+            p0 = holdings_data["positions"][0]
+            position_data = {
+                "symbol": p0["symbol"],
+                "qty": p0["qty"],
+                "avg_price": p0["avg_price"],
+                "invested": p0["invested"],
+                "opened": p0.get("opened"),
+                "averages": p0.get("averages"),
+                "sell_target": p0.get("sell_target"),
+                "avg_trigger": p0.get("avg_trigger"),
+                "ltp": p0.get("ltp"),
+                "change_pct": p0.get("change_pct", 0),
+                "pnl_pct": p0.get("pnl_pct"),
+                "signal": p0.get("signal"),
+                "signal_reason": p0.get("signal_reason"),
+            }
+    except Exception:
+        pos = load_position()
+        if pos:
+            quote = nse_quote(pos.symbol)
+            ltp = quote.get("ltp", 0) if quote else 0
+            signal = evaluate_position(ltp, pos) if ltp > 0 else None
+            position_data = {
+                "symbol": pos.symbol,
+                "qty": pos.total_qty,
+                "avg_price": round(pos.avg_price, 2),
+                "invested": round(pos.total_invested, 2),
+                "opened": pos.opened,
+                "averages": f"{pos.average_count}/{STRAT_CFG.get('max_averages', 1)}",
+                "sell_target": pos.sell_target(),
+                "avg_trigger": pos.next_avg_trigger(),
+                "ltp": ltp,
+                "change_pct": quote.get("change_pct", 0) if quote else 0,
+                "pnl_pct": round(pos.pnl_pct(ltp), 2) if ltp else 0,
+                "signal": signal["signal"] if signal else "—",
+                "signal_reason": signal.get("reason", "") if signal else "",
+            }
 
     try:
         from watchlists import get_watchlist
@@ -237,6 +261,7 @@ def get_dashboard() -> dict:
             "mode": "recommend_only",
         },
         "position": position_data,
+        "holdings": holdings_data,
         "report_date": report_date,
         "report_meta": report_meta,
         "report_preview": report_preview,
@@ -650,51 +675,74 @@ def format_share_text(data: dict) -> str:
 
 
 def _save_position_to_github():
-    from cloud_sync import push_position
-    from strategy import POSITION_FILE
+    from pathlib import Path
 
-    if not POSITION_FILE.exists():
-        return True
-    text = POSITION_FILE.read_text(encoding="utf-8")
-    return push_position(text)
+    from cloud_sync import push_position, push_user_data
+
+    root = Path(__file__).resolve().parent.parent
+    ok = True
+    holdings = root / "data" / "holdings.json"
+    if holdings.exists():
+        try:
+            if not push_user_data("holdings.json"):
+                ok = False
+        except Exception:
+            ok = False
+    pos = root / "data" / "position.json"
+    if pos.exists():
+        try:
+            if not push_position(pos.read_text(encoding="utf-8")):
+                ok = False
+        except Exception:
+            ok = False
+    return ok
 
 
 def position_action(action: str, symbol: str | None = None, price: float | None = None) -> dict:
     from nse_data import nse_quote
     from strategy import (
-        CONFIG as STRAT_CFG,
         add_average,
         calc_best_buy_price,
         close_position,
-        load_position,
+        get_position,
         open_position,
     )
 
     _sync()
     err = None
     ok = False
+    msg = ""
 
     if action == "buy":
         if not symbol:
             return {"ok": False, "error": "Symbol required"}
-        if load_position():
-            return {"ok": False, "error": f"Already holding {load_position().symbol}"}
+        if get_position(symbol.upper()):
+            return {"ok": False, "error": f"Already holding {symbol.upper()}"}
         if not price or price <= 0:
             q = nse_quote(symbol.upper())
             if not q:
                 return {"ok": False, "error": "No price"}
             price = calc_best_buy_price(q)
-        open_position(symbol.upper(), price, None)
-        ok = True
+        try:
+            open_position(symbol.upper(), price, None)
+            ok = True
+            msg = f"Added {symbol.upper()}"
+        except ValueError as exc:
+            return {"ok": False, "error": str(exc)}
     elif action == "sell":
-        if not load_position():
-            return {"ok": False, "error": "No open position"}
-        close_position()
-        ok = True
+        try:
+            if not close_position(symbol.upper() if symbol else None):
+                return {"ok": False, "error": "No open position" + (f" for {symbol}" if symbol else "")}
+            ok = True
+            msg = f"Closed {symbol or 'position'}"
+        except ValueError as exc:
+            return {"ok": False, "error": str(exc)}
     elif action == "average":
-        pos = load_position()
+        if not symbol:
+            return {"ok": False, "error": "Symbol required for average"}
+        pos = get_position(symbol.upper())
         if not pos:
-            return {"ok": False, "error": "No open position"}
+            return {"ok": False, "error": f"No open position for {symbol}"}
         if not pos.can_average():
             return {"ok": False, "error": "Max averages reached"}
         if not price or price <= 0:
@@ -704,6 +752,7 @@ def position_action(action: str, symbol: str | None = None, price: float | None 
             return {"ok": False, "error": "No price"}
         add_average(pos, price)
         ok = True
+        msg = f"Averaged {symbol.upper()}"
     elif action == "status":
         ok = True
     else:
@@ -714,7 +763,13 @@ def position_action(action: str, symbol: str | None = None, price: float | None 
             err = "Saved locally but GitHub sync failed — check GITHUB_TOKEN on server"
 
     dash = get_dashboard()
-    return {"ok": ok, "position": dash.get("position"), "error": err}
+    return {
+        "ok": ok,
+        "message": msg,
+        "position": dash.get("position"),
+        "holdings": dash.get("holdings"),
+        "error": err,
+    }
 
 
 def list_reports() -> list[dict]:

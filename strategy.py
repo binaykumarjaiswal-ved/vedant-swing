@@ -22,76 +22,20 @@ def _cfg() -> dict:
     return CONFIG
 
 
-@dataclass
-class Lot:
-    price: float
-    qty: int
-    amount: float
-    kind: str  # initial | average
-    date: str
+# Multi-holdings (preferred) + legacy single-position compatibility
+from holdings import (  # noqa: E402
+    Position,
+    add_average as _holdings_add_average,
+    close_position as _holdings_close,
+    get_position,
+    list_positions,
+    load_position,
+    open_position as _holdings_open,
+)
 
 
-@dataclass
-class Position:
-    active: bool
-    symbol: str
-    initial_amount: float
-    lots: list
-    average_count: int
-    opened: str
-
-    @property
-    def total_qty(self) -> int:
-        return sum(l["qty"] for l in self.lots)
-
-    @property
-    def total_invested(self) -> float:
-        return sum(l["amount"] for l in self.lots)
-
-    @property
-    def avg_price(self) -> float:
-        tq = self.total_qty
-        return self.total_invested / tq if tq else 0
-
-    def pnl_pct(self, ltp: float) -> float:
-        if self.avg_price <= 0:
-            return 0
-        return ((ltp / self.avg_price) - 1) * 100
-
-    def sell_target(self) -> float:
-        c = _cfg()
-        # Prefer stored target on first lot if present
-        for lot in self.lots:
-            if lot.get("target"):
-                return round(float(lot["target"]), 2)
-        return round(self.avg_price * (1 + c.get("profit_target_pct", 3.0) / 100), 2)
-
-    def hard_stop(self) -> float:
-        c = _cfg()
-        for lot in self.lots:
-            if lot.get("stop"):
-                return round(float(lot["stop"]), 2)
-        return round(self.avg_price * (1 - c.get("hard_stop_pct", 4.0) / 100), 2)
-
-    def next_avg_trigger(self) -> float:
-        c = _cfg()
-        return round(self.avg_price * (1 - c.get("loss_trigger_pct", 3.0) / 100), 2)
-
-    def can_average(self) -> bool:
-        c = _cfg()
-        return self.average_count < int(c.get("max_averages", 1))
-
-
-def load_position() -> Position | None:
-    if not POSITION_FILE.exists():
-        return None
-    try:
-        d = json.loads(POSITION_FILE.read_text(encoding="utf-8"))
-        if not d.get("active"):
-            return None
-        return Position(**d)
-    except (json.JSONDecodeError, TypeError):
-        return None
+def load_all_positions() -> list:
+    return list_positions()
 
 
 def calc_best_buy_price(quote: dict) -> float:
@@ -163,11 +107,16 @@ def enrich_pick_with_order(pick: dict, quote: dict | None = None) -> dict:
 
 
 def save_position(pos: Position | None) -> None:
-    POSITION_FILE.parent.mkdir(parents=True, exist_ok=True)
+    """Legacy helper — prefer holdings APIs."""
     if pos is None or not pos.active:
-        POSITION_FILE.write_text(json.dumps({"active": False}, indent=2), encoding="utf-8")
+        try:
+            _holdings_close(None)
+        except ValueError:
+            pass
         return
-    POSITION_FILE.write_text(json.dumps(asdict(pos), indent=2), encoding="utf-8")
+    # Upsert via close+open is unsafe; write via holdings store path
+    from holdings import _upsert  # noqa: WPS433
+    _upsert(pos)
 
 
 def open_position(
@@ -176,55 +125,17 @@ def open_position(
     amount: float | None = None,
     stop: float | None = None,
     target: float | None = None,
+    qty: int | None = None,
 ) -> Position:
-    c = _cfg()
-    budget = amount or c.get("default_investment", 30000)
-    order = calc_buy_order(budget, price)
-    if stop is None:
-        stop = round(order["price"] * (1 - c.get("hard_stop_pct", 4.0) / 100), 2)
-    if target is None:
-        target = round(order["price"] * (1 + c.get("profit_target_pct", 3.0) / 100), 2)
-    lot = {
-        "price": order["price"],
-        "qty": order["qty"],
-        "amount": order["amount"],
-        "kind": "initial",
-        "date": datetime.now().strftime("%Y-%m-%d"),
-        "stop": stop,
-        "target": target,
-    }
-    pos = Position(
-        active=True,
-        symbol=symbol,
-        initial_amount=budget,
-        lots=[lot],
-        average_count=0,
-        opened=lot["date"],
-    )
-    save_position(pos)
-    return pos
+    return _holdings_open(symbol, price, amount=amount, stop=stop, target=target, qty=qty)
 
 
 def add_average(pos: Position, price: float) -> Position:
-    c = _cfg()
-    if not pos.can_average():
-        return pos
-    add_budget = pos.initial_amount * c.get("average_fraction", 0.30)
-    order = calc_buy_order(add_budget, price)
-    pos.lots.append({
-        "price": order["price"],
-        "qty": order["qty"],
-        "amount": order["amount"],
-        "kind": "average",
-        "date": datetime.now().strftime("%Y-%m-%d"),
-    })
-    pos.average_count += 1
-    save_position(pos)
-    return pos
+    return _holdings_add_average(pos, price)
 
 
-def close_position() -> None:
-    save_position(None)
+def close_position(symbol: str | None = None) -> bool:
+    return _holdings_close(symbol)
 
 
 def evaluate_position(ltp: float, pos: Position) -> dict:

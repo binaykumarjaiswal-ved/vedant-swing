@@ -739,30 +739,84 @@ async function loadDashboard() {
 
 function renderPosition(data) {
   const body = $("position-body");
-  const actions = $("position-actions");
+  const summary = $("holdings-summary");
+  const tgLine = $("telegram-status-line");
   if (!body) return;
-  const p = data.position;
-  if (!p) {
-    body.innerHTML = '<p class="muted">No tracked live position. Paper tab is for practice only.</p>';
-    actions?.classList.add("hidden");
+
+  if (tgLine) {
+    tgLine.textContent = data.telegram_configured
+      ? "Telegram: ON — alerts will send when cloud jobs run"
+      : "Telegram: OFF — set TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID on GitHub/Render";
+    tgLine.style.color = data.telegram_configured ? "#86efac" : "#fca5a5";
+  }
+
+  const h = data.holdings || {};
+  const rows = h.positions || [];
+  if (summary) {
+    if (rows.length) {
+      summary.textContent =
+        `${h.count || rows.length}/${h.max_holdings || 10} holdings · ` +
+        `Invested ${fmtRs(h.total_invested)} · Value ${fmtRs(h.total_value)} · ` +
+        `P&L ${h.total_pnl_pct != null ? h.total_pnl_pct + "%" : "—"}`;
+    } else {
+      summary.textContent = "No holdings yet. Add after you buy in broker (or Telegram /buy SYMBOL).";
+    }
+  }
+
+  if (!rows.length) {
+    body.innerHTML = '<p class="muted">Empty. After broker buy: add symbol here or /buy SYMBOL on Telegram.</p>';
     return;
   }
-  const pnlCls = (p.pnl_pct || 0) >= 0 ? "green" : "red";
-  body.innerHTML = `
-    <div class="rec-card" style="cursor:default">
-      <div class="rec-top">
-        <div><div class="rec-sym">${escHtml(p.symbol)}</div>
-        <div class="rec-meta">Qty ${p.qty} · Avg ${fmtRs(p.avg_price)} · Opened ${escHtml(p.opened || "")}</div></div>
-        <span class="signal-badge ${signalClass(p.signal)}">${escHtml(p.signal || "—")}</span>
-      </div>
-      <div class="level-grid">
-        <div class="level-box entry"><span>LTP</span><strong>${fmtRs(p.ltp)}</strong></div>
-        <div class="level-box stop"><span>Stop zone</span><strong>${fmtRs(p.avg_trigger)}</strong></div>
-        <div class="level-box target"><span>Target</span><strong>${fmtRs(p.sell_target)}</strong></div>
-      </div>
-      <p class="rec-thesis">P&amp;L <span class="${pnlCls}">${p.pnl_pct ?? 0}%</span> · ${escHtml(p.signal_reason || "")}</p>
-    </div>`;
-  actions?.classList.remove("hidden");
+
+  body.innerHTML = rows.map((p) => {
+    const pnlCls = (p.pnl_pct || 0) >= 0 ? "green" : "red";
+    return `
+      <div class="rec-card" style="cursor:default;margin-bottom:0.55rem" data-hold="${escHtml(p.symbol)}">
+        <div class="rec-top">
+          <div>
+            <div class="rec-sym">${escHtml(p.symbol)}</div>
+            <div class="rec-meta">Qty ${p.qty} · Avg ${fmtRs(p.avg_price)} · Opened ${escHtml(p.opened || "")}</div>
+          </div>
+          <span class="signal-badge ${signalClass(p.signal)}">${escHtml(p.signal || "—")}</span>
+        </div>
+        <div class="level-grid">
+          <div class="level-box entry"><span>LTP</span><strong>${fmtRs(p.ltp)}</strong></div>
+          <div class="level-box stop"><span>Stop</span><strong>${fmtRs(p.stop)}</strong></div>
+          <div class="level-box target"><span>Target</span><strong>${fmtRs(p.sell_target)}</strong></div>
+        </div>
+        <p class="rec-thesis">P&amp;L <span class="${pnlCls}">${p.pnl_pct ?? 0}% (${fmtRs(p.pnl)})</span> · ${escHtml(p.signal_reason || "")}</p>
+        <div class="action-row" style="margin-top:0.45rem">
+          <button type="button" class="btn btn-warn btn-sm" data-hold-avg="${escHtml(p.symbol)}">Average</button>
+          <button type="button" class="btn btn-danger btn-sm" data-hold-sell="${escHtml(p.symbol)}">Close track</button>
+        </div>
+      </div>`;
+  }).join("");
+
+  body.querySelectorAll("[data-hold-sell]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const sym = btn.dataset.holdSell;
+      if (!confirm(`Stop tracking ${sym}? (Sell in broker yourself first.)`)) return;
+      const r = await fetch("/api/position/sell", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ symbol: sym }),
+      }).then((x) => x.json());
+      toast(r.ok ? `Closed ${sym}` : (r.error || "Failed"), r.ok ? "success" : "error");
+      loadDashboard();
+    });
+  });
+  body.querySelectorAll("[data-hold-avg]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const sym = btn.dataset.holdAvg;
+      const r = await fetch("/api/position/average", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ symbol: sym }),
+      }).then((x) => x.json());
+      toast(r.ok ? `Averaged ${sym}` : (r.error || "Failed"), r.ok ? "success" : "error");
+      loadDashboard();
+    });
+  });
 }
 
 function paperBuyPayload(symbol, price, qty, stop, target) {
@@ -867,6 +921,24 @@ function updateRrPreview() {
 
 $("search-form").addEventListener("submit", (e) => { e.preventDefault(); runAnalyze($("symbol-input").value); });
 $("btn-refresh").addEventListener("click", loadDashboard);
+$("holdings-add-form")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const symbol = ($("hold-symbol")?.value || "").trim().toUpperCase();
+  if (!symbol) return toast("Enter symbol", "error");
+  const r = await fetch("/api/position/buy", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ symbol }),
+  }).then((x) => x.json());
+  if (r.ok) {
+    toast(`Tracking ${symbol}`, "success");
+    if ($("hold-symbol")) $("hold-symbol").value = "";
+    loadDashboard();
+  } else {
+    toast(r.error || "Could not add holding", "error");
+  }
+});
+
 $("btn-run-morning")?.addEventListener("click", async () => {
   const force = confirm("Run morning scan now? On weekends this uses Force mode (8–12 min on cloud).");
   if (!force) return;

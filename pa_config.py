@@ -24,6 +24,25 @@ def _load_dotenv():
 _load_dotenv()
 
 
+def _load_telegram_from_agent_project() -> None:
+    """Fallback: load from 09-Telegram-Agent encrypted store if secrets.env empty."""
+    if os.environ.get("TELEGRAM_BOT_TOKEN") and os.environ.get("TELEGRAM_CHAT_ID"):
+        return
+    agent = Path(r"D:\BINAY-Projects\09-Telegram-Agent")
+    if not agent.exists():
+        return
+    try:
+        import sys
+        sys.path.insert(0, str(agent))
+        from load_telegram import load_telegram_env  # noqa: WPS433
+        load_telegram_env()
+    except Exception:
+        pass
+
+
+_load_telegram_from_agent_project()
+
+
 def _groq_from_env_or_vault() -> str:
     key = os.environ.get("GROQ_API_KEY", "").strip()
     if key:
@@ -38,6 +57,16 @@ def _groq_from_env_or_vault() -> str:
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+
+
+def refresh_telegram_env() -> tuple[str, str]:
+    """Re-read env after secrets loaded (for tests / late bind)."""
+    global TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+    _load_dotenv()
+    _load_telegram_from_agent_project()
+    TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+    TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+    return TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 GROQ_API_KEY = _groq_from_env_or_vault()
 if GROQ_API_KEY:
     os.environ.setdefault("GROQ_API_KEY", GROQ_API_KEY)

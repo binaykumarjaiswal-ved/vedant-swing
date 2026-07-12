@@ -132,12 +132,14 @@
       </section>
 
       <section class="card" id="position-card">
-        <h2>Open Position Tracker</h2>
+        <h2>My Holdings (multi-stock)</h2>
+        <p class="muted small" id="holdings-summary">Track broker buys for SELL / STOP / HOLD alerts</p>
+        <p class="muted small" id="telegram-status-line"></p>
+        <form id="holdings-add-form" class="search-row" style="margin-bottom:0.75rem">
+          <input type="text" id="hold-symbol" placeholder="SYMBOL e.g. DABUR" required autocomplete="off" autocapitalize="characters">
+          <button type="submit" class="btn btn-primary">Add holding</button>
+        </form>
         <div id="position-body"><p class="muted">Loading…</p></div>
-        <div class="action-row hidden" id="position-actions">
-          <button type="button" class="btn btn-warn" data-action="average">Record Average</button>
-          <button type="button" class="btn btn-danger" data-action="sell">Record Sell</button>
-        </div>
       </section>
 
       <section class="card search-card">
