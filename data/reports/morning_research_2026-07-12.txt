@@ -1,0 +1,165 @@
+=================================================================
+  VEDANT SWING — MORNING RESEARCH — 12 Jul 2026 02:35 PM IST
+  Groq AI brain + Nifty 500 scan | Sector filter | PE + S/R + RSS news
+=================================================================
+Market mood: BULLISH (Nifty 20d: +2.7%)
+Stocks scanned: 32 | News items: 75 | Universe: fallback list
+
+
+── GROQ AI MORNING BRAIN ──
+[Groq AI Morning Brain — llama-3.3-70b-versatile]
+**MORNING GROQ RESEARCH REPORT**
+
+**1. MARKET VERDICT**
+The market mood is **BULLISH**, with the Nifty 20-day trend showing a +2.7% gain. This indicates a positive sentiment, which is favorable for swing buys. However, it's essential to remain cautious and selective in stock picks, as the market can be volatile.
+
+**2. NEWS & MACRO**
+The news headlines suggest a mixed sentiment, with some positive and negative news. The **"NSE listing to 'complete the trioka' and unlock value, drive governance upgrade: Report"** and **"FPIs reverse 4-month selling trend with Rs 15,157 cr inflow in Jul"** headlines indicate a positive sentiment, while the **"Iran moves to close Strait of Hormuz. Should investors fear a Nifty crash in coming days?"** headline suggests a potential risk. Additionally, the **"Stocks priced for ‘sunshine and rainbows’ now face earnings test"** headline implies that the market may be due for a correction.
+
+**3. STRONG SECTORS**
+The strong sectors to favor are:
+* Pharma: +5.8% 20d
+* Healthcare: +5.8% 20d
+* FMCG: +2.7% 20d
+* Energy: +2.7% 20d
+* Metal: +2.7% 20d
+These sectors have shown significant gains in the past 20 days and are likely to continue their upward trend.
+
+**4. TOP 3 STOCKS FOR TODAY**
+* **DABUR**: Verdict - BUY. Why - Strong fundamentals, with a PE of 41.7 and EPS growth of 15.1%. The stock has a sideways trend, with an RSI of 54.8. Entry zone: Rs.430.19 - Rs.443.50, Target: Rs.456.81, Stop/Average trigger: Rs.430.19.
+* **NESTLEIND**: Verdict - BUY. Why - Strong fundamentals, with a PE of 80.0 and EPS growth of 27.2%. The stock has an upward trend, with an RSI of 59.9. Entry zone: Rs.1411.54 - Rs.1455.20, Target: Rs.1498.86, Stop/Average trigger: Rs.1411.54.
+* **AUROPHARMA**: Verdict - WATCH. Why - Average fundamentals, with a PE of 25.9 and EPS growth of 2.0%. The stock has an upward trend, with an RSI of 56.6. Entry zone: Rs.1517.76 - Rs.1564.70, Target: Rs.1611.64, Stop/Average trigger: Rs.1517.76.
+
+**5. STOCKS TO AVOID TODAY**
+* **COLPAL**: The stock has a high PE of 42.2 and a negative EPS growth of -0.5%, making it a less attractive option.
+* **JSWSTEEL**: The stock has a high RSI of 50.3 and a significant difference between its price and the Nifty, making it a risky bet.
+
+**6. RISKS**
+* Market risk: The market can be volatile, and a sudden correction can occur.
+* Global risk: The Iran-Straits of Hormuz issue can lead to a global market downturn.
+* Sector risk: The FMCG sector may face challenges due to intense competition.
+* Event risk: The upcoming earnings season can lead to stock-specific volatility.
+* Liquidity risk: The market may face liquidity issues, leading to a sharp decline in stock prices.
+
+**7. PRE-MARKET CHECKLIST**
+1. Is the market trend bullish? Yes/No
+2. Are the strong sectors aligned with the market trend? Yes/No
+3. Are the top stocks for today from the strong sectors? Yes/No
+4. Do the top stocks have strong fundamentals? Yes/No
+5. Are the entry zones and targets clearly defined? Yes/No
+6. Are the stop/average triggers in place? Yes/No
+7. Is the risk-reward ratio favorable? Yes/No
+8. Are the market and global conditions stable? Yes/No
+
+**8. FINAL CALL**
+The best stock for today's 3% swing is **DABUR**, due to its strong fundamentals, favorable sector trend, and clearly defined entry zone and target. However, it's essential to remain cautious and monitor the market conditions closely.
+
+Not SEBI-registered advice. Trade at your own risk.
+
+── SECTOR STRENGTH (20-day) ──
+  #1 Pharma: +5.8% 20d STRONG
+  #2 Healthcare: +5.8% 20d STRONG
+  #3 FMCG: +2.7% 20d STRONG
+  #4 Energy: +2.7% 20d STRONG
+  #5 Metal: +2.7% 20d STRONG
+  #6 Infra: +2.7% 20d 
+  #7 Power: +2.7% 20d 
+  #8 Consumer: +2.7% 20d 
+
+── TOP RESEARCH PICKS (technical scan) ──
+
+#1  DABUR  (Nifty Next 50 | FMCG)  —  Rs.443.50
+     Signal: STRONG BUY  |  Score: 82/100
+     Best buy: Rs.443.50  |  Qty: 67  |  Target +3%: Rs.456.81
+     Technical: RSI 54.8 | Trend sideways | vs Nifty +1.3%
+     Fundamentals: PE 41.7 | EPS growth +15.1% | Strong fundamentals
+     Support Rs.414.6 | Resistance Rs.490.5 | S 415 / R 490
+     TA: RSI 55 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#2  BRITANNIA  (Nifty 50 | FMCG)  —  Rs.5353.00
+     Signal: STRONG BUY  |  Score: 81/100
+     Best buy: Rs.5353.00  |  Qty: 5  |  Target +3%: Rs.5513.59
+     Technical: RSI 54.4 | Trend sideways | vs Nifty +0.9%
+     Fundamentals: PE 51.0 | EPS growth +21.1% | Average fundamentals
+     Support Rs.5035.0 | Resistance Rs.5924.0 | S 5035 / R 5924
+     TA: RSI 54 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#3  NESTLEIND  (Nifty 50 | FMCG)  —  Rs.1455.20
+     Signal: STRONG BUY  |  Score: 79/100
+     Best buy: Rs.1455.20  |  Qty: 20  |  Target +3%: Rs.1498.86
+     Technical: RSI 59.9 | Trend up | vs Nifty +3.6%
+     Fundamentals: PE 80.0 | EPS growth +27.2% | Strong fundamentals
+     Support Rs.1268.5 | Resistance Rs.1490.93 | Near resistance Rs.1491
+     TA: RSI 60 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#4  JSWSTEEL  (Nifty 50 | Metal)  —  Rs.1245.40
+     Signal: STRONG BUY  |  Score: 78/100
+     Best buy: Rs.1245.40  |  Qty: 24  |  Target +3%: Rs.1282.76
+     Technical: RSI 50.3 | Trend sideways | vs Nifty -6.2%
+     Fundamentals: PE 13.6 | EPS growth +989.2% | Strong fundamentals
+     Support Rs.1203.79 | Resistance Rs.1320.42 | S 1204 / R 1320
+     TA: RSI 50 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#5  MARICO  (Nifty Next 50 | FMCG)  —  Rs.852.50
+     Signal: STRONG BUY  |  Score: 77/100
+     Best buy: Rs.852.50  |  Qty: 35  |  Target +3%: Rs.878.08
+     Technical: RSI 59.8 | Trend up | vs Nifty +1.4%
+     Fundamentals: PE 62.9 | EPS growth +14.0% | Average fundamentals
+     Support Rs.753.9 | Resistance Rs.873.0 | Near resistance Rs.873
+     TA: RSI 60 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#6  GODREJCP  (Nifty Next 50 | FMCG)  —  Rs.1088.40
+     Signal: STRONG BUY  |  Score: 76/100
+     Best buy: Rs.1088.40  |  Qty: 27  |  Target +3%: Rs.1121.05
+     Technical: RSI 62.1 | Trend up | vs Nifty +2.6%
+     Fundamentals: PE 59.9 | EPS growth +9.7% | Average fundamentals
+     Support Rs.975.4 | Resistance Rs.1142.32 | S 975 / R 1142
+     TA: RSI 62 mild momentum, MACD bullish crossover, Above 20 EMA
+
+#7  COLPAL  (Nifty Next 50 | FMCG)  —  Rs.2052.40
+     Signal: STRONG BUY  |  Score: 76/100
+     Best buy: Rs.2052.40  |  Qty: 14  |  Target +3%: Rs.2113.97
+     Technical: RSI 52.0 | Trend sideways | vs Nifty -4.0%
+     Fundamentals: PE 42.2 | EPS growth -0.5% | Average fundamentals
+     Support Rs.1957.8 | Resistance Rs.2197.79 | S 1958 / R 2198
+     TA: RSI 52 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#8  AUROPHARMA  (Nifty Next 50 | Pharma)  —  Rs.1564.70
+     Signal: STRONG BUY  |  Score: 76/100
+     Best buy: Rs.1564.70  |  Qty: 19  |  Target +3%: Rs.1611.64
+     Technical: RSI 56.6 | Trend up | vs Nifty +3.5%
+     Fundamentals: PE 25.9 | EPS growth +2.0% | Average fundamentals
+     Support Rs.1363.5 | Resistance Rs.1636.8 | S 1364 / R 1637
+     TA: RSI 57 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#9  HDFCAMC  (Nifty Next 50 | Other)  —  Rs.2761.20
+     Signal: BUY  |  Score: 73/100
+     Best buy: Rs.2761.20  |  Qty: 10  |  Target +3%: Rs.2844.04
+     Technical: RSI 57.3 | Trend up | vs Nifty +9.7%
+     Fundamentals: PE 41.5 | EPS growth -2.5% | Average fundamentals
+     Support Rs.2380.8 | Resistance Rs.2838.4 | Near resistance Rs.2838
+     TA: RSI 57 ideal for 3% bounce, MACD bullish crossover, Above 20 EMA
+
+#10  ATGL  (Nifty Next 50 | Energy)  —  Rs.723.90
+     Signal: BUY  |  Score: 71/100
+     Best buy: Rs.723.90  |  Qty: 41  |  Target +3%: Rs.745.62
+     Technical: RSI 53.2 | Trend up | vs Nifty -3.3%
+     Fundamentals: PE 121.9 | EPS growth +8.9% | Average fundamentals
+     Support Rs.587.89 | Resistance Rs.859.55 | S 588 / R 860
+     TA: RSI 53 ideal for 3% bounce, Above 20 EMA, Uptrend intact
+
+── MARKET HEADLINES (RSS) ──
+  - [Economic Times Markets] NSE listing to "complete the trioka" and unlock value, drive governance upgrade: Report
+  - [Economic Times Markets] Largecap funds no longer the best bet? Edelweiss CIO Trideep Bhattacharya explains why flexicaps may win now
+  - [Economic Times Markets] Iran moves to close Strait of Hormuz. Should investors fear a Nifty crash in coming days?
+  - [Economic Times Markets] 10 debt-free penny stocks under Rs 10 rally up to 1,126% in one year. Did you catch them?
+  - [Economic Times Markets] FPIs reverse 4-month selling trend with Rs 15,157 cr inflow in Jul
+  - [Economic Times Markets] 9 Nifty200 stocks with up to 40% upside potential: Do you own any?
+  - [Economic Times Markets] Contrarian investing: Fred Kelly's timeless lessons for winning in the stock market
+  - [Economic Times Markets] Stocks priced for ‘sunshine and rainbows’ now face earnings test
+  - [Economic Times Markets] Fed officials divided on US inflation views; US home prices hit all-time high
+  - [Economic Times Markets] Dmart recasts strategy as rapid delivery competition intensifies
+
+── DISCLAIMER ──
+Automated research only. NOT financial advice. Not SEBI-registered.
+=================================================================
