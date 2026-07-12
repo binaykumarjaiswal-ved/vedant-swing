@@ -62,22 +62,27 @@ def _match_symbols(text: str, symbols: list[str]) -> list[str]:
 
 
 def _sentiment_score(text: str) -> float:
-    text_l = text.lower()
-    positive = [
-        "surge", "rally", "gain", "profit", "growth", "upgrade", "bullish",
-        "record high", "beat estimates", "strong", "outperform", "buy",
-        "expansion", "deal win", "order book", "dividend",
-    ]
-    negative = [
-        "fall", "drop", "crash", "loss", "downgrade", "bearish", "weak",
-        "miss estimates", "selloff", "fraud", "probe", "penalty", "slump",
-        "concern", "risk", "cut", "layoff", "default",
-    ]
-    pos = sum(1 for w in positive if w in text_l)
-    neg = sum(1 for w in negative if w in text_l)
-    if pos + neg == 0:
-        return 0.0
-    return (pos - neg) / (pos + neg)
+    """Delegate to expanded India-equity lexicon in sentiment_engine."""
+    try:
+        from sentiment_engine import score_text
+        return float(score_text(text)["score"])
+    except Exception:
+        text_l = text.lower()
+        positive = [
+            "surge", "rally", "gain", "profit", "growth", "upgrade", "bullish",
+            "record high", "beat estimates", "strong", "outperform", "buy",
+            "expansion", "deal win", "order book", "dividend", "fii buying",
+        ]
+        negative = [
+            "fall", "drop", "crash", "loss", "downgrade", "bearish", "weak",
+            "miss estimates", "selloff", "fraud", "probe", "penalty", "slump",
+            "concern", "risk", "cut", "layoff", "default", "fii selling",
+        ]
+        pos = sum(1 for w in positive if w in text_l)
+        neg = sum(1 for w in negative if w in text_l)
+        if pos + neg == 0:
+            return 0.0
+        return (pos - neg) / (pos + neg)
 
 
 def fetch_news(sources: list[dict], symbols: list[str], max_age_hours: int = 48) -> dict[str, Any]:
@@ -139,7 +144,18 @@ def fetch_news(sources: list[dict], symbols: list[str], max_age_hours: int = 48)
 def symbol_news_score(news_items: list[dict]) -> tuple[float, str]:
     if not news_items:
         return 0.0, "No recent news"
-    avg_sent = sum(n["sentiment"] for n in news_items) / len(news_items)
-    top = sorted(news_items, key=lambda x: abs(x["sentiment"]), reverse=True)[:2]
+    # Re-score with latest lexicon if missing intensity
+    scores = []
+    for n in news_items:
+        s = n.get("sentiment")
+        if s is None:
+            s = _sentiment_score(f"{n.get('title', '')} {n.get('summary', '')}")
+            n["sentiment"] = s
+        scores.append(float(s))
+    avg_sent = sum(scores) / len(scores)
+    # Slight volume boost: more headlines with same direction = stronger signal
+    if len(scores) >= 3 and abs(avg_sent) > 0.1:
+        avg_sent = max(-1.0, min(1.0, avg_sent * 1.1))
+    top = sorted(news_items, key=lambda x: abs(float(x.get("sentiment") or 0)), reverse=True)[:2]
     summary = " | ".join(t["title"][:70] for t in top)
     return avg_sent, summary

@@ -38,12 +38,68 @@
 
   <main class="main">
     <div class="tab-panel active" id="panel-home">
+      <!-- Professional research dashboard -->
+      <section class="dash-hero">
+        <div class="dash-hero-top">
+          <div>
+            <p class="dash-kicker">Daily Research Desk</p>
+            <h2 class="dash-title">Market Decision Board</h2>
+            <p class="muted small" id="dash-updated">Loading…</p>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" id="btn-run-morning">Refresh research</button>
+        </div>
+        <div class="kpi-grid" id="kpi-grid">
+          <div class="kpi-card"><span class="kpi-label">Loading</span><strong class="kpi-value">…</strong></div>
+        </div>
+      </section>
+
+      <section class="card action-card" id="action-card">
+        <div class="card-head-row">
+          <h2>Today’s Action Report</h2>
+          <span class="status-pill" id="action-status-pill">—</span>
+        </div>
+        <p class="action-headline" id="action-headline">Loading decision…</p>
+        <div id="action-primary" class="action-primary"></div>
+        <ol class="action-steps" id="action-steps"></ol>
+        <p class="muted small" id="action-hint"></p>
+        <p class="disclaimer" id="action-disclaimer">Research only · Not SEBI advice · No auto-broker orders</p>
+      </section>
+
+      <section class="card" id="recs-card">
+        <h2>Ranked Recommendations</h2>
+        <p class="muted small">Confidence-gated BUY ideas with entry / stop / target</p>
+        <div id="recs-board" class="recs-board"></div>
+      </section>
+
+      <div class="two-col">
+        <section class="card" id="sentiment-card">
+          <h2>Market Sentiment</h2>
+          <div class="sent-meter">
+            <div class="sent-score" id="sent-score">—</div>
+            <div>
+              <strong id="sent-label">—</strong>
+              <p class="muted small" id="sent-sub">News + regime blend</p>
+            </div>
+          </div>
+          <div class="sent-bars">
+            <div class="sent-bar-row"><span>Bullish news</span><div class="bar-track"><div class="bar-fill bull" id="sent-bull-bar"></div></div><span id="sent-bull-pct">—</span></div>
+            <div class="sent-bar-row"><span>Bearish news</span><div class="bar-track"><div class="bar-fill bear" id="sent-bear-bar"></div></div><span id="sent-bear-pct">—</span></div>
+          </div>
+          <ul class="sent-feed" id="sent-feed"></ul>
+        </section>
+
+        <section class="card" id="sector-card">
+          <h2>Sector Rotation</h2>
+          <p class="muted small">20-day relative strength</p>
+          <div id="sector-heatmap" class="sector-heatmap"></div>
+        </section>
+      </div>
+
       <section class="card" id="morning-card">
         <div class="card-head-row">
-          <h2>Morning Briefing</h2>
-          <button type="button" class="btn btn-ghost btn-sm" id="btn-run-morning">Run now</button>
+          <h2>AI Research Brief</h2>
+          <span class="muted small" id="morning-date"></span>
         </div>
-        <p class="muted small" id="morning-date"></p>
         <p class="muted small" id="morning-status">Loading…</p>
         <p class="stale-banner hidden" id="morning-stale-banner"></p>
         <div class="ai-block morning-groq-block" id="morning-groq-block">
@@ -53,19 +109,33 @@
         </div>
         <div id="morning-picks" class="picks-list"></div>
         <details class="morning-details" id="morning-details">
-          <summary>Full morning report (technical picks)</summary>
+          <summary>Full morning technical report</summary>
           <pre class="morning-report-text" id="morning-report-text"></pre>
         </details>
       </section>
 
-      <section class="card" id="sector-card">
-        <h2>Sector Heatmap (20-day)</h2>
-        <p class="muted small">Top 5 green = strong sectors for swing picks</p>
-        <div id="sector-heatmap" class="sector-heatmap"></div>
+      <section class="card" id="backtest-card">
+        <h2>Model Scorecard</h2>
+        <p class="muted small">Does higher score actually win? Tracked from logged predictions.</p>
+        <div id="backtest-stats" class="backtest-hero">
+          <div><span class="muted small">Win rate</span><strong id="bt-win">—</strong></div>
+          <div><span class="muted small">Closed</span><strong id="bt-trades">—</strong></div>
+          <div><span class="muted small">Wins</span><strong id="bt-wins">—</strong></div>
+        </div>
+        <div id="backtest-samples" class="picks-list"></div>
+      </section>
+
+      <section class="card" id="position-card">
+        <h2>Open Position Tracker</h2>
+        <div id="position-body"><p class="muted">Loading…</p></div>
+        <div class="action-row hidden" id="position-actions">
+          <button type="button" class="btn btn-warn" data-action="average">Record Average</button>
+          <button type="button" class="btn btn-danger" data-action="sell">Record Sell</button>
+        </div>
       </section>
 
       <section class="card search-card">
-        <h2>Search Stock</h2>
+        <h2>Deep Dive · Stock Analysis</h2>
         <form id="search-form" class="search-row">
           <input type="text" id="symbol-input" placeholder="e.g. TITAN, RELIANCE" autocomplete="off" autocapitalize="characters" spellcheck="false">
           <button type="submit" class="btn btn-primary" id="btn-analyze">Analyze</button>
@@ -135,11 +205,11 @@
         </div>
         <div class="stats-grid">
           <div class="stat"><span class="stat-label">Price</span><span class="stat-val" id="res-price">—</span></div>
-          <div class="stat"><span class="stat-label">Target +3%</span><span class="stat-val green" id="res-target">—</span></div>
+          <div class="stat"><span class="stat-label">Target</span><span class="stat-val green" id="res-target">—</span></div>
+          <div class="stat"><span class="stat-label">Stop</span><span class="stat-val red" id="res-stop">—</span></div>
           <div class="stat"><span class="stat-label">RSI</span><span class="stat-val" id="res-rsi">—</span></div>
           <div class="stat"><span class="stat-label">Trend</span><span class="stat-val" id="res-trend">—</span></div>
-          <div class="stat"><span class="stat-label">EMA21</span><span class="stat-val" id="res-ema21">—</span></div>
-          <div class="stat"><span class="stat-label">EMA50</span><span class="stat-val" id="res-ema50">—</span></div>
+          <div class="stat"><span class="stat-label">Sentiment</span><span class="stat-val" id="res-sentiment">—</span></div>
         </div>
         <div class="reasons" id="res-reasons"></div>
         <div class="fund-block hidden" id="res-fund-block">
@@ -179,25 +249,6 @@
         <p id="loading-msg">Fetching prices, news &amp; Groq AI research…</p>
       </div>
 
-      <section class="card" id="backtest-card">
-        <h2>Model Performance</h2>
-        <p class="muted small">Prediction history win rate (from SQLite model audit). Morning recommendations only.</p>
-        <div id="backtest-stats" class="backtest-hero">
-          <div><span class="muted small">Win rate</span><strong id="bt-win">—</strong></div>
-          <div><span class="muted small">Trades</span><strong id="bt-trades">—</strong></div>
-          <div><span class="muted small">Wins</span><strong id="bt-wins">—</strong></div>
-        </div>
-        <div id="backtest-samples" class="picks-list"></div>
-      </section>
-
-      <section class="card" id="position-card">
-        <h2>Position Tracker</h2>
-        <div id="position-body"><p class="muted">Loading…</p></div>
-        <div class="action-row hidden" id="position-actions">
-          <button type="button" class="btn btn-warn" data-action="average">Record Average</button>
-          <button type="button" class="btn btn-danger" data-action="sell">Record Sell</button>
-        </div>
-      </section>
     </div>
 
     <div class="tab-panel" id="panel-watch">

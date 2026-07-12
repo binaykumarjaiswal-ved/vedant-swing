@@ -44,6 +44,12 @@ def build_recommendations(
     min_score = float(CONFIG.get("min_buy_score", 65))
 
     regime = market_health()
+    market_pulse = {}
+    try:
+        from sentiment_engine import market_sentiment_pulse
+        market_pulse = market_sentiment_pulse()
+    except Exception:
+        market_pulse = {}
     try:
         from history_db import log_regime
         log_regime(day, regime)
@@ -69,10 +75,20 @@ def build_recommendations(
             enrich_pick_with_risk(row)
         except Exception:
             pass
+        try:
+            from sentiment_engine import enrich_pick_sentiment
+            enrich_pick_sentiment(row)
+        except Exception:
+            pass
+        if market_pulse:
+            row["market_sentiment_100"] = market_pulse.get("score_100")
+            row["market_sentiment_label"] = market_pulse.get("label")
         conf = confidence_score(row, regime)
         row["confidence"] = conf
         row["pred_date"] = day
         row["horizon_days"] = int(CONFIG.get("max_hold_days", 7))
+        # Plain-language thesis for dashboard
+        row["thesis"] = _build_thesis(row)
         candidates.append(row)
 
     candidates.sort(
@@ -121,6 +137,7 @@ def build_recommendations(
         "date": day,
         "generated": datetime.now().isoformat(timespec="seconds"),
         "regime": regime,
+        "market_sentiment": market_pulse,
         "min_confidence": min_conf,
         "min_buy_score": min_score,
         "recommendations": top,
@@ -140,6 +157,26 @@ def build_recommendations(
     path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
     payload["file"] = str(path)
     return payload
+
+
+def _build_thesis(row: dict) -> str:
+    bits = []
+    if row.get("trend"):
+        bits.append(f"Trend {row['trend']}")
+    if row.get("rsi") is not None:
+        bits.append(f"RSI {row['rsi']}")
+    if row.get("sector"):
+        bits.append(str(row["sector"]))
+    if row.get("sector_strong"):
+        bits.append("strong sector")
+    if row.get("sentiment_label") and row["sentiment_label"] not in ("NO_NEWS", "NEUTRAL"):
+        bits.append(f"news {row['sentiment_label'].lower()}")
+    if row.get("vs_nifty_20d") is not None:
+        bits.append(f"vs Nifty {row['vs_nifty_20d']:+.1f}%")
+    reasons = row.get("reasons") or []
+    if reasons:
+        bits.append(str(reasons[0])[:60])
+    return " · ".join(bits[:5]) if bits else "Composite technical setup"
 
 
 def _no_trade_message(regime: dict, min_conf: float) -> str:

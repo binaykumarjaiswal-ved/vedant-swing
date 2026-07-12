@@ -114,6 +114,160 @@ function renderHeaderStats(data) {
     `Watchlist ${data.watchlist_count ?? 0} · Alerts ${data.active_alerts ?? 0}` +
     (refreshed ? ` · ${refreshed}` : "") + tg;
   if (data.market) renderDateTimeBar(data.market);
+  const du = $("dash-updated");
+  if (du) du.textContent = data.updated ? `Updated ${data.updated} · Recommend-only desk` : "Recommend-only desk";
+}
+
+function renderKpis(data) {
+  const grid = $("kpi-grid");
+  if (!grid) return;
+  const kpis = data.kpis || [];
+  if (!kpis.length) {
+    grid.innerHTML = '<div class="kpi-card"><span class="kpi-label">Status</span><strong class="kpi-value">Loading</strong></div>';
+    return;
+  }
+  grid.innerHTML = kpis.map((k) => `
+    <div class="kpi-card ${k.cls || "neutral"}">
+      <span class="kpi-label">${escHtml(k.label)}</span>
+      <strong class="kpi-value">${escHtml(String(k.value ?? "—"))}</strong>
+      <span class="kpi-sub">${escHtml(k.sub || "")}</span>
+    </div>`).join("");
+}
+
+function renderActionReport(data) {
+  const ar = data.action_report || {};
+  const pill = $("action-status-pill");
+  const headline = $("action-headline");
+  const primaryEl = $("action-primary");
+  const stepsEl = $("action-steps");
+  const hint = $("action-hint");
+  if (!headline) return;
+
+  const st = (ar.status || "NO_TRADE").toLowerCase();
+  if (pill) {
+    pill.textContent = ar.status === "BUY" ? "BUY READY" : ar.status === "BLOCKED" ? "BLOCKED" : "NO TRADE";
+    pill.className = "status-pill " + (st === "buy" ? "buy" : st === "blocked" ? "blocked" : "no_trade");
+  }
+  headline.textContent = ar.headline || "—";
+
+  const p = ar.primary;
+  if (p && primaryEl) {
+    primaryEl.innerHTML = `
+      <div class="rec-top">
+        <div>
+          <div class="rec-sym" data-symbol="${escHtml(p.symbol)}">${escHtml(p.symbol)}</div>
+          <div class="rec-meta">${escHtml(p.sector || "")} · Score ${p.score ?? "—"} · Conf ${p.confidence ?? "—"}</div>
+        </div>
+        <span class="signal-badge ${signalClass(p.signal)}">${escHtml(p.signal || "BUY")}</span>
+      </div>
+      <div class="level-grid">
+        <div class="level-box entry"><span>Entry</span><strong>${fmtRs(p.entry)}</strong></div>
+        <div class="level-box stop"><span>Stop</span><strong>${fmtRs(p.stop)}</strong></div>
+        <div class="level-box target"><span>Target</span><strong>${fmtRs(p.target)}</strong></div>
+      </div>
+      <p class="rec-thesis">${escHtml(p.thesis || "")}</p>
+      <p class="muted small">Qty ~${p.buy_qty ?? "—"} · Amount ~${p.buy_amount != null ? fmtRs(p.buy_amount) : "—"} · Manual broker buy only</p>`;
+    bindPickClicks(primaryEl);
+  } else if (primaryEl) {
+    const research = ar.research_picks || [];
+    primaryEl.innerHTML = research.length
+      ? `<p class="empty-state">No high-confidence BUY. Nearby research ideas:</p>
+         ${research.map((r) => `
+           <div class="pick-row" data-symbol="${escHtml(r.symbol)}">
+             <div class="pick-mid"><strong>${escHtml(r.symbol)}</strong><span>Score ${r.score ?? "—"} · ${escHtml(r.signal || "")}</span></div>
+             <span class="signal-badge ${signalClass(r.signal)}">${escHtml(r.signal || "WATCH")}</span>
+           </div>`).join("")}`
+      : `<p class="empty-state">No recommendation yet. Run morning research on a trading day.</p>`;
+    bindPickClicks(primaryEl);
+  }
+
+  if (stepsEl) {
+    stepsEl.innerHTML = (ar.steps || []).map((s) => `<li>${escHtml(s)}</li>`).join("");
+  }
+  if (hint) {
+    const parts = [ar.sentiment_hint, ar.regime_hint].filter(Boolean);
+    hint.textContent = parts.join(" · ");
+  }
+}
+
+function renderRecsBoard(data) {
+  const board = $("recs-board");
+  if (!board) return;
+  const top = data.recommendations?.top || [];
+  if (!top.length) {
+    board.innerHTML = `<p class="empty-state">${escHtml(data.recommendations?.message || "No confidence-gated buys today.")}</p>`;
+    return;
+  }
+  board.innerHTML = top.map((r, i) => {
+    const conf = Math.max(0, Math.min(100, Number(r.confidence) || 0));
+    const sent = r.sentiment_label && r.sentiment_label !== "NO_NEWS"
+      ? ` · News ${r.sentiment_label}`
+      : "";
+    return `
+      <div class="rec-card" data-symbol="${escHtml(r.symbol)}">
+        <div class="rec-top">
+          <div>
+            <div class="rec-sym">#${i + 1} ${escHtml(r.symbol)}</div>
+            <div class="rec-meta">${escHtml(r.sector || "—")} · ${escHtml(r.trend || "")}${escHtml(sent)}</div>
+          </div>
+          <span class="signal-badge ${signalClass(r.signal)}">${escHtml(r.signal || "BUY")}</span>
+        </div>
+        <div class="rec-metrics">
+          <div><span>Score</span><strong>${r.score ?? "—"}</strong></div>
+          <div><span>Conf</span><strong>${r.confidence ?? "—"}</strong></div>
+          <div><span>Entry</span><strong>${fmtRs(r.entry)}</strong></div>
+          <div><span>RSI</span><strong>${r.rsi ?? "—"}</strong></div>
+        </div>
+        <div class="level-grid">
+          <div class="level-box entry"><span>Entry</span><strong>${fmtRs(r.entry)}</strong></div>
+          <div class="level-box stop"><span>Stop ${r.stop_pct != null ? "(-" + r.stop_pct + "%)" : ""}</span><strong>${fmtRs(r.stop)}</strong></div>
+          <div class="level-box target"><span>Target ${r.target_pct != null ? "(+" + r.target_pct + "%)" : ""}</span><strong>${fmtRs(r.target)}</strong></div>
+        </div>
+        <p class="rec-thesis">${escHtml(r.thesis || (r.reasons || []).slice(0, 2).join(" · ") || "")}</p>
+        <div class="conf-bar"><i style="width:${conf}%"></i></div>
+      </div>`;
+  }).join("");
+  bindPickClicks(board);
+}
+
+function renderSentiment(data) {
+  const s = data.sentiment || {};
+  const scoreEl = $("sent-score");
+  const labelEl = $("sent-label");
+  const subEl = $("sent-sub");
+  if (!scoreEl) return;
+
+  const sc = s.score_100;
+  scoreEl.textContent = sc != null ? sc : "—";
+  scoreEl.className = "sent-score " + (sc >= 60 ? "good" : sc <= 40 ? "bad" : "neutral");
+  if (labelEl) labelEl.textContent = s.label || "NEUTRAL";
+  if (subEl) {
+    subEl.textContent = s.action_hint
+      || `${s.headline_count || 0} headlines · regime ${s.regime || "—"}`;
+  }
+
+  const bull = Number(s.bullish_pct) || 0;
+  const bear = Number(s.bearish_pct) || 0;
+  const bullBar = $("sent-bull-bar");
+  const bearBar = $("sent-bear-bar");
+  if (bullBar) bullBar.style.width = `${Math.min(100, bull)}%`;
+  if (bearBar) bearBar.style.width = `${Math.min(100, bear)}%`;
+  const bp = $("sent-bull-pct");
+  const brp = $("sent-bear-pct");
+  if (bp) bp.textContent = `${bull}%`;
+  if (brp) brp.textContent = `${bear}%`;
+
+  const feed = $("sent-feed");
+  if (feed) {
+    const items = s.feed || [];
+    feed.innerHTML = items.length
+      ? items.slice(0, 8).map((h) => {
+          const cls = h.sentiment > 0.12 ? "bull" : h.sentiment < -0.12 ? "bear" : "";
+          return `<li class="${cls}">${escHtml(h.title)}
+            <span class="src">${escHtml(h.source || "")} · ${escHtml(h.label || "")} (${h.sentiment ?? "—"})</span></li>`;
+        }).join("")
+      : '<li class="muted">Sentiment feed loads with market news…</li>';
+  }
 }
 
 function renderMorningBriefing(data) {
@@ -305,10 +459,15 @@ function renderResult(data) {
   $("res-score-bar").style.width = score + "%";
   $("res-price").textContent = fmtRs(data.price);
   $("res-target").textContent = fmtRs(data.target);
+  if ($("res-stop")) $("res-stop").textContent = fmtRs(data.stop || data.avg_trigger);
   $("res-rsi").textContent = data.rsi ?? "—";
   $("res-trend").textContent = data.trend ?? "—";
-  $("res-ema21").textContent = data.ema21 ?? "—";
-  $("res-ema50").textContent = data.ema50 ?? "—";
+  if ($("res-sentiment")) {
+    const sl = data.sentiment_label || (data.news_sentiment != null ? `News ${data.news_sentiment}` : "—");
+    $("res-sentiment").textContent = sl;
+  }
+  if ($("res-ema21")) $("res-ema21").textContent = data.ema21 ?? "—";
+  if ($("res-ema50")) $("res-ema50").textContent = data.ema50 ?? "—";
   const reasons = data.reasons || [];
   $("res-reasons").innerHTML = reasons.length ? "<strong>Signals</strong><ul>" + reasons.map((r) => `<li>${escHtml(r)}</li>`).join("") + "</ul>" : "";
 
@@ -480,13 +639,46 @@ async function loadDashboard() {
     const data = await dash.json();
     renderMarket(data.benchmark);
     renderHeaderStats(data);
+    renderKpis(data);
+    renderActionReport(data);
+    renderRecsBoard(data);
+    renderSentiment(data);
     renderMorningBriefing(data);
     renderSectorHeatmap(data);
+    renderPosition(data);
 
     await Promise.all([loadWatchlist(), loadPaper(), loadJournal(), loadAlerts(), loadBacktest()]);
   } catch (e) {
     toast("Load failed");
   }
+}
+
+function renderPosition(data) {
+  const body = $("position-body");
+  const actions = $("position-actions");
+  if (!body) return;
+  const p = data.position;
+  if (!p) {
+    body.innerHTML = '<p class="muted">No tracked live position. Paper tab is for practice only.</p>';
+    actions?.classList.add("hidden");
+    return;
+  }
+  const pnlCls = (p.pnl_pct || 0) >= 0 ? "green" : "red";
+  body.innerHTML = `
+    <div class="rec-card" style="cursor:default">
+      <div class="rec-top">
+        <div><div class="rec-sym">${escHtml(p.symbol)}</div>
+        <div class="rec-meta">Qty ${p.qty} · Avg ${fmtRs(p.avg_price)} · Opened ${escHtml(p.opened || "")}</div></div>
+        <span class="signal-badge ${signalClass(p.signal)}">${escHtml(p.signal || "—")}</span>
+      </div>
+      <div class="level-grid">
+        <div class="level-box entry"><span>LTP</span><strong>${fmtRs(p.ltp)}</strong></div>
+        <div class="level-box stop"><span>Stop zone</span><strong>${fmtRs(p.avg_trigger)}</strong></div>
+        <div class="level-box target"><span>Target</span><strong>${fmtRs(p.sell_target)}</strong></div>
+      </div>
+      <p class="rec-thesis">P&amp;L <span class="${pnlCls}">${p.pnl_pct ?? 0}%</span> · ${escHtml(p.signal_reason || "")}</p>
+    </div>`;
+  actions?.classList.remove("hidden");
 }
 
 function paperBuyPayload(symbol, price, qty, stop, target) {

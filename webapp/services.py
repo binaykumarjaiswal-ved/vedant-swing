@@ -211,6 +211,12 @@ def get_dashboard() -> dict:
     from web_notify import is_telegram_configured
 
     ctx = get_market_context()
+    recs = _latest_recs_summary()
+    regime = _regime_summary()
+    perf = _perf_summary()
+    sentiment = _sentiment_summary(recs)
+    action = _build_action_report(recs, regime, sentiment, benchmark, top_picks)
+
     return {
         "app": CONFIG.get("app_name", "Vedant Swing"),
         "updated": ist_now().strftime("%d %b %Y, %I:%M %p IST"),
@@ -239,10 +245,146 @@ def get_dashboard() -> dict:
         "ai_morning_briefing": ai_morning_briefing,
         "has_groq_morning": bool(ai_morning_briefing),
         "scan": scan_info,
-        "recommendations": _latest_recs_summary(),
-        "performance": _perf_summary(),
-        "regime": _regime_summary(),
+        "recommendations": recs,
+        "performance": perf,
+        "regime": regime,
+        "sentiment": sentiment,
+        "action_report": action,
+        "kpis": _build_kpis(benchmark, regime, sentiment, perf, recs),
         "mode": "morning_only",
+    }
+
+
+def _sentiment_summary(recs: dict | None = None) -> dict:
+    try:
+        from sentiment_engine import market_sentiment_pulse
+        pulse = market_sentiment_pulse()
+        if recs and recs.get("market_sentiment"):
+            # Prefer pulse stored with last recommender run if fresher fields
+            pass
+        return {"ok": True, **pulse}
+    except Exception as exc:
+        return {
+            "ok": False,
+            "score_100": 50,
+            "label": "NEUTRAL",
+            "action_hint": "Sentiment unavailable",
+            "error": str(exc)[:120],
+            "feed": [],
+        }
+
+
+def _build_kpis(benchmark, regime, sentiment, perf, recs) -> list:
+    def mood_cls(v, hi=60, lo=40):
+        if v is None:
+            return "neutral"
+        if v >= hi:
+            return "good"
+        if v <= lo:
+            return "bad"
+        return "neutral"
+
+    conf_top = None
+    if recs and recs.get("top"):
+        conf_top = recs["top"][0].get("confidence")
+
+    return [
+        {
+            "id": "regime",
+            "label": "Market Regime",
+            "value": regime.get("regime", "—"),
+            "sub": f"Health {regime.get('score', '—')}/100",
+            "cls": mood_cls(regime.get("score"), 70, 45),
+        },
+        {
+            "id": "sentiment",
+            "label": "News Sentiment",
+            "value": sentiment.get("label", "—"),
+            "sub": f"Pulse {sentiment.get('score_100', '—')}/100",
+            "cls": mood_cls(sentiment.get("score_100"), 60, 40),
+        },
+        {
+            "id": "nifty",
+            "label": "Nifty 20d",
+            "value": f"{benchmark.get('change_20d', 0):+.1f}%",
+            "sub": benchmark.get("mood", "NEUTRAL"),
+            "cls": "good" if (benchmark.get("change_20d") or 0) > 1 else (
+                "bad" if (benchmark.get("change_20d") or 0) < -1 else "neutral"
+            ),
+        },
+        {
+            "id": "edge",
+            "label": "Model Edge",
+            "value": f"{perf.get('win_rate')}%" if perf.get("win_rate") is not None else "Building",
+            "sub": f"{perf.get('outcomes') or 0} closed trades",
+            "cls": mood_cls(perf.get("win_rate"), 55, 45) if perf.get("win_rate") is not None else "neutral",
+        },
+        {
+            "id": "action",
+            "label": "Today Action",
+            "value": (recs.get("top") or [{}])[0].get("symbol") if recs.get("top") else "NO TRADE",
+            "sub": f"Conf {conf_top}" if conf_top is not None else (recs.get("message") or "Waiting")[:40],
+            "cls": "good" if recs.get("top") else "neutral",
+        },
+    ]
+
+
+def _build_action_report(recs, regime, sentiment, benchmark, top_picks) -> dict:
+    """Human-readable daily decision board."""
+    top = (recs or {}).get("top") or []
+    primary = top[0] if top else None
+    status = "BUY" if primary else "NO_TRADE"
+    if not regime.get("trade_approval", True):
+        status = "BLOCKED"
+
+    steps = []
+    if status == "BLOCKED":
+        steps = [
+            "Market regime is weak — new buys blocked by risk rules.",
+            "Review open positions only: use stop / target.",
+            "Wait for regime health ≥ threshold before new entries.",
+        ]
+    elif status == "NO_TRADE":
+        steps = [
+            "No setup met confidence threshold today.",
+            "Check watchlist for near-setup stocks.",
+            "Do not force a trade — capital protection first.",
+        ]
+    else:
+        steps = [
+            f"Primary pick: {primary.get('symbol')} ({primary.get('signal')}).",
+            f"Plan entry near Rs.{primary.get('entry')} · stop Rs.{primary.get('stop')} · target Rs.{primary.get('target')}.",
+            f"Size ~{primary.get('buy_qty') or '—'} shares (risk-sized). Buy manually in broker.",
+            "Bot never places broker orders. Set stop in broker after fill.",
+        ]
+
+    # Fallback research picks when no high-conf BUY
+    research = top or [
+        {
+            "symbol": p.get("symbol"),
+            "score": p.get("score"),
+            "signal": p.get("signal"),
+            "entry": p.get("price"),
+            "confidence": None,
+            "thesis": f"Research pick · score {p.get('score')}",
+        }
+        for p in (top_picks or [])[:5]
+    ]
+
+    return {
+        "status": status,
+        "headline": (
+            f"BUY {primary['symbol']}" if primary and status == "BUY"
+            else "NO TRADE TODAY" if status == "NO_TRADE"
+            else "NEW BUYS BLOCKED"
+        ),
+        "primary": primary,
+        "alternates": top[1:3],
+        "research_picks": research[:5],
+        "steps": steps,
+        "sentiment_hint": sentiment.get("action_hint", ""),
+        "regime_hint": regime.get("reason", ""),
+        "disclaimer": "Research only. Not SEBI advice. No auto-broker orders.",
     }
 
 
@@ -252,13 +394,16 @@ def _latest_recs_summary() -> dict:
 
         data = get_latest_recommendations()
         if not data.get("ok"):
-            return {"ok": False, "count": 0}
+            return {"ok": False, "count": 0, "message": data.get("error") or data.get("message")}
         recs = data.get("recommendations") or []
+        watch = data.get("watch") or []
         return {
             "ok": True,
             "date": data.get("date"),
             "count": len(recs),
             "message": data.get("message"),
+            "regime": data.get("regime"),
+            "market_sentiment": data.get("market_sentiment"),
             "top": [
                 {
                     "symbol": r.get("symbol"),
@@ -267,9 +412,29 @@ def _latest_recs_summary() -> dict:
                     "entry": r.get("entry") or r.get("price"),
                     "target": r.get("target"),
                     "stop": r.get("stop"),
+                    "target_pct": r.get("target_pct"),
+                    "stop_pct": r.get("stop_pct"),
+                    "buy_qty": r.get("buy_qty"),
+                    "buy_amount": r.get("buy_amount"),
                     "signal": r.get("signal"),
+                    "sector": r.get("sector"),
+                    "rsi": r.get("rsi"),
+                    "trend": r.get("trend"),
+                    "thesis": r.get("thesis") or r.get("strategy_reason") or "",
+                    "sentiment_label": r.get("sentiment_label"),
+                    "news_sentiment": r.get("news_sentiment"),
+                    "reasons": (r.get("reasons") or [])[:4],
                 }
                 for r in recs[:5]
+            ],
+            "watch": [
+                {
+                    "symbol": r.get("symbol"),
+                    "score": r.get("swing_score"),
+                    "signal": r.get("signal"),
+                    "confidence": r.get("confidence"),
+                }
+                for r in watch[:5]
             ],
         }
     except Exception:
@@ -366,6 +531,12 @@ def analyze_symbol(symbol: str, with_ai: bool = True) -> dict:
     )
     news_items = news["by_symbol"].get(symbol, [])
     score, news_meta = _apply_news_score(score, news_items)
+    try:
+        from sentiment_engine import enrich_pick_sentiment
+        tech = enrich_pick_sentiment({**tech, **news_meta}, news_items)
+        news_meta = {**news_meta, "sentiment_label": tech.get("sentiment_label"), "news_sentiment": tech.get("news_sentiment", news_meta.get("news_sentiment"))}
+    except Exception:
+        pass
 
     min_score = CONFIG.get("min_buy_score", 62)
     if score >= 75:

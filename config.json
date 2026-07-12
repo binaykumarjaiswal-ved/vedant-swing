@@ -13,7 +13,7 @@
   "min_confidence": 68,
   "recommend_top_n": 3,
   "top_research_picks": 10,
-  "news_weight": 0.12,
+  "news_weight": 0.20,
   "news_max_age_hours": 48,
   "ai_enabled": true,
   "ai_model": "llama-3.3-70b-versatile",

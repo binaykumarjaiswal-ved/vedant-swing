@@ -30,7 +30,7 @@ app = Flask(
 )
 
 # Bump when UI changes — forces browsers to load new JS/CSS after deploy
-BUILD_VERSION = os.environ.get("RENDER_GIT_COMMIT", "a3e1300")[:7]
+BUILD_VERSION = os.environ.get("RENDER_GIT_COMMIT", "dash-pro1")[:12]
 
 
 @app.after_request

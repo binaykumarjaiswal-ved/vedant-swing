@@ -195,10 +195,10 @@ def enrich_pick_with_risk(
 def confidence_score(pick: dict[str, Any], regime: dict | None = None) -> float:
     """
     0–100 confidence for recommendation gate.
-    Composite of swing_score, regime, signal quality, RR.
+    Composite: technicals + sector + news sentiment + RR + market regime.
     """
     score = float(pick.get("swing_score") or 0)
-    conf = score * 0.65
+    conf = score * 0.55  # leave more room for multi-factor boosts
 
     signal = (pick.get("signal") or "").upper()
     if signal == "STRONG BUY":
@@ -209,31 +209,73 @@ def confidence_score(pick: dict[str, Any], regime: dict | None = None) -> float:
     if pick.get("strategy") in ("pullback_21ema", "breakout"):
         conf += 5
     if pick.get("sector_strong"):
-        conf += 4
+        conf += 6
     if pick.get("macd_bullish"):
-        conf += 3
+        conf += 4
+    if pick.get("trend") == "up":
+        conf += 4
+    elif pick.get("trend") == "down":
+        conf -= 8
+
+    # Relative strength vs Nifty
+    vs = float(pick.get("vs_nifty_20d") or 0)
+    if vs > 3:
+        conf += 5
+    elif vs > 1:
+        conf += 2
+    elif vs < -4:
+        conf -= 5
+
+    # RSI sweet spot for swings
+    rsi = float(pick.get("rsi") or 50)
+    if 40 <= rsi <= 58:
+        conf += 4
+    elif rsi > 72:
+        conf -= 8
+    elif rsi < 30:
+        conf += 2  # oversold bounce possible
+
+    # News / sentiment (stronger weight)
     if pick.get("news_sentiment") is not None:
         ns = float(pick["news_sentiment"])
-        if ns > 0.15:
-            conf += 3
+        if ns > 0.35:
+            conf += 10
+        elif ns > 0.15:
+            conf += 6
+        elif ns < -0.35:
+            conf -= 12
         elif ns < -0.15:
-            conf -= 6
+            conf -= 7
+    label = (pick.get("sentiment_label") or "").upper()
+    if label == "BULLISH":
+        conf += 3
+    elif label == "BEARISH":
+        conf -= 5
 
     # Reward:risk
     tp = float(pick.get("target_pct") or 0)
     sp = float(pick.get("stop_pct") or 0)
-    if sp > 0 and tp / sp >= 1.2:
-        conf += 5
+    if sp > 0 and tp / sp >= 1.3:
+        conf += 6
+    elif sp > 0 and tp / sp >= 1.0:
+        conf += 3
     elif sp > 0 and tp / sp < 0.9:
-        conf -= 4
+        conf -= 5
 
     if regime:
         if not regime.get("trade_approval", True):
-            conf -= 15
+            conf -= 18
         elif regime.get("regime") == "BULLISH":
-            conf += 5
+            conf += 6
         elif regime.get("regime") == "BEARISH":
-            conf -= 10
+            conf -= 12
+
+    # Market-wide news pulse if provided on pick
+    mpulse = float(pick.get("market_sentiment_100") or 0)
+    if mpulse >= 65:
+        conf += 4
+    elif mpulse and mpulse <= 35:
+        conf -= 6
 
     conf = max(0, min(100, conf))
     return round(conf, 1)
