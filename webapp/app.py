@@ -328,16 +328,25 @@ def api_regime():
 def api_export_pdf(symbol: str):
     from webapp.insights import build_research_pdf
 
-    data = analyze_symbol(symbol, with_ai=True)
-    if not data.get("ok"):
-        return jsonify(data), 404
-    pdf_bytes = build_research_pdf(data)
-    fname = f"{symbol.upper()}_research.pdf"
-    return Response(
-        pdf_bytes,
-        mimetype="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{fname}"'},
-    )
+    try:
+        # AI is optional for PDF — fail soft if Groq slow/down
+        data = analyze_symbol(symbol, with_ai=True)
+        if not data.get("ok"):
+            data = analyze_symbol(symbol, with_ai=False)
+        if not data.get("ok"):
+            return jsonify(data), 404
+        pdf_bytes = build_research_pdf(data)
+        fname = f"{symbol.upper().replace('/', '_')}_research.pdf"
+        return Response(
+            pdf_bytes,
+            mimetype="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="{fname}"'},
+        )
+    except Exception as exc:
+        return jsonify({
+            "ok": False,
+            "error": f"PDF export failed: {str(exc)[:200]}",
+        }), 500
 
 
 @app.route("/api/telegram/status")

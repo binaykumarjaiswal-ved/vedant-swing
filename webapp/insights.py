@@ -138,50 +138,104 @@ def _compare_row(d: dict) -> dict:
     }
 
 
+def _pdf_safe(text: object) -> str:
+    """Helvetica core fonts are latin-1 only — strip/replace unsupported chars."""
+    if text is None:
+        return ""
+    s = str(text)
+    # Common unicode → ASCII
+    repl = {
+        "\u2014": "-",  # em dash
+        "\u2013": "-",  # en dash
+        "\u2018": "'",
+        "\u2019": "'",
+        "\u201c": '"',
+        "\u201d": '"',
+        "\u2022": "*",
+        "\u2026": "...",
+        "\u20b9": "Rs.",  # rupee
+        "\u00a0": " ",
+        "×": "x",
+        "→": "->",
+        "←": "<-",
+        "≥": ">=",
+        "≤": "<=",
+        "±": "+/-",
+        "·": "|",
+        "—": "-",
+        "–": "-",
+    }
+    for a, b in repl.items():
+        s = s.replace(a, b)
+    s = re.sub(r"\*\*", "", s)
+    # Drop anything still outside latin-1
+    return s.encode("latin-1", errors="replace").decode("latin-1")
+
+
 def build_research_pdf(data: dict) -> bytes:
     from fpdf import FPDF
 
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
-    pdf.set_font("Helvetica", "B", 16)
-    pdf.cell(0, 10, f"Vedant Swing — {data.get('symbol', '')} Research", ln=True)
-    pdf.set_font("Helvetica", "", 10)
-    pdf.cell(0, 8, f"Analyzed: {data.get('analyzed_at', '')}", ln=True)
-    pdf.cell(0, 8, f"Signal: {data.get('signal')} | Score: {data.get('swing_score')}/100", ln=True)
-    pdf.ln(4)
+    left = pdf.l_margin
+    usable = pdf.w - pdf.l_margin - pdf.r_margin
+
+    def line(text: str, size: int = 10, style: str = "", h: float = 6) -> None:
+        pdf.set_font("Helvetica", style, size)
+        pdf.set_x(left)
+        pdf.multi_cell(usable, h, _pdf_safe(text))
+
+    sym = _pdf_safe(data.get("symbol", ""))
+    line(f"Vedant Swing - {sym} Research", size=16, style="B", h=10)
+    line(f"Analyzed: {data.get('analyzed_at', '')}", size=10, h=7)
+    line(f"Signal: {data.get('signal')} | Score: {data.get('swing_score')}/100", size=10, h=7)
+    pdf.ln(2)
 
     for label, key in (
-        ("Price", "price"), ("Target +3%", "target"), ("RSI", "rsi"),
-        ("Trend", "trend"), ("Sector", "sector"), ("PE", "pe_trailing"),
+        ("Price", "price"),
+        ("Target", "target"),
+        ("Stop", "stop"),
+        ("RSI", "rsi"),
+        ("ADX", "adx"),
+        ("Trend", "trend"),
+        ("Sector", "sector"),
+        ("PE", "pe_trailing"),
+        ("R:R", "reward_risk"),
+        ("Setup", "setup_type"),
+        ("Quality", "quality_count"),
     ):
         val = data.get(key)
         if val is not None and val != "":
-            pdf.cell(0, 6, f"{label}: {val}", ln=True)
+            line(f"{label}: {val}", size=10, h=6)
 
-    pdf.ln(4)
-    pdf.set_font("Helvetica", "B", 11)
-    pdf.cell(0, 8, "Quick summary", ln=True)
-    pdf.set_font("Helvetica", "", 10)
-    for line in build_quick_summary(data):
-        pdf.multi_cell(0, 5, f"- {line}")
+    qf = data.get("quality_flags") or []
+    if qf:
+        line(f"Flags: {', '.join(str(x) for x in qf)}", size=10, h=6)
+
+    pdf.ln(2)
+    line("Quick summary", size=11, style="B", h=7)
+    for s in build_quick_summary(data):
+        line(f"- {s}", size=10, h=5)
+
+    reasons = data.get("reasons") or []
+    if reasons:
+        pdf.ln(1)
+        line("Signals", size=11, style="B", h=7)
+        for r in reasons[:8]:
+            line(f"- {r}", size=10, h=5)
 
     ai = data.get("ai_note") or ""
     if ai:
-        pdf.ln(4)
-        pdf.set_font("Helvetica", "B", 11)
-        pdf.cell(0, 8, "AI Deep Research", ln=True)
-        pdf.set_font("Helvetica", "", 9)
-        clean = re.sub(r"\*\*", "", ai)
-        for para in clean.split("\n"):
+        pdf.ln(2)
+        line("AI Deep Research", size=11, style="B", h=7)
+        for para in _pdf_safe(ai).split("\n"):
             para = para.strip()
             if para:
-                pdf.multi_cell(0, 4, para)
-                pdf.ln(1)
+                line(para, size=9, h=4)
 
-    pdf.ln(6)
-    pdf.set_font("Helvetica", "I", 8)
-    pdf.multi_cell(0, 4, "Not SEBI-registered advice. Trade at your own risk.")
+    pdf.ln(4)
+    line("Not SEBI-registered advice. Trade at your own risk.", size=8, style="I", h=4)
 
     out = BytesIO()
     pdf.output(out)
