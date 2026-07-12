@@ -1,57 +1,54 @@
 =================================================================
-  VEDANT SWING — MORNING RESEARCH — 12 Jul 2026 02:38 PM IST
+  VEDANT SWING — MORNING RESEARCH — 12 Jul 2026 03:46 PM IST
   Groq AI brain + Nifty 500 scan | Sector filter | PE + S/R + RSS news
 =================================================================
 Market mood: BULLISH (Nifty 20d: +2.7%)
-Stocks scanned: 32 | News items: 75 | Universe: fallback list
+Stocks scanned: 32 | News items: 73 | Universe: fallback list
 
 
 ── GROQ AI MORNING BRAIN ──
 [Groq AI Morning Brain — llama-3.3-70b-versatile]
 **MORNING GROQ RESEARCH REPORT**
 
-**1. MARKET VERDICT**
-The market mood is **BULLISH**, with the Nifty 20-day trend showing a +2.7% increase. This uptrend, combined with strong sector performances, particularly in Pharma and Healthcare, suggests a positive outlook for swing buys today. However, it's essential to remain cautious and selective in stock picks, considering the potential risks and market volatility.
+1. **MARKET VERDICT** — **BULLISH** for swing buys today. The overall market mood remains bullish, with the Nifty 20-day trend showing a +2.7% increase. This uptrend, combined with strong sector performances, particularly in Pharma and Healthcare, suggests a favorable environment for swing traders.
 
-**2. NEWS & MACRO**
-Recent headlines, such as "[Economic Times Markets] NSE listing to 'complete the trioka' and unlock value, drive governance upgrade: Report" and "[Economic Times Markets] FPIs reverse 4-month selling trend with Rs 15,157 cr inflow in Jul", indicate a positive sentiment in the market. Additionally, "[Economic Times Markets] 9 Nifty200 stocks with up to 40% upside potential: Do you own any?" suggests that there are opportunities for growth in the market. However, "[Economic Times Markets] Iran moves to close Strait of Hormuz. Should investors fear a Nifty crash in coming days?" introduces a note of caution, highlighting the potential risks of global events on the market.
+2. **NEWS & MACRO** — Recent headlines indicate a mix of positive and neutral sentiments. The article "FPIs reverse 4-month selling trend with Rs 15,157 cr inflow in Jul" suggests an increase in foreign investor confidence, which could support the market. On the other hand, "Iran moves to close Strait of Hormuz. Should investors fear a Nifty crash in coming days?" introduces a note of caution regarding geopolitical tensions. Additionally, "9 Nifty200 stocks with up to 40% upside potential: Do you own any?" and "Stocks priced for ‘sunshine and rainbows’ now face earnings test" highlight the potential for growth but also the importance of earnings performance. These headlines collectively suggest that while there are positive trends, traders should remain vigilant about potential risks and the impact of earnings reports.
 
-**3. STRONG SECTORS**
+3. **STRONG SECTORS** — 
 * Pharma: +5.8% 20d STRONG
 * Healthcare: +5.8% 20d STRONG
 * FMCG: +2.7% 20d STRONG
 * Energy: +2.7% 20d STRONG
 * Metal: +2.7% 20d STRONG
-These sectors are showing strong performance and are likely to be favourable for swing trades. However, it's essential to be selective within these sectors and focus on stocks with strong fundamentals and technicals.
+These sectors are currently showing strength and could be favored for swing trades. Sectors like Infra, Power, and Consumer, while not as strong, still show positive trends and could be considered based on individual stock performance.
 
-**4. TOP 3 STOCKS FOR TODAY**
-* **DABUR**: Verdict - BUY. Why - Strong sector (FMCG), good fundamentals (PE 41.7, EPS growth 15.1%), and a reasonable RSI (54.8). Entry zone: Rs.430.19 - Rs.443.50, Target: Rs.456.81, Stop/Average trigger: Rs.430.19.
-* **NESTLEIND**: Verdict - BUY. Why - Strong sector (FMCG), excellent fundamentals (PE 80.0, EPS growth 27.2%), and a favourable RSI (59.9). Entry zone: Rs.1411.54 - Rs.1455.20, Target: Rs.1498.86, Stop/Average trigger: Rs.1411.54.
-* **AUROPHARMA**: Verdict - WATCH. Why - Strong sector (Pharma), average fundamentals (PE 25.9, EPS growth 2.0%), and a reasonable RSI (56.6). Entry zone: Rs.1517.76 - Rs.1564.70, Target: Rs.1611.64, Stop/Average trigger: Rs.1517.76.
+4. **TOP 3 STOCKS FOR TODAY** — 
+* **DABUR**: Verdict — **BUY**. Why — Strong sector (FMCG), high buy score (82.2), and decent fundamentals (PE 41.7, EPS growth 15.1%). Entry zone around Rs.430.19, target +3% at Rs.457.91.
+* **NESTLEIND**: Verdict — **BUY**. Why — Strong sector (FMCG), high buy score (78.7), and excellent earnings growth (EPS growth 27.2%, Revenue growth 23.0%). Entry zone around Rs.1411.54, target +3% at Rs.1496.09.
+* **AUROPHARMA**: Verdict — **WATCH**. Why — While it's in a strong sector (Pharma) and has a good buy score (76.4), its earnings growth is relatively low (EPS growth 2.0%). Entry zone around Rs.1517.76, target +3% at Rs.1624.63. It's worth watching for potential improvement in earnings or sectoral strength.
 
-**5. STOCKS TO AVOID TODAY**
-* **COLPAL**: Due to its average fundamentals (PE 42.2, EPS growth -0.5%) and a high RSI (52.0), which may indicate a potential reversal.
-* **JSWSTEEL**: Despite its strong fundamentals (PE 13.6, EPS growth 989.2%), its RSI (50.3) and recent trend (-6.2% vs Nifty) suggest a cautious approach.
+5. **STOCKS TO AVOID TODAY** — 
+* **COLPAL**: Due to its average fundamentals and the fact that it's near its resistance level, making a +3% target challenging.
+* **JSWSTEEL**: Despite being in a strong sector, its trend is sideways, and its performance vs. Nifty is -6.2%, indicating potential underperformance.
 
-**6. RISKS**
-* Market risk: A sudden change in market sentiment could impact swing trades.
-* Global risk: Geopolitical events, such as the Iran-Straits of Hormuz issue, could affect the market.
-* Sector risk: A downturn in strong sectors, such as Pharma or FMCG, could impact stock performance.
-* Event risk: Unexpected events, such as a change in government policies or regulations, could affect the market.
-* Liquidity risk: Insufficient liquidity in certain stocks could make it difficult to enter or exit trades.
+6. **RISKS** — 
+* Market risk: A sudden change in market sentiment could affect all stocks.
+* Global risk: Geopolitical tensions, like the situation with Iran, could impact global markets.
+* Sector risk: Overdependence on a few strong sectors could lead to vulnerability if those sectors decline.
+* Event risk: Earnings reports and other corporate events could significantly impact individual stocks.
+* Liquidity risk: Trades with low liquidity could result in higher volatility and difficulty in entering or exiting positions.
 
-**7. PRE-MARKET CHECKLIST**
-1. Is the market mood bullish? Yes/No
-2. Are the strong sectors aligned with my stock picks? Yes/No
-3. Do my stock picks have strong fundamentals? Yes/No
-4. Are the RSI and technicals favourable for my stock picks? Yes/No
-5. Have I set a clear entry and exit strategy? Yes/No
-6. Am I aware of the potential risks? Yes/No
-7. Have I checked the news and macro environment? Yes/No
-8. Am I prepared to adjust my strategy if market conditions change? Yes/No
+7. **PRE-MARKET CHECKLIST** — 
+1. Is the market trend bullish?
+2. Are you focusing on strong sectors?
+3. Have you checked the news for any stock-specific or sector-specific risks?
+4. Are your target stocks near their support or resistance levels?
+5. Have you considered the PE and earnings growth of your target stocks?
+6. Are you prepared for potential averaging if a stock drops by -3%?
+7. Do you have a clear exit strategy?
+8. Are you within your risk tolerance and budget for the trade?
 
-**8. FINAL CALL**
-Based on the analysis, **NESTLEIND** appears to be the best stock for today's 3% swing, considering its strong sector, excellent fundamentals, and favourable technicals. However, it's essential to remain cautious and monitor market conditions, as unexpected events could impact the trade.
+8. **FINAL CALL** — Based on the analysis, **NESTLEIND** appears to be the best stock for today's 3% swing due to its strong sector, high buy score, and excellent earnings growth. However, it's crucial to monitor market conditions and be prepared for any changes. Always prioritize risk management and trade within your means.
 
 Not SEBI-registered advice. Trade at your own risk.
 
@@ -69,7 +66,7 @@ Not SEBI-registered advice. Trade at your own risk.
 
 #1  DABUR  (Nifty Next 50 | FMCG)  —  Rs.443.50
      Signal: STRONG BUY  |  Score: 82/100
-     Best buy: Rs.443.50  |  Qty: 67  |  Target +3%: Rs.456.81
+     Best buy: Rs.443.50  |  Qty: 67  |  Target: Rs.457.91 (+3.2%)  |  Stop: Rs.431.97
      Technical: RSI 54.8 | Trend sideways | vs Nifty +1.3%
      Fundamentals: PE 41.7 | EPS growth +15.1% | Strong fundamentals
      Support Rs.414.6 | Resistance Rs.490.5 | S 415 / R 490
@@ -77,7 +74,7 @@ Not SEBI-registered advice. Trade at your own risk.
 
 #2  BRITANNIA  (Nifty 50 | FMCG)  —  Rs.5353.00
      Signal: STRONG BUY  |  Score: 81/100
-     Best buy: Rs.5353.00  |  Qty: 5  |  Target +3%: Rs.5513.59
+     Best buy: Rs.5353.00  |  Qty: 5  |  Target: Rs.5501.81 (+2.8%)  |  Stop: Rs.5234.16
      Technical: RSI 54.4 | Trend sideways | vs Nifty +0.9%
      Fundamentals: PE 51.0 | EPS growth +21.1% | Average fundamentals
      Support Rs.5035.0 | Resistance Rs.5924.0 | S 5035 / R 5924
@@ -85,7 +82,7 @@ Not SEBI-registered advice. Trade at your own risk.
 
 #3  NESTLEIND  (Nifty 50 | FMCG)  —  Rs.1455.20
      Signal: STRONG BUY  |  Score: 79/100
-     Best buy: Rs.1455.20  |  Qty: 20  |  Target +3%: Rs.1498.86
+     Best buy: Rs.1455.20  |  Qty: 20  |  Target: Rs.1496.09 (+2.8%)  |  Stop: Rs.1422.46
      Technical: RSI 59.9 | Trend up | vs Nifty +3.6%
      Fundamentals: PE 80.0 | EPS growth +27.2% | Strong fundamentals
      Support Rs.1268.5 | Resistance Rs.1490.93 | Near resistance Rs.1491
@@ -93,7 +90,7 @@ Not SEBI-registered advice. Trade at your own risk.
 
 #4  JSWSTEEL  (Nifty 50 | Metal)  —  Rs.1245.40
      Signal: STRONG BUY  |  Score: 78/100
-     Best buy: Rs.1245.40  |  Qty: 24  |  Target +3%: Rs.1282.76
+     Best buy: Rs.1245.40  |  Qty: 24  |  Target: Rs.1280.40 (+2.8%)  |  Stop: Rs.1217.38
      Technical: RSI 50.3 | Trend sideways | vs Nifty -6.2%
      Fundamentals: PE 13.6 | EPS growth +989.2% | Strong fundamentals
      Support Rs.1203.79 | Resistance Rs.1320.42 | S 1204 / R 1320
@@ -101,7 +98,7 @@ Not SEBI-registered advice. Trade at your own risk.
 
 #5  MARICO  (Nifty Next 50 | FMCG)  —  Rs.852.50
      Signal: STRONG BUY  |  Score: 77/100
-     Best buy: Rs.852.50  |  Qty: 35  |  Target +3%: Rs.878.08
+     Best buy: Rs.852.50  |  Qty: 35  |  Target: Rs.877.48 (+2.9%)  |  Stop: Rs.832.47
      Technical: RSI 59.8 | Trend up | vs Nifty +1.4%
      Fundamentals: PE 62.9 | EPS growth +14.0% | Average fundamentals
      Support Rs.753.9 | Resistance Rs.873.0 | Near resistance Rs.873
@@ -109,7 +106,7 @@ Not SEBI-registered advice. Trade at your own risk.
 
 #6  GODREJCP  (Nifty Next 50 | FMCG)  —  Rs.1088.40
      Signal: STRONG BUY  |  Score: 76/100
-     Best buy: Rs.1088.40  |  Qty: 27  |  Target +3%: Rs.1121.05
+     Best buy: Rs.1088.40  |  Qty: 27  |  Target: Rs.1124.86 (+3.4%)  |  Stop: Rs.1059.23
      Technical: RSI 62.1 | Trend up | vs Nifty +2.6%
      Fundamentals: PE 59.9 | EPS growth +9.7% | Average fundamentals
      Support Rs.975.4 | Resistance Rs.1142.32 | S 975 / R 1142
@@ -117,7 +114,7 @@ Not SEBI-registered advice. Trade at your own risk.
 
 #7  COLPAL  (Nifty Next 50 | FMCG)  —  Rs.2052.40
      Signal: STRONG BUY  |  Score: 76/100
-     Best buy: Rs.2052.40  |  Qty: 14  |  Target +3%: Rs.2113.97
+     Best buy: Rs.2052.40  |  Qty: 14  |  Target: Rs.2112.54 (+2.9%)  |  Stop: Rs.2004.17
      Technical: RSI 52.0 | Trend sideways | vs Nifty -4.0%
      Fundamentals: PE 42.2 | EPS growth -0.5% | Average fundamentals
      Support Rs.1957.8 | Resistance Rs.2197.79 | S 1958 / R 2198
@@ -125,7 +122,7 @@ Not SEBI-registered advice. Trade at your own risk.
 
 #8  AUROPHARMA  (Nifty Next 50 | Pharma)  —  Rs.1564.70
      Signal: STRONG BUY  |  Score: 76/100
-     Best buy: Rs.1564.70  |  Qty: 19  |  Target +3%: Rs.1611.64
+     Best buy: Rs.1564.70  |  Qty: 19  |  Target: Rs.1624.63 (+3.8%)  |  Stop: Rs.1516.66
      Technical: RSI 56.6 | Trend up | vs Nifty +3.5%
      Fundamentals: PE 25.9 | EPS growth +2.0% | Average fundamentals
      Support Rs.1363.5 | Resistance Rs.1636.8 | S 1364 / R 1637
@@ -133,7 +130,7 @@ Not SEBI-registered advice. Trade at your own risk.
 
 #9  HDFCAMC  (Nifty Next 50 | Other)  —  Rs.2761.20
      Signal: BUY  |  Score: 73/100
-     Best buy: Rs.2761.20  |  Qty: 10  |  Target +3%: Rs.2844.04
+     Best buy: Rs.2761.20  |  Qty: 10  |  Target: Rs.2863.64 (+3.7%)  |  Stop: Rs.2679.19
      Technical: RSI 57.3 | Trend up | vs Nifty +9.7%
      Fundamentals: PE 41.5 | EPS growth -2.5% | Average fundamentals
      Support Rs.2380.8 | Resistance Rs.2838.4 | Near resistance Rs.2838
@@ -141,13 +138,14 @@ Not SEBI-registered advice. Trade at your own risk.
 
 #10  ATGL  (Nifty Next 50 | Energy)  —  Rs.723.90
      Signal: BUY  |  Score: 71/100
-     Best buy: Rs.723.90  |  Qty: 41  |  Target +3%: Rs.745.62
+     Best buy: Rs.723.90  |  Qty: 41  |  Target: Rs.757.63 (+4.7%)  |  Stop: Rs.696.90
      Technical: RSI 53.2 | Trend up | vs Nifty -3.3%
      Fundamentals: PE 121.9 | EPS growth +8.9% | Average fundamentals
      Support Rs.587.89 | Resistance Rs.859.55 | S 588 / R 860
      TA: RSI 53 ideal for 3% bounce, Above 20 EMA, Uptrend intact
 
 ── MARKET HEADLINES (RSS) ──
+  - [Economic Times Markets] Vijay Kedia buys 3.58 lakh shares in this IT company that nearly doubled investor money
   - [Economic Times Markets] NSE listing to "complete the trioka" and unlock value, drive governance upgrade: Report
   - [Economic Times Markets] Largecap funds no longer the best bet? Edelweiss CIO Trideep Bhattacharya explains why flexicaps may win now
   - [Economic Times Markets] Iran moves to close Strait of Hormuz. Should investors fear a Nifty crash in coming days?
@@ -157,7 +155,6 @@ Not SEBI-registered advice. Trade at your own risk.
   - [Economic Times Markets] Contrarian investing: Fred Kelly's timeless lessons for winning in the stock market
   - [Economic Times Markets] Stocks priced for ‘sunshine and rainbows’ now face earnings test
   - [Economic Times Markets] Fed officials divided on US inflation views; US home prices hit all-time high
-  - [Economic Times Markets] Dmart recasts strategy as rapid delivery competition intensifies
 
 ── DISCLAIMER ──
 Automated research only. NOT financial advice. Not SEBI-registered.
