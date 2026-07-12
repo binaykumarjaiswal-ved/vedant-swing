@@ -126,12 +126,21 @@ def open_position(
     stop: float | None = None,
     target: float | None = None,
     qty: int | None = None,
+    notes: str = "",
 ) -> Position:
-    return _holdings_open(symbol, price, amount=amount, stop=stop, target=target, qty=qty)
+    return _holdings_open(
+        symbol,
+        price,
+        amount=amount,
+        stop=stop,
+        target=target,
+        qty=qty,
+        notes=notes or "",
+    )
 
 
-def add_average(pos: Position, price: float) -> Position:
-    return _holdings_add_average(pos, price)
+def add_average(pos: Position, price: float, qty: int | None = None) -> Position:
+    return _holdings_add_average(pos, price, qty=qty)
 
 
 def close_position(symbol: str | None = None) -> bool:

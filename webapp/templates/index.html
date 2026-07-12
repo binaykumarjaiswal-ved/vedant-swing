@@ -135,9 +135,22 @@
         <h2>My Holdings (multi-stock)</h2>
         <p class="muted small" id="holdings-summary">Track broker buys for SELL / STOP / HOLD alerts</p>
         <p class="muted small" id="telegram-status-line"></p>
-        <form id="holdings-add-form" class="search-row" style="margin-bottom:0.75rem">
-          <input type="text" id="hold-symbol" placeholder="SYMBOL e.g. DABUR" required autocomplete="off" autocapitalize="characters">
-          <button type="submit" class="btn btn-primary">Add holding</button>
+        <p class="muted small" style="margin-bottom:0.5rem">
+          Enter your <strong>actual broker buy price + qty</strong> so target / stop / average alerts match real P&amp;L.
+          Telegram: <code>/buy TITAN 4481 6</code>
+        </p>
+        <form id="holdings-add-form" class="holdings-add-form" style="margin-bottom:0.75rem">
+          <div class="holdings-fields">
+            <input type="text" id="hold-symbol" placeholder="SYMBOL e.g. TITAN" required autocomplete="off" autocapitalize="characters">
+            <input type="number" id="hold-price" placeholder="Buy price Rs." step="0.05" min="0.05" required inputmode="decimal">
+            <input type="number" id="hold-qty" placeholder="Qty" step="1" min="1" required inputmode="numeric">
+          </div>
+          <div class="holdings-fields optional">
+            <input type="number" id="hold-stop" placeholder="Stop (optional)" step="0.05" min="0" inputmode="decimal">
+            <input type="number" id="hold-target" placeholder="Target (optional)" step="0.05" min="0" inputmode="decimal">
+          </div>
+          <p class="muted small" id="hold-preview">Invested: — · Target +3% / Stop auto if blank</p>
+          <button type="submit" class="btn btn-primary" style="width:100%">Add holding</button>
         </form>
         <div id="position-body"><p class="muted">Loading…</p></div>
       </section>

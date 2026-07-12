@@ -698,8 +698,58 @@ def _save_position_to_github():
     return ok
 
 
-def position_action(action: str, symbol: str | None = None, price: float | None = None) -> dict:
-    from nse_data import nse_quote
+def _parse_num(val) -> float | None:
+    if val is None or val == "":
+        return None
+    try:
+        if isinstance(val, str):
+            val = val.replace(",", "").strip()
+        n = float(val)
+        return n if n > 0 else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _parse_holding_fields(symbol, price, qty):
+    """Accept separate fields or one-line 'LOWVOLIETF 21.71 1383'."""
+    from nse_data import normalize_symbol
+
+    sym = (symbol or "").strip()
+    p = _parse_num(price)
+    q = _parse_num(qty)
+    q_int = int(q) if q else None
+
+    # One-line paste in symbol box: SYMBOL PRICE QTY
+    parts = sym.replace(",", " ").split()
+    if len(parts) >= 3 and p is None:
+        try:
+            p = float(parts[-2].replace(",", ""))
+            q_int = int(float(parts[-1].replace(",", "")))
+            sym = " ".join(parts[:-2])
+        except ValueError:
+            pass
+    elif len(parts) == 2 and p is None:
+        # SYMBOL PRICE — qty still required separately
+        try:
+            p = float(parts[-1].replace(",", ""))
+            sym = parts[0]
+        except ValueError:
+            pass
+
+    sym = normalize_symbol(sym)
+    return sym, p, q_int
+
+
+def position_action(
+    action: str,
+    symbol: str | None = None,
+    price: float | None = None,
+    qty: int | None = None,
+    stop: float | None = None,
+    target: float | None = None,
+) -> dict:
+    """Track broker fills. Uses YOUR price+qty — does NOT need live NSE quote to add."""
+    from nse_data import nse_quote, normalize_symbol
     from strategy import (
         add_average,
         calc_best_buy_price,
@@ -714,45 +764,91 @@ def position_action(action: str, symbol: str | None = None, price: float | None 
     msg = ""
 
     if action == "buy":
-        if not symbol:
-            return {"ok": False, "error": "Symbol required"}
-        if get_position(symbol.upper()):
-            return {"ok": False, "error": f"Already holding {symbol.upper()}"}
-        if not price or price <= 0:
-            q = nse_quote(symbol.upper())
-            if not q:
-                return {"ok": False, "error": "No price"}
-            price = calc_best_buy_price(q)
+        sym, p, q = _parse_holding_fields(symbol, price, qty)
+        if not sym:
+            return {
+                "ok": False,
+                "error": "Symbol required. Example: LOWVOLIETF + price 21.71 + qty 1383",
+            }
+        if get_position(sym):
+            return {"ok": False, "error": f"Already holding {sym}"}
+        # NEVER call live quote for buy — user fill is source of truth
+        if not p or p <= 0:
+            return {
+                "ok": False,
+                "error": (
+                    "Buy PRICE required (your broker fill). "
+                    "Example: price=21.71 — live market quote is NOT used for add."
+                ),
+            }
+        if not q or q < 1:
+            return {
+                "ok": False,
+                "error": (
+                    "QTY required (shares bought). Example: qty=1383. "
+                    f"You entered symbol={sym} price={p}."
+                ),
+            }
         try:
-            open_position(symbol.upper(), price, None)
+            pos = open_position(
+                sym,
+                float(p),
+                amount=None,
+                stop=_parse_num(stop),
+                target=_parse_num(target),
+                qty=int(q),
+                notes="web_add_holding",
+            )
             ok = True
-            msg = f"Added {symbol.upper()}"
+            msg = (
+                f"Added {pos.symbol}: {pos.total_qty} @ Rs.{pos.avg_price:.2f} "
+                f"(invested Rs.{pos.total_invested:,.2f}) · "
+                f"Target Rs.{pos.sell_target():.2f} · Stop Rs.{pos.hard_stop():.2f}"
+            )
+        except TypeError as exc:
+            # notes kw not supported on older open_position
+            try:
+                pos = open_position(sym, float(p), None, _parse_num(stop), _parse_num(target), int(q))
+                ok = True
+                msg = f"Added {pos.symbol}: {pos.total_qty} @ Rs.{pos.avg_price:.2f}"
+            except Exception as exc2:
+                return {"ok": False, "error": f"Add failed: {exc2}"}
         except ValueError as exc:
             return {"ok": False, "error": str(exc)}
+        except Exception as exc:
+            return {"ok": False, "error": f"Add failed: {exc}"}
     elif action == "sell":
         try:
-            if not close_position(symbol.upper() if symbol else None):
+            sym = normalize_symbol(symbol) if symbol else None
+            if not close_position(sym):
                 return {"ok": False, "error": "No open position" + (f" for {symbol}" if symbol else "")}
             ok = True
-            msg = f"Closed {symbol or 'position'}"
+            msg = f"Closed {sym or 'position'}"
         except ValueError as exc:
             return {"ok": False, "error": str(exc)}
     elif action == "average":
-        if not symbol:
+        sym, p, q = _parse_holding_fields(symbol, price, qty)
+        if not sym:
             return {"ok": False, "error": "Symbol required for average"}
-        pos = get_position(symbol.upper())
+        pos = get_position(sym)
         if not pos:
-            return {"ok": False, "error": f"No open position for {symbol}"}
+            return {"ok": False, "error": f"No open position for {sym}"}
         if not pos.can_average():
             return {"ok": False, "error": "Max averages reached"}
-        if not price or price <= 0:
-            q = nse_quote(pos.symbol)
-            price = calc_best_buy_price(q) if q else 0
-        if price <= 0:
-            return {"ok": False, "error": "No price"}
-        add_average(pos, price)
+        if not p or p <= 0:
+            return {
+                "ok": False,
+                "error": "Average buy PRICE required (your fill). Live quote not used.",
+            }
+        try:
+            pos = add_average(pos, float(p), qty=int(q) if q and q > 0 else None)
+        except TypeError:
+            pos = add_average(pos, float(p))
         ok = True
-        msg = f"Averaged {symbol.upper()}"
+        msg = (
+            f"Averaged {sym} @ Rs.{float(p):.2f} · "
+            f"New avg Rs.{pos.avg_price:.2f} · Qty {pos.total_qty}"
+        )
     elif action == "status":
         ok = True
     else:

@@ -85,14 +85,17 @@ def _handle_command(text: str) -> bool:
         max_h = CONFIG.get("max_holdings", 10)
         send_message(
             "Vedant Swing — multi holdings\n\n"
-            f"/buy SYMBOL [price] [qty] — add holding (max {max_h})\n"
-            "  e.g. /buy TITAN\n"
+            f"/buy SYMBOL PRICE QTY — add holding (max {max_h})\n"
+            "  REQUIRED: your real buy price + shares\n"
+            "  e.g. /buy TITAN 4481.10 6\n"
             "  e.g. /buy RELIANCE 1400 20\n"
             "/sell SYMBOL — close that holding\n"
-            "/average SYMBOL — record optional average\n"
+            "/average SYMBOL PRICE [QTY] — record average down\n"
+            "  e.g. /average TITAN 4300 2\n"
             "/status — all holdings + SELL/HOLD/STOP\n"
             "/holdings — same as /status\n"
             "/help — this message\n\n"
+            "Without price+qty, P&L / sell / average alerts are wrong.\n"
             "Bot does NOT place broker orders. You trade, then /buy or /sell."
         )
         return True
@@ -135,7 +138,7 @@ def _handle_command(text: str) -> bool:
             if len(open_list) == 1:
                 symbol = open_list[0].symbol
             else:
-                send_message("Usage: /average SYMBOL")
+                send_message("Usage: /average SYMBOL PRICE [QTY]\ne.g. /average TITAN 4300 2")
                 return True
         else:
             symbol = parts[1].upper()
@@ -146,20 +149,31 @@ def _handle_command(text: str) -> bool:
         if not pos.can_average():
             send_message(f"{symbol}: max averages reached.")
             return True
-        q = nse_quote(symbol)
-        if not q:
-            send_message(f"Could not get price for {symbol}")
-            return True
-        price = calc_best_buy_price(q)
+        price = 0.0
+        qty = None
         if len(parts) >= 3:
             try:
                 price = float(parts[2])
             except ValueError:
-                pass
-        pos = add_average(pos, price)
+                price = 0
+        if len(parts) >= 4:
+            try:
+                qty = int(float(parts[3]))
+            except ValueError:
+                qty = None
+        if price <= 0:
+            send_message(
+                f"Usage: /average {symbol} PRICE [QTY]\n"
+                "Use your actual average-buy fill price (and qty if known)."
+            )
+            return True
+        try:
+            pos = add_average(pos, price, qty=qty)
+        except TypeError:
+            pos = add_average(pos, price)
         send_message(
             f"AVERAGE recorded: {symbol}\n"
-            f"Add @ Rs.{price:.2f}\n"
+            f"Add @ Rs.{price:.2f}" + (f" × {qty}" if qty else "") + "\n"
             f"New avg Rs.{pos.avg_price:.2f}\n"
             f"Qty {pos.total_qty} | Target Rs.{pos.sell_target():.2f} | Stop Rs.{pos.hard_stop():.2f}"
         )
@@ -167,7 +181,11 @@ def _handle_command(text: str) -> bool:
 
     if cmd == "/buy":
         if len(parts) < 2:
-            send_message("Usage: /buy SYMBOL [price] [qty]\ne.g. /buy DABUR")
+            send_message(
+                "Usage: /buy SYMBOL PRICE QTY\n"
+                "e.g. /buy TITAN 4481.10 6\n"
+                "Price + qty required for correct sell/average alerts."
+            )
             return True
         symbol = parts[1].upper()
         if get_position(symbol):
@@ -185,12 +203,14 @@ def _handle_command(text: str) -> bool:
                 qty = int(float(parts[3]))
             except ValueError:
                 qty = None
-        if price <= 0:
-            q = nse_quote(symbol)
-            if not q:
-                send_message(f"Could not get price for {symbol}")
-                return True
-            price = calc_best_buy_price(q)
+        if price <= 0 or not qty or qty < 1:
+            send_message(
+                f"Usage: /buy {symbol} PRICE QTY\n"
+                f"Example: /buy {symbol} 1000 10\n"
+                "Need your broker fill price AND number of shares.\n"
+                "(Symbol-only was causing wrong P&L alerts.)"
+            )
+            return True
         try:
             pos = open_position(symbol, price, qty=qty)
         except ValueError as exc:

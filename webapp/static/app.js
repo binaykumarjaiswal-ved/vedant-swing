@@ -764,18 +764,21 @@ function renderPosition(data) {
   }
 
   if (!rows.length) {
-    body.innerHTML = '<p class="muted">Empty. After broker buy: add symbol here or /buy SYMBOL on Telegram.</p>';
+    body.innerHTML =
+      '<p class="muted">Empty. After broker buy: add <strong>symbol + buy price + qty</strong> above, ' +
+      "or Telegram <code>/buy TITAN 4481 6</code>.</p>";
     return;
   }
 
   body.innerHTML = rows.map((p) => {
     const pnlCls = (p.pnl_pct || 0) >= 0 ? "green" : "red";
+    const avgTrig = p.avg_trigger != null ? fmtRs(p.avg_trigger) : "—";
     return `
       <div class="rec-card" style="cursor:default;margin-bottom:0.55rem" data-hold="${escHtml(p.symbol)}">
         <div class="rec-top">
           <div>
             <div class="rec-sym">${escHtml(p.symbol)}</div>
-            <div class="rec-meta">Qty ${p.qty} · Avg ${fmtRs(p.avg_price)} · Opened ${escHtml(p.opened || "")}</div>
+            <div class="rec-meta">Qty ${p.qty} · Avg ${fmtRs(p.avg_price)} · Invested ${fmtRs(p.invested)} · Opened ${escHtml(p.opened || "")}</div>
           </div>
           <span class="signal-badge ${signalClass(p.signal)}">${escHtml(p.signal || "—")}</span>
         </div>
@@ -784,7 +787,12 @@ function renderPosition(data) {
           <div class="level-box stop"><span>Stop</span><strong>${fmtRs(p.stop)}</strong></div>
           <div class="level-box target"><span>Target</span><strong>${fmtRs(p.sell_target)}</strong></div>
         </div>
-        <p class="rec-thesis">P&amp;L <span class="${pnlCls}">${p.pnl_pct ?? 0}% (${fmtRs(p.pnl)})</span> · ${escHtml(p.signal_reason || "")}</p>
+        <p class="rec-thesis">
+          P&amp;L <span class="${pnlCls}">${p.pnl_pct ?? 0}% (${fmtRs(p.pnl)})</span>
+          · Hold vs avg ${fmtRs(p.avg_price)}
+          · Avg trigger ${avgTrig}
+          · ${escHtml(p.signal_reason || "")}
+        </p>
         <div class="action-row" style="margin-top:0.45rem">
           <button type="button" class="btn btn-warn btn-sm" data-hold-avg="${escHtml(p.symbol)}">Average</button>
           <button type="button" class="btn btn-danger btn-sm" data-hold-sell="${escHtml(p.symbol)}">Close track</button>
@@ -808,15 +816,39 @@ function renderPosition(data) {
   body.querySelectorAll("[data-hold-avg]").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const sym = btn.dataset.holdAvg;
+      const priceStr = prompt(`Average buy price for ${sym} (your actual fill Rs.)`);
+      if (priceStr == null || priceStr === "") return;
+      const price = parseFloat(priceStr);
+      if (!price || price <= 0) return toast("Invalid average price", "error");
+      const qtyStr = prompt(`Qty added for ${sym} (shares). Leave blank for auto 30% rule.`);
+      const qty = qtyStr && qtyStr.trim() ? parseInt(qtyStr, 10) : null;
+      const body = { symbol: sym, price };
+      if (qty && qty > 0) body.qty = qty;
       const r = await fetch("/api/position/average", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ symbol: sym }),
+        body: JSON.stringify(body),
       }).then((x) => x.json());
-      toast(r.ok ? `Averaged ${sym}` : (r.error || "Failed"), r.ok ? "success" : "error");
+      toast(r.ok ? (r.message || `Averaged ${sym}`) : (r.error || "Failed"), r.ok ? "success" : "error");
       loadDashboard();
     });
   });
+}
+
+function updateHoldPreview() {
+  const price = parseFloat($("hold-price")?.value || "0");
+  const qty = parseInt($("hold-qty")?.value || "0", 10);
+  const el = $("hold-preview");
+  if (!el) return;
+  if (price > 0 && qty > 0) {
+    const inv = price * qty;
+    const tgt = price * 1.03;
+    const stop = price * 0.96;
+    el.textContent =
+      `Invested: ${fmtRs(inv)} · Auto target ~${fmtRs(tgt)} (+3%) · Auto stop ~${fmtRs(stop)} (-4%)`;
+  } else {
+    el.textContent = "Invested: — · Enter buy price + qty from your broker";
+  }
 }
 
 function paperBuyPayload(symbol, price, qty, stop, target) {
@@ -921,21 +953,65 @@ function updateRrPreview() {
 
 $("search-form").addEventListener("submit", (e) => { e.preventDefault(); runAnalyze($("symbol-input").value); });
 $("btn-refresh").addEventListener("click", loadDashboard);
+$("hold-price")?.addEventListener("input", updateHoldPreview);
+$("hold-qty")?.addEventListener("input", updateHoldPreview);
+updateHoldPreview();
+
 $("holdings-add-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const symbol = ($("hold-symbol")?.value || "").trim().toUpperCase();
-  if (!symbol) return toast("Enter symbol", "error");
+  let symbol = ($("hold-symbol")?.value || "").trim().toUpperCase();
+  // Support one-line: LOWVOLIETF 21.71 1383 in symbol box
+  let price = parseFloat(String($("hold-price")?.value || "0").replace(/,/g, ""));
+  let qty = parseInt(String($("hold-qty")?.value || "0").replace(/,/g, ""), 10);
+  const parts = symbol.split(/\s+/).filter(Boolean);
+  if (parts.length >= 3 && (!price || price <= 0)) {
+    const maybePrice = parseFloat(parts[parts.length - 2].replace(/,/g, ""));
+    const maybeQty = parseInt(parts[parts.length - 1].replace(/,/g, ""), 10);
+    if (maybePrice > 0 && maybeQty > 0) {
+      price = maybePrice;
+      qty = maybeQty;
+      symbol = parts.slice(0, -2).join("");
+    }
+  }
+  // Fix OCR zero: LOWV0LIETF → LOWVOLIETF
+  if (symbol === "LOWV0LIETF") symbol = "LOWVOLIETF";
+
+  const stopRaw = parseFloat(String($("hold-stop")?.value || "0").replace(/,/g, ""));
+  const targetRaw = parseFloat(String($("hold-target")?.value || "0").replace(/,/g, ""));
+  if (!symbol) return toast("Enter symbol e.g. LOWVOLIETF", "error");
+  if (!price || price <= 0) {
+    return toast("Enter buy PRICE in its box (e.g. 21.71) — not live market", "error");
+  }
+  if (!qty || qty < 1) {
+    return toast("Enter QTY in its box (e.g. 1383 shares)", "error");
+  }
+
+  const body = { symbol, price, qty };
+  if (stopRaw > 0) body.stop = stopRaw;
+  if (targetRaw > 0) body.target = targetRaw;
+
   const r = await fetch("/api/position/buy", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ symbol }),
-  }).then((x) => x.json());
+    body: JSON.stringify(body),
+  }).then((x) => x.json()).catch(() => ({ ok: false, error: "Network error" }));
   if (r.ok) {
-    toast(`Tracking ${symbol}`, "success");
+    toast(r.message || `Tracking ${symbol}: ${qty} @ ${fmtRs(price)}`, "success");
     if ($("hold-symbol")) $("hold-symbol").value = "";
+    if ($("hold-price")) $("hold-price").value = "";
+    if ($("hold-qty")) $("hold-qty").value = "";
+    if ($("hold-stop")) $("hold-stop").value = "";
+    if ($("hold-target")) $("hold-target").value = "";
+    updateHoldPreview();
     loadDashboard();
   } else {
-    toast(r.error || "Could not add holding", "error");
+    // Old servers said "No price" when they tried live NSE for ETFs — explain clearly
+    let err = r.error || "Could not add holding";
+    if (/no price/i.test(err)) {
+      err =
+        "Server still uses old add-holding (live quote). Redeploy app, or use Telegram: /buy LOWVOLIETF 21.71 1383";
+    }
+    toast(err, "error");
   }
 });
 

@@ -182,9 +182,12 @@ def open_position(
     qty: int | None = None,
     notes: str = "",
 ) -> Position:
+    from nse_data import normalize_symbol
     from strategy import calc_buy_order
 
-    symbol = symbol.upper().strip()
+    symbol = normalize_symbol(symbol)
+    if not symbol:
+        raise ValueError("Symbol required")
     if get_position(symbol):
         raise ValueError(f"Already holding {symbol}")
 
@@ -196,12 +199,14 @@ def open_position(
     c = _cfg()
     budget = amount or c.get("default_investment", 30000)
     if qty and qty > 0 and price > 0:
+        # Real broker fill — invested = price × qty (not default Rs.30k budget)
         order = {
             "qty": int(qty),
-            "price": round(price, 2),
-            "amount": round(qty * price, 2),
-            "budget": budget,
+            "price": round(float(price), 2),
+            "amount": round(int(qty) * float(price), 2),
+            "budget": round(int(qty) * float(price), 2),
         }
+        budget = order["amount"]
     else:
         order = calc_buy_order(budget, price)
 
@@ -233,14 +238,23 @@ def open_position(
     return pos
 
 
-def add_average(pos: Position, price: float) -> Position:
+def add_average(pos: Position, price: float, qty: int | None = None) -> Position:
+    """Record average-down. Prefer real broker qty; else use strategy fraction of initial."""
     from strategy import calc_buy_order
 
     c = _cfg()
     if not pos.can_average():
         return pos
-    add_budget = pos.initial_amount * c.get("average_fraction", 0.30)
-    order = calc_buy_order(add_budget, price)
+    price = float(price)
+    if qty and int(qty) > 0 and price > 0:
+        order = {
+            "qty": int(qty),
+            "price": round(price, 2),
+            "amount": round(int(qty) * price, 2),
+        }
+    else:
+        add_budget = pos.initial_amount * c.get("average_fraction", 0.30)
+        order = calc_buy_order(add_budget, price)
     pos.lots.append({
         "price": order["price"],
         "qty": order["qty"],
@@ -310,10 +324,16 @@ def evaluate_all(quotes: dict[str, float] | None = None) -> list[dict[str, Any]]
             q = nse_quote(pos.symbol)
             ltp = float(q["ltp"]) if q and q.get("ltp") else 0
         if ltp <= 0:
+            # Still evaluate vs last avg so SELL/AVERAGE work offline (ETFs sometimes fail quote APIs)
+            ltp = float(pos.avg_price or 0)
+        if ltp <= 0:
             results.append({
                 "symbol": pos.symbol,
-                "signal": "ERROR",
-                "reason": "No price",
+                "signal": "HOLD",
+                "reason": "Live LTP unavailable — using entry avg offline",
+                "ltp": 0,
+                "avg_price": round(pos.avg_price, 2),
+                "pnl_pct": 0,
                 "position": pos,
             })
             continue

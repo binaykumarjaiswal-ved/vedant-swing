@@ -94,10 +94,33 @@ def api_report(date: str):
 @app.route("/api/position/<action>", methods=["POST"])
 def api_position(action: str):
     body = request.get_json(silent=True) or {}
+    qty_raw = body.get("qty")
+    try:
+        qty = int(float(qty_raw)) if qty_raw not in (None, "") else None
+    except (TypeError, ValueError):
+        qty = None
+    price_raw = body.get("price")
+    try:
+        price = float(price_raw) if price_raw not in (None, "") else None
+    except (TypeError, ValueError):
+        price = None
+    stop_raw = body.get("stop")
+    target_raw = body.get("target")
+    try:
+        stop = float(stop_raw) if stop_raw not in (None, "") else None
+    except (TypeError, ValueError):
+        stop = None
+    try:
+        target = float(target_raw) if target_raw not in (None, "") else None
+    except (TypeError, ValueError):
+        target = None
     result = position_action(
         action,
         symbol=body.get("symbol"),
-        price=body.get("price"),
+        price=price,
+        qty=qty,
+        stop=stop,
+        target=target,
     )
     return jsonify(result)
 

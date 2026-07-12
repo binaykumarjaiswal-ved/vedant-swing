@@ -29,7 +29,28 @@ YAHOO_MAP = {
     "TATAMOTORS": "TMPV.NS",
     "ZOMATO": "ETERNAL.NS",
     "ADANITRANS": "ADANIENSOL.NS",
+    # Common NSE ETFs (equity API often fails; Yahoo works)
+    "LOWVOLIETF": "LOWVOLIETF.NS",
+    "MON100": "MON100.NS",
+    "NIFTYBEES": "NIFTYBEES.NS",
+    "BANKBEES": "BANKBEES.NS",
+    "GOLDBEES": "GOLDBEES.NS",
+    "JUNIORBEES": "JUNIORBEES.NS",
+    "LIQUIDBEES": "LIQUIDBEES.NS",
+    "ITBEES": "ITBEES.NS",
+    "PSUBNKBEES": "PSUBNKBEES.NS",
+    "PHARMABEES": "PHARMABEES.NS",
 }
+
+
+def normalize_symbol(symbol: str) -> str:
+    """Uppercase NSE ticker; fix common OCR typos (0 vs O)."""
+    s = (symbol or "").upper().strip()
+    s = s.replace(" ", "")
+    # LOWV0LIETF (zero) → LOWVOLIETF
+    if s == "LOWV0LIETF":
+        s = "LOWVOLIETF"
+    return s
 
 
 _SESSION: requests.Session | None = None
@@ -47,7 +68,21 @@ def _session() -> requests.Session:
     return s
 
 
+def _looks_like_etf(symbol: str) -> bool:
+    s = symbol.upper()
+    return (
+        s.endswith("ETF")
+        or s.endswith("BEES")
+        or s in YAHOO_MAP
+        or "IETF" in s
+    )
+
+
 def nse_quote(symbol: str) -> dict | None:
+    symbol = normalize_symbol(symbol)
+    if not symbol:
+        return None
+
     cache = CACHE_DIR / f"quote_{symbol}.json"
     if cache.exists():
         try:
@@ -57,6 +92,37 @@ def nse_quote(symbol: str) -> dict | None:
         except (json.JSONDecodeError, KeyError, ValueError):
             pass
 
+    # ETFs: Yahoo first (NSE quote-equity often 404s for ETF symbols)
+    if _looks_like_etf(symbol):
+        yq = _yahoo_quote(symbol)
+        if yq and yq.get("ltp", 0) > 0:
+            _cache_quote(symbol, yq)
+            return yq
+
+    nq = _nse_equity_quote(symbol)
+    if nq and nq.get("ltp", 0) > 0:
+        _cache_quote(symbol, nq)
+        return nq
+
+    yq = _yahoo_quote(symbol)
+    if yq and yq.get("ltp", 0) > 0:
+        _cache_quote(symbol, yq)
+        return yq
+    return None
+
+
+def _cache_quote(symbol: str, quote: dict) -> None:
+    try:
+        cache = CACHE_DIR / f"quote_{symbol}.json"
+        cache.write_text(
+            json.dumps({"ts": datetime.now().isoformat(), "quote": quote}),
+            encoding="utf-8",
+        )
+    except OSError:
+        pass
+
+
+def _nse_equity_quote(symbol: str) -> dict | None:
     try:
         s = _session()
         url = f"https://www.nseindia.com/api/quote-equity?symbol={symbol}"
@@ -64,9 +130,12 @@ def nse_quote(symbol: str) -> dict | None:
         resp.raise_for_status()
         raw = resp.json()
         price_info = raw.get("priceInfo", {})
-        quote = {
+        ltp = float(price_info.get("lastPrice") or 0)
+        if ltp <= 0:
+            return None
+        return {
             "symbol": symbol,
-            "ltp": float(price_info.get("lastPrice") or 0),
+            "ltp": ltp,
             "open": float(price_info.get("open") or 0),
             "high": float(price_info.get("intraDayHighLow", {}).get("max") or 0),
             "low": float(price_info.get("intraDayHighLow", {}).get("min") or 0),
@@ -74,26 +143,41 @@ def nse_quote(symbol: str) -> dict | None:
             "change_pct": float(price_info.get("pChange") or 0),
             "source": "nse",
         }
-        cache.write_text(
-            json.dumps({"ts": datetime.now().isoformat(), "quote": quote}),
-            encoding="utf-8",
-        )
-        return quote
     except Exception:
-        return _yahoo_quote(symbol)
+        return None
 
 
 def _yahoo_quote(symbol: str) -> dict | None:
+    symbol = normalize_symbol(symbol)
     ticker = YAHOO_MAP.get(symbol, f"{symbol}.NS")
     if not ticker.endswith(".NS"):
         ticker = f"{ticker}.NS"
     try:
         t = yf.Ticker(ticker)
-        info = t.fast_info
-        ltp = float(getattr(info, "last_price", 0) or 0)
-        prev = float(getattr(info, "previous_close", 0) or ltp)
+        ltp = 0.0
+        prev = 0.0
+        # fast_info can fail on cloud; try history fallback
+        try:
+            info = t.fast_info
+            ltp = float(getattr(info, "last_price", 0) or 0)
+            prev = float(getattr(info, "previous_close", 0) or 0)
+        except Exception:
+            pass
+        if ltp <= 0:
+            try:
+                hist = t.history(period="5d")
+                if hist is not None and len(hist) > 0:
+                    ltp = float(hist["Close"].iloc[-1])
+                    if len(hist) > 1:
+                        prev = float(hist["Close"].iloc[-2])
+                    else:
+                        prev = ltp
+            except Exception:
+                pass
         if ltp <= 0:
             return None
+        if prev <= 0:
+            prev = ltp
         chg = ((ltp / prev) - 1) * 100 if prev else 0
         return {
             "symbol": symbol,
