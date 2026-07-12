@@ -62,8 +62,10 @@ def risk_levels(
     max_target = float(CONFIG.get("max_target_pct", 5.0))
     min_stop = float(CONFIG.get("min_stop_pct", 2.0))
     max_stop = float(CONFIG.get("max_stop_pct", 6.0))
-    target_atr_mult = float(CONFIG.get("target_atr_mult", 1.5))
-    stop_atr_mult = float(CONFIG.get("stop_atr_mult", 1.2))
+    # Default R:R design: target 1.8×ATR, stop 1.1×ATR ≈ 1.6 reward:risk
+    target_atr_mult = float(CONFIG.get("target_atr_mult", 1.8))
+    stop_atr_mult = float(CONFIG.get("stop_atr_mult", 1.1))
+    min_rr = float(CONFIG.get("min_reward_risk", 1.4))
 
     if atr > 0 and price > 0:
         target_pct = (atr * target_atr_mult / price) * 100
@@ -76,9 +78,9 @@ def risk_levels(
         stop_pct = float(CONFIG.get("hard_stop_pct", CONFIG.get("loss_trigger_pct", 3.0) + 1))
         method = "fixed_pct"
 
-    # Ensure target:stop reward roughly >= 1.0 when possible
-    if target_pct < stop_pct * 0.9:
-        target_pct = min(max_target, stop_pct * 1.1)
+    # Enforce minimum reward:risk (win rate alone is not enough — expectancy needs R)
+    if stop_pct > 0 and target_pct / stop_pct < min_rr:
+        target_pct = min(max_target, stop_pct * min_rr)
 
     entry = round(price, 2)
     target = round(entry * (1 + target_pct / 100), 2)
@@ -206,16 +208,41 @@ def confidence_score(pick: dict[str, Any], regime: dict | None = None) -> float:
     elif signal == "BUY":
         conf += 6
 
-    if pick.get("strategy") in ("pullback_21ema", "breakout"):
-        conf += 5
+    if pick.get("strategy") in ("pullback_21ema", "breakout") or pick.get("setup_type") in (
+        "pullback_trend", "breakout_vol",
+    ):
+        conf += 6
     if pick.get("sector_strong"):
         conf += 6
     if pick.get("macd_bullish"):
         conf += 4
+    if pick.get("macd_improving"):
+        conf += 2
     if pick.get("trend") == "up":
         conf += 4
     elif pick.get("trend") == "down":
         conf -= 8
+
+    # Multi-factor quality from technicals
+    qc = int(pick.get("quality_count") or 0)
+    if qc >= 5:
+        conf += 8
+    elif qc >= 3:
+        conf += 4
+    elif qc <= 1:
+        conf -= 6
+
+    adx = float(pick.get("adx") or 0)
+    if adx >= 25 and pick.get("trend") == "up":
+        conf += 5
+    elif adx and adx < 16:
+        conf -= 5  # choppy — lower win rate
+
+    rr = float(pick.get("reward_risk") or 0)
+    if rr >= 1.6:
+        conf += 5
+    elif rr and rr < 1.2:
+        conf -= 4
 
     # Relative strength vs Nifty
     vs = float(pick.get("vs_nifty_20d") or 0)

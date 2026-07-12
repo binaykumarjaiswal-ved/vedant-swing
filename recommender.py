@@ -97,11 +97,14 @@ def build_recommendations(
     )
 
     # Only BUY / STRONG BUY with confidence gate
+    min_quality = int(CONFIG.get("min_quality_flags", 3))
     buys = [
         c for c in candidates
         if c.get("signal") in ("BUY", "STRONG BUY")
         and float(c.get("confidence") or 0) >= min_conf
         and float(c.get("swing_score") or 0) >= min_score
+        and int(c.get("quality_count") or 0) >= min_quality
+        and float(c.get("reward_risk") or 0) >= float(CONFIG.get("min_reward_risk", 1.4)) * 0.9
     ]
 
     # If regime blocks, allow zero buys (honest NO TRADE day)
