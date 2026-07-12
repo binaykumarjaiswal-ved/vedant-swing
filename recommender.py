@@ -176,10 +176,13 @@ def _build_thesis(row: dict) -> str:
         bits.append(f"news {row['sentiment_label'].lower()}")
     if row.get("vs_nifty_20d") is not None:
         bits.append(f"vs Nifty {row['vs_nifty_20d']:+.1f}%")
+    qf = row.get("quality_flags") or []
+    if qf:
+        bits.append(f"flags:{','.join(qf[:4])}")
     reasons = row.get("reasons") or []
     if reasons:
         bits.append(str(reasons[0])[:60])
-    return " · ".join(bits[:5]) if bits else "Composite technical setup"
+    return " · ".join(bits[:6]) if bits else "Composite technical setup"
 
 
 def _no_trade_message(regime: dict, min_conf: float) -> str:

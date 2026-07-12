@@ -380,6 +380,35 @@ body {
   line-height: 1.4;
 }
 
+.quality-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.45rem 0 0.5rem;
+}
+
+.quality-count {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #7dd3fc;
+  margin-right: 0.15rem;
+}
+
+.quality-chip {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.18rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.18);
+  border: 1px solid #1d4ed8;
+  color: #bfdbfe;
+  white-space: nowrap;
+}
+
 .conf-bar {
   height: 6px;
   background: #1e293b;

@@ -156,7 +156,7 @@ function renderActionReport(data) {
       <div class="rec-top">
         <div>
           <div class="rec-sym" data-symbol="${escHtml(p.symbol)}">${escHtml(p.symbol)}</div>
-          <div class="rec-meta">${escHtml(p.sector || "")} · Score ${p.score ?? "—"} · Conf ${p.confidence ?? "—"}</div>
+          <div class="rec-meta">${escHtml(p.sector || "")} · Score ${p.score ?? "—"} · Conf ${p.confidence ?? "—"}${p.reward_risk != null ? " · R:R " + p.reward_risk : ""}</div>
         </div>
         <span class="signal-badge ${signalClass(p.signal)}">${escHtml(p.signal || "BUY")}</span>
       </div>
@@ -165,6 +165,7 @@ function renderActionReport(data) {
         <div class="level-box stop"><span>Stop</span><strong>${fmtRs(p.stop)}</strong></div>
         <div class="level-box target"><span>Target</span><strong>${fmtRs(p.target)}</strong></div>
       </div>
+      ${formatQualityFlags(p.quality_flags, p.quality_count)}
       <p class="rec-thesis">${escHtml(p.thesis || "")}</p>
       <p class="muted small">Qty ~${p.buy_qty ?? "—"} · Amount ~${p.buy_amount != null ? fmtRs(p.buy_amount) : "—"} · Manual broker buy only</p>`;
     bindPickClicks(primaryEl);
@@ -190,6 +191,34 @@ function renderActionReport(data) {
   }
 }
 
+const QUALITY_LABELS = {
+  trend_ok: "Trend+ADX",
+  ema_stack: "EMA stack",
+  pullback: "Pullback",
+  rsi_ok: "RSI zone",
+  macd_ok: "MACD",
+  stoch_ok: "Stoch turn",
+  bb_ok: "BB value",
+  vol_ok: "Volume",
+  rs_ok: "vs Nifty RS",
+  room: "Room to run",
+  structure: "Higher lows",
+  atr_ok: "ATR OK",
+};
+
+function formatQualityFlags(flags, count) {
+  const list = Array.isArray(flags) ? flags : [];
+  if (!list.length && !count) {
+    return '<p class="quality-line muted small">Quality flags: —</p>';
+  }
+  const chips = list.map((f) => {
+    const label = QUALITY_LABELS[f] || f;
+    return `<span class="quality-chip">${escHtml(label)}</span>`;
+  }).join("");
+  const n = count != null ? count : list.length;
+  return `<div class="quality-line"><span class="quality-count">${n} confirms</span>${chips || '<span class="muted small">none</span>'}</div>`;
+}
+
 function renderRecsBoard(data) {
   const board = $("recs-board");
   if (!board) return;
@@ -203,12 +232,14 @@ function renderRecsBoard(data) {
     const sent = r.sentiment_label && r.sentiment_label !== "NO_NEWS"
       ? ` · News ${r.sentiment_label}`
       : "";
+    const setup = r.setup_type ? ` · ${r.setup_type}` : "";
+    const rr = r.reward_risk != null ? ` · R:R ${r.reward_risk}` : "";
     return `
       <div class="rec-card" data-symbol="${escHtml(r.symbol)}">
         <div class="rec-top">
           <div>
             <div class="rec-sym">#${i + 1} ${escHtml(r.symbol)}</div>
-            <div class="rec-meta">${escHtml(r.sector || "—")} · ${escHtml(r.trend || "")}${escHtml(sent)}</div>
+            <div class="rec-meta">${escHtml(r.sector || "—")} · ${escHtml(r.trend || "")}${escHtml(sent)}${escHtml(setup)}${escHtml(rr)}</div>
           </div>
           <span class="signal-badge ${signalClass(r.signal)}">${escHtml(r.signal || "BUY")}</span>
         </div>
@@ -223,6 +254,7 @@ function renderRecsBoard(data) {
           <div class="level-box stop"><span>Stop ${r.stop_pct != null ? "(-" + r.stop_pct + "%)" : ""}</span><strong>${fmtRs(r.stop)}</strong></div>
           <div class="level-box target"><span>Target ${r.target_pct != null ? "(+" + r.target_pct + "%)" : ""}</span><strong>${fmtRs(r.target)}</strong></div>
         </div>
+        ${formatQualityFlags(r.quality_flags, r.quality_count)}
         <p class="rec-thesis">${escHtml(r.thesis || (r.reasons || []).slice(0, 2).join(" · ") || "")}</p>
         <div class="conf-bar"><i style="width:${conf}%"></i></div>
       </div>`;

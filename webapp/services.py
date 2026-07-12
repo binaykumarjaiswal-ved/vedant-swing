@@ -424,6 +424,11 @@ def _latest_recs_summary() -> dict:
                     "sentiment_label": r.get("sentiment_label"),
                     "news_sentiment": r.get("news_sentiment"),
                     "reasons": (r.get("reasons") or [])[:4],
+                    "quality_flags": r.get("quality_flags") or [],
+                    "quality_count": r.get("quality_count") or 0,
+                    "setup_type": r.get("setup_type") or "",
+                    "reward_risk": r.get("reward_risk"),
+                    "adx": r.get("adx"),
                 }
                 for r in recs[:5]
             ],
