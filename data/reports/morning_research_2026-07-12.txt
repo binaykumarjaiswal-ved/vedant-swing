@@ -1,54 +1,57 @@
 =================================================================
-  VEDANT SWING — MORNING RESEARCH — 12 Jul 2026 03:46 PM IST
+  VEDANT SWING — MORNING RESEARCH — 12 Jul 2026 03:58 PM IST
   Groq AI brain + Nifty 500 scan | Sector filter | PE + S/R + RSS news
 =================================================================
 Market mood: BULLISH (Nifty 20d: +2.7%)
-Stocks scanned: 32 | News items: 73 | Universe: fallback list
+Stocks scanned: 32 | News items: 74 | Universe: fallback list
 
 
 ── GROQ AI MORNING BRAIN ──
 [Groq AI Morning Brain — llama-3.3-70b-versatile]
 **MORNING GROQ RESEARCH REPORT**
 
-1. **MARKET VERDICT** — **BULLISH** for swing buys today. The overall market mood remains bullish, with the Nifty 20-day trend showing a +2.7% increase. This uptrend, combined with strong sector performances, particularly in Pharma and Healthcare, suggests a favorable environment for swing traders.
+**1. MARKET VERDICT**
+The market mood is **BULLISH**, with the Nifty 20-day return at +2.7%. This suggests a positive sentiment, which can be beneficial for swing buys. However, it's essential to remain cautious and focus on strong sectors and stocks with solid fundamentals.
 
-2. **NEWS & MACRO** — Recent headlines indicate a mix of positive and neutral sentiments. The article "FPIs reverse 4-month selling trend with Rs 15,157 cr inflow in Jul" suggests an increase in foreign investor confidence, which could support the market. On the other hand, "Iran moves to close Strait of Hormuz. Should investors fear a Nifty crash in coming days?" introduces a note of caution regarding geopolitical tensions. Additionally, "9 Nifty200 stocks with up to 40% upside potential: Do you own any?" and "Stocks priced for ‘sunshine and rainbows’ now face earnings test" highlight the potential for growth but also the importance of earnings performance. These headlines collectively suggest that while there are positive trends, traders should remain vigilant about potential risks and the impact of earnings reports.
+**2. NEWS & MACRO**
+Recent headlines, such as "[Economic Times Markets] FPIs reverse 4-month selling trend with Rs 15,157 cr inflow in Jul" and "[Economic Times Markets] 9 Nifty200 stocks with up to 40% upside potential: Do you own any?" indicate a positive sentiment among foreign investors and a potential for upside in select stocks. On the other hand, "[Economic Times Markets] Iran moves to close Strait of Hormuz. Should investors fear a Nifty crash in coming days?" suggests a potential geopolitical risk that could impact the market. Additionally, "[Economic Times Markets] Stocks priced for ‘sunshine and rainbows’ now face earnings test" highlights the importance of earnings growth in the current market scenario.
 
-3. **STRONG SECTORS** — 
-* Pharma: +5.8% 20d STRONG
-* Healthcare: +5.8% 20d STRONG
-* FMCG: +2.7% 20d STRONG
-* Energy: +2.7% 20d STRONG
-* Metal: +2.7% 20d STRONG
-These sectors are currently showing strength and could be favored for swing trades. Sectors like Infra, Power, and Consumer, while not as strong, still show positive trends and could be considered based on individual stock performance.
+**3. STRONG SECTORS**
+* Pharma: +5.8% 20d return
+* Healthcare: +5.8% 20d return
+* FMCG: +2.7% 20d return
+* Energy: +2.7% 20d return
+* Metal: +2.7% 20d return
+These sectors have shown strong returns over the past 20 days and are likely to continue their upward momentum. However, it's essential to focus on individual stock fundamentals within these sectors.
 
-4. **TOP 3 STOCKS FOR TODAY** — 
-* **DABUR**: Verdict — **BUY**. Why — Strong sector (FMCG), high buy score (82.2), and decent fundamentals (PE 41.7, EPS growth 15.1%). Entry zone around Rs.430.19, target +3% at Rs.457.91.
-* **NESTLEIND**: Verdict — **BUY**. Why — Strong sector (FMCG), high buy score (78.7), and excellent earnings growth (EPS growth 27.2%, Revenue growth 23.0%). Entry zone around Rs.1411.54, target +3% at Rs.1496.09.
-* **AUROPHARMA**: Verdict — **WATCH**. Why — While it's in a strong sector (Pharma) and has a good buy score (76.4), its earnings growth is relatively low (EPS growth 2.0%). Entry zone around Rs.1517.76, target +3% at Rs.1624.63. It's worth watching for potential improvement in earnings or sectoral strength.
+**4. TOP 3 STOCKS FOR TODAY**
+* **DABUR**: Verdict - BUY. Why - Strong fundamentals, PE of 41.7, and EPS growth of 15.1%. Entry zone: Rs.430.19 - Rs.443.50, Target: Rs.457.91, Stop/Average trigger: Rs.430.19.
+* **NESTLEIND**: Verdict - BUY. Why - Strong fundamentals, PE of 80.0, and EPS growth of 27.2%. Entry zone: Rs.1411.54 - Rs.1455.20, Target: Rs.1496.09, Stop/Average trigger: Rs.1411.54.
+* **JSWSTEEL**: Verdict - WATCH. Why - Strong fundamentals, but RSI of 50.3 and a recent decline of -6.2% vs Nifty. Entry zone: Rs.1208.04 - Rs.1245.40, Target: Rs.1280.40, Stop/Average trigger: Rs.1208.04.
 
-5. **STOCKS TO AVOID TODAY** — 
-* **COLPAL**: Due to its average fundamentals and the fact that it's near its resistance level, making a +3% target challenging.
-* **JSWSTEEL**: Despite being in a strong sector, its trend is sideways, and its performance vs. Nifty is -6.2%, indicating potential underperformance.
+**5. STOCKS TO AVOID TODAY**
+* **COLPAL**: Due to average fundamentals and a recent decline of -4.0% vs Nifty.
+* **AUROPHARMA**: Due to average fundamentals and a lack of recent news or catalysts.
 
-6. **RISKS** — 
-* Market risk: A sudden change in market sentiment could affect all stocks.
-* Global risk: Geopolitical tensions, like the situation with Iran, could impact global markets.
-* Sector risk: Overdependence on a few strong sectors could lead to vulnerability if those sectors decline.
-* Event risk: Earnings reports and other corporate events could significantly impact individual stocks.
-* Liquidity risk: Trades with low liquidity could result in higher volatility and difficulty in entering or exiting positions.
+**6. RISKS**
+* Market risk: A sudden change in market sentiment could impact stock prices.
+* Global risk: Geopolitical events, such as the Iran Strait of Hormuz situation, could impact global markets.
+* Sector risk: A decline in a specific sector, such as FMCG, could impact related stocks.
+* Event risk: Earnings announcements or other events could impact individual stock prices.
+* Liquidity risk: A lack of liquidity in a particular stock could make it difficult to enter or exit a trade.
 
-7. **PRE-MARKET CHECKLIST** — 
-1. Is the market trend bullish?
-2. Are you focusing on strong sectors?
-3. Have you checked the news for any stock-specific or sector-specific risks?
-4. Are your target stocks near their support or resistance levels?
-5. Have you considered the PE and earnings growth of your target stocks?
-6. Are you prepared for potential averaging if a stock drops by -3%?
-7. Do you have a clear exit strategy?
-8. Are you within your risk tolerance and budget for the trade?
+**7. PRE-MARKET CHECKLIST**
+1. Is the market mood bullish? Yes/No
+2. Are you focusing on strong sectors? Yes/No
+3. Have you checked the stock's fundamentals? Yes/No
+4. Is the RSI within a reasonable range? Yes/No
+5. Have you set a clear target and stop/average trigger? Yes/No
+6. Are you aware of any potential risks? Yes/No
+7. Have you checked for any recent news or catalysts? Yes/No
+8. Are you sticking to your trading plan? Yes/No
 
-8. **FINAL CALL** — Based on the analysis, **NESTLEIND** appears to be the best stock for today's 3% swing due to its strong sector, high buy score, and excellent earnings growth. However, it's crucial to monitor market conditions and be prepared for any changes. Always prioritize risk management and trade within your means.
+**8. FINAL CALL**
+Based on the analysis, **NESTLEIND** is the top pick for today's 3% swing. The stock has strong fundamentals, a high PE, and a recent uptrend. However, it's essential to remain cautious and focus on the entry zone and stop/average trigger.
 
 Not SEBI-registered advice. Trade at your own risk.
 
