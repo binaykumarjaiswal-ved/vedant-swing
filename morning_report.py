@@ -27,8 +27,11 @@ def _format_pick(rank: int, p: dict) -> list[str]:
     eps_s = f"{eps:+.1f}%" if eps is not None else "—"
     lines = [
         f"#{rank}  {p['symbol']}  ({p.get('index_group', 'Nifty')} | {p.get('sector', '?')})  —  Rs.{p.get('price', 0):.2f}",
-        f"     Signal: {p.get('signal', 'WATCH')}  |  Score: {p.get('swing_score', 0):.0f}/100",
-        f"     Best buy: Rs.{best:.2f}  |  Qty: {p.get('buy_qty', 0)}  |  Target +3%: Rs.{p.get('target', 0):.2f}",
+        f"     Signal: {p.get('signal', 'WATCH')}  |  Score: {p.get('swing_score', 0):.0f}/100"
+        + (f"  |  Conf: {p.get('confidence', 0):.0f}" if p.get("confidence") else ""),
+        f"     Best buy: Rs.{best:.2f}  |  Qty: {p.get('buy_qty', 0)}  |  "
+        f"Target: Rs.{p.get('target', 0):.2f} (+{p.get('target_pct', 3):.1f}%)  |  "
+        f"Stop: Rs.{p.get('stop', p.get('avg_trigger', 0)):.2f}",
         f"     Technical: RSI {p.get('rsi', 0)} | Trend {p.get('trend', '?')} | vs Nifty {p.get('vs_nifty_20d', 0):+.1f}%",
         f"     Fundamentals: PE {pe} | EPS growth {eps_s} | {p.get('fund_verdict', '—')}",
         f"     Support Rs.{p.get('support', '—')} | Resistance Rs.{p.get('resistance', '—')} | {p.get('level_note', '')[:80]}",

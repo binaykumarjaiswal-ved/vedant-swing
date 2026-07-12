@@ -97,22 +97,29 @@ def format_position(signal: dict, pos_symbol: str) -> str:
         lines.extend([
             "",
             f"SELL at Rs.{signal.get('sell_price', signal.get('ltp', 0)):.2f} or better",
-            "After selling run: CONFIRM_SELL.bat",
+            "After selling: confirm in app / journal (manual broker exit).",
+        ])
+    elif sig == "STOP":
+        lines.extend([
+            "",
+            f"HARD STOP — exit near Rs.{signal.get('stop_price', signal.get('sell_price', signal.get('ltp', 0))):.2f}",
+            "Protect capital. Manual sell in broker. Bot does NOT place orders.",
         ])
     elif sig == "AVERAGE":
         lines.extend([
             "",
-            f"Best buy price: Rs.{signal.get('add_price', signal.get('ltp', 0)):.2f}",
+            f"Optional add price: Rs.{signal.get('add_price', signal.get('ltp', 0)):.2f}",
             f"Add qty: {signal.get('add_qty', 0)} shares",
-            f"Add cost: Rs.{signal.get('add_amount', 0):,.2f} (30% of Rs.{CONFIG.get('default_investment', 30000):,.0f})",
-            f"Average {signal.get('average_count', 0) + 1}/{CONFIG.get('max_averages', 5)}",
-            "After averaging run: CONFIRM_AVERAGE.bat",
+            f"Add cost: Rs.{signal.get('add_amount', 0):,.2f}",
+            f"Average {signal.get('average_count', 0) + 1}/{CONFIG.get('max_averages', 1)} (max 1 recommended)",
+            f"Hard stop still Rs.{signal.get('stop_price', 0):.2f}",
+            "Optional only — not required. No broker auto-order.",
         ])
     else:
         lines.extend([
             "",
-            f"Hold — sell target Rs.{signal.get('sell_price', 0):.2f}",
-            f"Avg trigger Rs.{signal.get('avg_trigger', 0):.2f}",
+            f"Hold — target Rs.{signal.get('sell_price', 0):.2f}",
+            f"Stop Rs.{signal.get('stop_price', 0):.2f} | Avg trigger Rs.{signal.get('avg_trigger', 0):.2f}",
         ])
     lines.append("\nNot SEBI advice.")
     return "\n".join(lines)

@@ -102,24 +102,12 @@ def api_position(action: str):
     return jsonify(result)
 
 
-@app.route("/api/evening-scan")
-def api_evening_scan():
-    from evening_scan import run_evening_scan
-    return jsonify(run_evening_scan())
-
-
 @app.route("/api/morning-scan")
 def api_morning_scan():
     from webapp.services import run_morning_scan_api
 
     force = request.args.get("force", "0") in ("1", "true", "yes")
     return jsonify(run_morning_scan_api(force=force))
-
-
-@app.route("/api/evening-scan/latest")
-def api_evening_scan_latest():
-    from webapp.services import get_latest_evening_scan
-    return jsonify(get_latest_evening_scan())
 
 
 @app.route("/api/paper")
@@ -259,11 +247,79 @@ def api_compare():
 
 @app.route("/api/backtest")
 def api_backtest():
-    from webapp.insights import backtest_evening_scan
+    """Historical score backtest (sample universe). Prefer /api/performance for live audit."""
+    from backtest_engine import backtest_universe
 
     try:
-        days = int(request.args.get("days", 30))
-        return jsonify(backtest_evening_scan(days=min(days, 60)))
+        n = int(request.args.get("symbols", request.args.get("days", 20)))
+        # days param was legacy; treat as symbols if engine-style
+        if request.args.get("symbols"):
+            n = int(request.args.get("symbols", 20))
+        else:
+            n = min(int(request.args.get("symbols", 20)), 50)
+        return jsonify(backtest_universe(max_symbols=min(n, 50)))
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)[:200]}), 500
+
+
+@app.route("/api/recommendations")
+def api_recommendations():
+    """Latest BUY recommendations (recommend-only, no broker)."""
+    from recommender import get_latest_recommendations
+
+    return jsonify(get_latest_recommendations())
+
+
+@app.route("/api/recommendations/run")
+def api_recommendations_run():
+    """Rebuild recommendations from latest scored scan / quick universe."""
+    from recommender import build_recommendations, format_recommendation_message
+
+    try:
+        limit = int(request.args.get("limit", 40))
+        from scanner import scan_universe
+        from stock_universe import get_universe
+
+        u = get_universe()
+        scored = scan_universe(u["all"][: max(10, min(limit, 100))], set(u["nifty50"]))
+        payload = build_recommendations(
+            scored=scored,
+            source="api",
+            auto_paper=request.args.get("paper", "0") in ("1", "true", "yes"),
+        )
+        payload["text"] = format_recommendation_message(payload)
+        return jsonify(payload)
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)[:300]}), 500
+
+
+@app.route("/api/performance")
+def api_performance():
+    from history_db import performance_summary
+
+    try:
+        days = int(request.args.get("days", 60))
+        return jsonify(performance_summary(days=min(days, 365)))
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)[:200]}), 500
+
+
+@app.route("/api/model-audit")
+def api_model_audit():
+    from model_audit import audit_pending
+
+    try:
+        return jsonify(audit_pending())
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)[:200]}), 500
+
+
+@app.route("/api/regime")
+def api_regime():
+    from market_regime import market_health
+
+    try:
+        return jsonify({"ok": True, **market_health()})
     except Exception as exc:
         return jsonify({"ok": False, "error": str(exc)[:200]}), 500
 

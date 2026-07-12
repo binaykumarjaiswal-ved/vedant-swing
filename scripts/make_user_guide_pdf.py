@@ -208,7 +208,7 @@ def build_report() -> Report:
     pdf.table(
         ["Tab", "Purpose", "Main actions"],
         [
-            ["Home", "Research hub", "Search, chart, analyze, evening scan"],
+            ["Home", "Research hub", "Search, chart, analyze, morning research"],
             ["Watch", "Track favourites", "Add/remove symbols, tap to analyze"],
             ["Paper", "Practice trades", "Virtual Rs.5L portfolio, buy/sell"],
             ["Journal", "Trade discipline", "Plan entry/stop/target, log R:R"],

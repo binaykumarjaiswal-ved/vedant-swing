@@ -180,24 +180,14 @@
       </div>
 
       <section class="card" id="backtest-card">
-        <h2>Strategy Backtest (Evening picks)</h2>
-        <p class="muted small">Did +3% target hit within 7 days on past evening scan picks?</p>
+        <h2>Model Performance</h2>
+        <p class="muted small">Prediction history win rate (from SQLite model audit). Morning recommendations only.</p>
         <div id="backtest-stats" class="backtest-hero">
           <div><span class="muted small">Win rate</span><strong id="bt-win">—</strong></div>
           <div><span class="muted small">Trades</span><strong id="bt-trades">—</strong></div>
           <div><span class="muted small">Wins</span><strong id="bt-wins">—</strong></div>
         </div>
         <div id="backtest-samples" class="picks-list"></div>
-      </section>
-
-      <section class="card">
-        <div class="card-head-row">
-          <h2>Evening Swing Scan</h2>
-          <button type="button" class="btn btn-ghost btn-sm" id="btn-run-evening">Run now</button>
-        </div>
-        <p class="muted small" id="evening-scan-meta">Auto after 3:45 PM IST</p>
-        <div class="strategy-chips" id="strategy-chips"></div>
-        <div id="evening-scan-list" class="picks-list"></div>
       </section>
 
       <section class="card" id="position-card">

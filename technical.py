@@ -130,9 +130,30 @@ def analyze_technicals(symbol: str, nifty_df: pd.DataFrame | None = None) -> dic
         score -= 6
 
     score = max(0, min(100, score))
+
+    # ATR for risk engine (14-period)
+    atr_val = 0.0
+    try:
+        prev_c = close.shift(1)
+        tr = pd.concat(
+            [(high - low).abs(), (high - prev_c).abs(), (low - prev_c).abs()],
+            axis=1,
+        ).max(axis=1)
+        atr_val = float(tr.tail(14).mean())
+        if np.isnan(atr_val):
+            atr_val = 0.0
+    except Exception:
+        atr_val = 0.0
+
     target_pct = 3.0
+    stop_pct = 4.0
+    if atr_val > 0 and price > 0:
+        target_pct = max(2.0, min(5.0, (atr_val * 1.5 / price) * 100))
+        stop_pct = max(2.0, min(6.0, (atr_val * 1.2 / price) * 100))
+
     entry = price
     target = round(price * (1 + target_pct / 100), 2)
+    stop = round(price * (1 - stop_pct / 100), 2)
     avg_trigger = round(price * 0.97, 2)
 
     return {
@@ -150,10 +171,13 @@ def analyze_technicals(symbol: str, nifty_df: pd.DataFrame | None = None) -> dic
         "ema21": round(ema21_val, 2),
         "ema20": round(ema20_val, 2),
         "ema50": round(ema50_val, 2),
+        "atr": round(atr_val, 2),
         "swing_score": round(score, 1),
         "reasons": reasons,
         "entry": entry,
         "target": target,
+        "stop": stop,
         "avg_trigger": avg_trigger,
-        "target_pct": target_pct,
+        "target_pct": round(target_pct, 2),
+        "stop_pct": round(stop_pct, 2),
     }

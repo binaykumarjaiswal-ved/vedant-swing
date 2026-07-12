@@ -85,28 +85,6 @@ def _report_meta(report_date: str) -> dict:
     }
 
 
-def _evening_fallback_picks() -> dict | None:
-    eve = get_latest_evening_scan()
-    if not eve.get("ok"):
-        return None
-    picks = []
-    for i, p in enumerate((eve.get("top") or [])[:5], 1):
-        picks.append({
-            "rank": i,
-            "symbol": p.get("symbol"),
-            "signal": p.get("signal", "—"),
-            "score": int(p.get("swing_score") or 0),
-            "strategy": p.get("strategy", ""),
-            "price": p.get("price") or p.get("entry"),
-        })
-    return {
-        "date": eve.get("date", ""),
-        "date_display": _report_meta(eve.get("date", "")).get("report_display", eve.get("date")),
-        "picks": picks,
-        "hits": eve.get("hits", 0),
-    }
-
-
 def _extract_groq_morning(text: str) -> str:
     marker = "── GROQ AI MORNING BRAIN ──"
     if marker not in text:
@@ -182,7 +160,6 @@ def get_dashboard() -> dict:
     top_picks: list[dict] = []
 
     report_meta = _report_meta("")
-    evening_fallback = None
     ai_morning_briefing = ""
     if report_path:
         report_date = report_path.stem.replace("morning_research_", "")
@@ -195,8 +172,6 @@ def get_dashboard() -> dict:
                 ai_morning_briefing = ai_file.read_text(encoding="utf-8").strip()
         report_preview = ai_morning_briefing or text[:1200]
         top_picks = _parse_top_picks(text)
-    if not report_meta.get("is_today"):
-        evening_fallback = _evening_fallback_picks()
 
     position_data = None
     pos = load_position()
@@ -246,9 +221,14 @@ def get_dashboard() -> dict:
         "watchlist_count": watchlist_count,
         "active_alerts": active_alerts,
         "strategy": {
-            "profit_target_pct": CONFIG["profit_target_pct"],
-            "loss_trigger_pct": CONFIG["loss_trigger_pct"],
-            "default_investment": CONFIG["default_investment"],
+            "profit_target_pct": CONFIG.get("profit_target_pct", 3.0),
+            "loss_trigger_pct": CONFIG.get("loss_trigger_pct", 3.0),
+            "hard_stop_pct": CONFIG.get("hard_stop_pct", 4.0),
+            "max_averages": CONFIG.get("max_averages", 1),
+            "default_investment": CONFIG.get("default_investment", 30000),
+            "min_confidence": CONFIG.get("min_confidence", 68),
+            "broker_integration": False,
+            "mode": "recommend_only",
         },
         "position": position_data,
         "report_date": report_date,
@@ -256,11 +236,62 @@ def get_dashboard() -> dict:
         "report_preview": report_preview,
         "top_picks": top_picks,
         "has_report": bool(report_path),
-        "evening_fallback": evening_fallback,
         "ai_morning_briefing": ai_morning_briefing,
         "has_groq_morning": bool(ai_morning_briefing),
         "scan": scan_info,
+        "recommendations": _latest_recs_summary(),
+        "performance": _perf_summary(),
+        "regime": _regime_summary(),
+        "mode": "morning_only",
     }
+
+
+def _latest_recs_summary() -> dict:
+    try:
+        from recommender import get_latest_recommendations
+
+        data = get_latest_recommendations()
+        if not data.get("ok"):
+            return {"ok": False, "count": 0}
+        recs = data.get("recommendations") or []
+        return {
+            "ok": True,
+            "date": data.get("date"),
+            "count": len(recs),
+            "message": data.get("message"),
+            "top": [
+                {
+                    "symbol": r.get("symbol"),
+                    "score": r.get("swing_score"),
+                    "confidence": r.get("confidence"),
+                    "entry": r.get("entry") or r.get("price"),
+                    "target": r.get("target"),
+                    "stop": r.get("stop"),
+                    "signal": r.get("signal"),
+                }
+                for r in recs[:5]
+            ],
+        }
+    except Exception:
+        return {"ok": False, "count": 0}
+
+
+def _perf_summary() -> dict:
+    try:
+        from history_db import performance_summary
+
+        return performance_summary(days=60)
+    except Exception:
+        return {"ok": False}
+
+
+def _regime_summary() -> dict:
+    try:
+        from market_regime import market_health
+
+        return market_health()
+    except Exception:
+        return {"regime": "NEUTRAL", "score": 50, "trade_approval": True}
 
 
 def run_morning_scan_api(force: bool = False) -> dict:
@@ -531,17 +562,3 @@ def get_report(date: str) -> dict:
         "text": text,
         "top_picks": _parse_top_picks(text),
     }
-
-
-def get_latest_evening_scan() -> dict:
-    _sync()
-    files = sorted((DATA_DIR / "reports").glob("evening_scan_*.json"), reverse=True)
-    if not files:
-        files = sorted((ROOT / "data" / "reports").glob("evening_scan_*.json"), reverse=True)
-    if not files:
-        return {"ok": False, "message": "No evening scan yet"}
-    try:
-        payload = json.loads(files[0].read_text(encoding="utf-8"))
-        return {"ok": True, "date": files[0].stem.replace("evening_scan_", ""), **payload}
-    except json.JSONDecodeError:
-        return {"ok": False, "error": "Corrupt scan file"}

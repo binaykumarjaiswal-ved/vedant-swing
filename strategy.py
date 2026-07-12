@@ -1,4 +1,4 @@
-"""Binay's swing strategy: 3% profit, average 30% up to 5 times on -3% drops."""
+"""Swing position rules: target, hard stop, max 1 optional average. Recommend-only."""
 
 from __future__ import annotations
 
@@ -10,6 +10,16 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent
 POSITION_FILE = BASE_DIR / "data" / "position.json"
 CONFIG = json.loads((BASE_DIR / "config.json").read_text(encoding="utf-8"))
+
+
+def _cfg() -> dict:
+    """Reload config so runtime changes apply."""
+    global CONFIG
+    try:
+        CONFIG = json.loads((BASE_DIR / "config.json").read_text(encoding="utf-8"))
+    except Exception:
+        pass
+    return CONFIG
 
 
 @dataclass
@@ -49,13 +59,27 @@ class Position:
         return ((ltp / self.avg_price) - 1) * 100
 
     def sell_target(self) -> float:
-        return round(self.avg_price * (1 + CONFIG["profit_target_pct"] / 100), 2)
+        c = _cfg()
+        # Prefer stored target on first lot if present
+        for lot in self.lots:
+            if lot.get("target"):
+                return round(float(lot["target"]), 2)
+        return round(self.avg_price * (1 + c.get("profit_target_pct", 3.0) / 100), 2)
+
+    def hard_stop(self) -> float:
+        c = _cfg()
+        for lot in self.lots:
+            if lot.get("stop"):
+                return round(float(lot["stop"]), 2)
+        return round(self.avg_price * (1 - c.get("hard_stop_pct", 4.0) / 100), 2)
 
     def next_avg_trigger(self) -> float:
-        return round(self.avg_price * (1 - CONFIG["loss_trigger_pct"] / 100), 2)
+        c = _cfg()
+        return round(self.avg_price * (1 - c.get("loss_trigger_pct", 3.0) / 100), 2)
 
     def can_average(self) -> bool:
-        return self.average_count < CONFIG["max_averages"]
+        c = _cfg()
+        return self.average_count < int(c.get("max_averages", 1))
 
 
 def load_position() -> Position | None:
@@ -83,7 +107,8 @@ def calc_best_buy_price(quote: dict) -> float:
 
 def calc_buy_order(budget: float | None = None, price: float = 0) -> dict:
     """Qty and cost for a fixed Rs. budget at the given buy price."""
-    budget = budget or CONFIG["default_investment"]
+    c = _cfg()
+    budget = budget or c.get("default_investment", 30000)
     if price <= 0:
         return {"qty": 0, "price": 0, "amount": 0, "budget": budget}
     qty = int(budget / price)
@@ -99,8 +124,8 @@ def calc_buy_order(budget: float | None = None, price: float = 0) -> dict:
 
 
 def enrich_pick_with_order(pick: dict, quote: dict | None = None) -> dict:
-    """Add best buy price, qty, and amounts to a scanner pick."""
-    budget = CONFIG["default_investment"]
+    """Add best buy price, ATR risk levels, and risk-sized qty to a pick."""
+    c = _cfg()
     if quote and quote.get("ltp", 0) > 0:
         best = calc_best_buy_price(quote)
         pick["price"] = round(float(quote["ltp"]), 2)
@@ -112,14 +137,28 @@ def enrich_pick_with_order(pick: dict, quote: dict | None = None) -> dict:
     if best <= 0:
         return pick
 
-    order = calc_buy_order(budget, best)
     pick["best_buy_price"] = best
     pick["entry"] = best
+
+    # Prefer risk engine (ATR + risk %)
+    try:
+        from risk_engine import enrich_pick_with_risk
+
+        pick["price"] = pick.get("price") or best
+        return enrich_pick_with_risk(pick)
+    except Exception:
+        pass
+
+    budget = c.get("default_investment", 30000)
+    order = calc_buy_order(budget, best)
     pick["buy_qty"] = order["qty"]
     pick["buy_amount"] = order["amount"]
     pick["buy_budget"] = budget
-    pick["target"] = round(best * (1 + CONFIG["profit_target_pct"] / 100), 2)
-    pick["avg_trigger"] = round(best * (1 - CONFIG["loss_trigger_pct"] / 100), 2)
+    pick["target"] = round(best * (1 + c.get("profit_target_pct", 3.0) / 100), 2)
+    pick["stop"] = round(best * (1 - c.get("hard_stop_pct", 4.0) / 100), 2)
+    pick["avg_trigger"] = round(best * (1 - c.get("loss_trigger_pct", 3.0) / 100), 2)
+    pick["target_pct"] = c.get("profit_target_pct", 3.0)
+    pick["stop_pct"] = c.get("hard_stop_pct", 4.0)
     return pick
 
 
@@ -131,15 +170,28 @@ def save_position(pos: Position | None) -> None:
     POSITION_FILE.write_text(json.dumps(asdict(pos), indent=2), encoding="utf-8")
 
 
-def open_position(symbol: str, price: float, amount: float | None = None) -> Position:
-    budget = amount or CONFIG["default_investment"]
+def open_position(
+    symbol: str,
+    price: float,
+    amount: float | None = None,
+    stop: float | None = None,
+    target: float | None = None,
+) -> Position:
+    c = _cfg()
+    budget = amount or c.get("default_investment", 30000)
     order = calc_buy_order(budget, price)
+    if stop is None:
+        stop = round(order["price"] * (1 - c.get("hard_stop_pct", 4.0) / 100), 2)
+    if target is None:
+        target = round(order["price"] * (1 + c.get("profit_target_pct", 3.0) / 100), 2)
     lot = {
         "price": order["price"],
         "qty": order["qty"],
         "amount": order["amount"],
         "kind": "initial",
         "date": datetime.now().strftime("%Y-%m-%d"),
+        "stop": stop,
+        "target": target,
     }
     pos = Position(
         active=True,
@@ -154,7 +206,10 @@ def open_position(symbol: str, price: float, amount: float | None = None) -> Pos
 
 
 def add_average(pos: Position, price: float) -> Position:
-    add_budget = pos.initial_amount * CONFIG["average_fraction"]
+    c = _cfg()
+    if not pos.can_average():
+        return pos
+    add_budget = pos.initial_amount * c.get("average_fraction", 0.30)
     order = calc_buy_order(add_budget, price)
     pos.lots.append({
         "price": order["price"],
@@ -173,33 +228,58 @@ def close_position() -> None:
 
 
 def evaluate_position(ltp: float, pos: Position) -> dict:
-    """Return signal: SELL | AVERAGE | HOLD with details."""
+    """Return signal: SELL | STOP | AVERAGE | HOLD with details."""
+    c = _cfg()
     pnl = pos.pnl_pct(ltp)
     sell_at = pos.sell_target()
+    stop_at = pos.hard_stop()
     avg_at = pos.next_avg_trigger()
+    target_pct = c.get("profit_target_pct", 3.0)
 
-    if pnl >= CONFIG["profit_target_pct"]:
+    # Hard stop first (capital protection)
+    if c.get("hard_stop_enabled", True) and ltp <= stop_at:
         return {
-            "signal": "SELL",
-            "confidence": min(95, 70 + pnl),
-            "reason": f"Target hit: +{pnl:.2f}% profit (goal {CONFIG['profit_target_pct']}%)",
+            "signal": "STOP",
+            "confidence": 90,
+            "reason": (
+                f"Hard stop hit: LTP Rs.{ltp:.2f} <= stop Rs.{stop_at:.2f} "
+                f"({pnl:+.2f}% from avg Rs.{pos.avg_price:.2f})"
+            ),
             "ltp": ltp,
             "avg_price": round(pos.avg_price, 2),
-            "sell_price": sell_at,
+            "sell_price": stop_at,
+            "stop_price": stop_at,
             "pnl_pct": round(pnl, 2),
             "total_invested": round(pos.total_invested, 2),
             "total_qty": pos.total_qty,
         }
 
-    if ltp <= avg_at and pos.can_average():
-        add_budget = pos.initial_amount * CONFIG["average_fraction"]
+    if ltp >= sell_at or pnl >= target_pct:
+        return {
+            "signal": "SELL",
+            "confidence": min(95, 70 + max(pnl, 0)),
+            "reason": f"Target zone: +{pnl:.2f}% (goal ~{target_pct}%). Sell near Rs.{sell_at:.2f}",
+            "ltp": ltp,
+            "avg_price": round(pos.avg_price, 2),
+            "sell_price": sell_at,
+            "stop_price": stop_at,
+            "pnl_pct": round(pnl, 2),
+            "total_invested": round(pos.total_invested, 2),
+            "total_qty": pos.total_qty,
+        }
+
+    # Optional single average only (max_averages default 1)
+    if ltp <= avg_at and pos.can_average() and int(c.get("max_averages", 1)) > 0:
+        add_budget = pos.initial_amount * c.get("average_fraction", 0.30)
         add_order = calc_buy_order(add_budget, ltp)
+        max_avg = int(c.get("max_averages", 1))
         return {
             "signal": "AVERAGE",
-            "confidence": 75,
+            "confidence": 70,
             "reason": (
-                f"Price Rs.{ltp:.2f} fell 3% below avg Rs.{pos.avg_price:.2f}. "
-                f"Add {int(CONFIG['average_fraction']*100)}% of initial (avg {pos.average_count+1}/{CONFIG['max_averages']})"
+                f"Price Rs.{ltp:.2f} below avg trigger Rs.{avg_at:.2f}. "
+                f"Optional add {int(c.get('average_fraction', 0.3)*100)}% "
+                f"(avg {pos.average_count + 1}/{max_avg}). Hard stop remains Rs.{stop_at:.2f}."
             ),
             "ltp": ltp,
             "avg_price": round(pos.avg_price, 2),
@@ -208,16 +288,21 @@ def evaluate_position(ltp: float, pos: Position) -> dict:
             "add_qty": add_order["qty"],
             "add_price": add_order["price"],
             "average_count": pos.average_count,
+            "stop_price": stop_at,
             "pnl_pct": round(pnl, 2),
         }
 
     return {
         "signal": "HOLD",
         "confidence": 50,
-        "reason": f"Wait for +{CONFIG['profit_target_pct']}% (now {pnl:+.2f}%). Sell at Rs.{sell_at:.2f}",
+        "reason": (
+            f"Hold. PnL {pnl:+.2f}%. Target Rs.{sell_at:.2f} | "
+            f"Stop Rs.{stop_at:.2f} | Avg trigger Rs.{avg_at:.2f}"
+        ),
         "ltp": ltp,
         "avg_price": round(pos.avg_price, 2),
         "sell_price": sell_at,
+        "stop_price": stop_at,
         "avg_trigger": avg_at,
         "pnl_pct": round(pnl, 2),
     }

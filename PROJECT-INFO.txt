@@ -1,44 +1,42 @@
-VEDANT SWING — MVP COMPLETE
-===========================
+VEDANT SWING — MORNING-ONLY RECOMMEND SYSTEM
+============================================
 
-PRODUCT: Vedant Swing (India Nifty 500 swing trading)
+PRODUCT: Vedant Swing (India Nifty 500 swing recommendations)
 REPO: https://github.com/binaykumarjaiswal-ved/vedant-swing
 LIVE APP: https://vedant-swing-web.onrender.com
 DATA: Yahoo Finance (yfinance) + NSE quotes
-BROKER: None (Angel One Phase 2)
-EMAIL ALERTS: Skipped for now (see SETUP_GMAIL_ALERTS.txt to enable later)
+BROKER: NONE — no auto trade, no order placement
+GOALS: See GOALS.md
+MODE: Morning research only (evening scan removed)
 
 FEATURES:
   [x] Nifty 500 universe
-  [x] 3 swing strategies (pullback, breakout, oversold)
-  [x] Evening scan (3:45 PM IST)
-  [x] Morning research (Render cloud)
-  [x] Daily candlestick charts + EMA 21/50
-  [x] Stock search + technical analysis
-  [x] Watchlist
-  [x] Price alerts (in-app; Telegram optional)
-  [x] Paper trading (Rs.5L virtual)
-  [x] Trade journal + R:R
-  [x] Mobile web dashboard (5 tabs)
-  [x] GitHub Actions automation (enabled)
-  [x] Render free deploy
+  [x] Morning research + BUY recommendations
+  [x] Market regime filter
+  [x] ATR risk: target/stop + risk-based position size
+  [x] Hard stop + max 1 optional average
+  [x] Confidence-gated recommendations
+  [x] SQLite history + model audit + backtest
+  [x] Auto paper trade (virtual only)
+  [x] Charts, watchlist, alerts, journal
+  [x] Mobile web dashboard
+  [x] GitHub Actions + Render (morning)
 
-TABS: Home | Watch | Paper | Journal | Alerts
+REMOVED (do not re-add without product decision):
+  - evening_scan.py / evening GitHub workflow
+  - swing_strategies evening packaging
+  - evening email/Telegram summaries
+  - evening UI card / APIs
 
-AUTOMATION (GitHub Actions):
-  evening-scan.yml       — Nifty 500 scan after market close
-  alert-check.yml        — Price alert checks every 30 min
-  webapp-keep-awake.yml    — Keeps Render fast during market hours
-  webapp-morning-boost.yml — Morning research on Render
-  smoke-test.yml           — Runs on every push
+QUICK COMMANDS:
+  RUN_RECOMMEND.bat   — today's BUY recommendations
+  RUN_BACKTEST.bat    — historical sample backtest
+  RUN_MODEL_AUDIT.bat — score past predictions
 
 DAILY ROUTINE:
-  9:00 AM   Morning research auto-runs on cloud
-  9:15 AM   Check alerts tab in app
-  3:45 PM   Evening scan auto-runs
-  4:00 PM   Review setups in app → watchlist / paper / journal
+  8:30–10:30 AM  Morning research + BUY recommendations
+  Market hours   Manual broker trade if you agree; check stop/target
 
-PHONE: Open https://vedant-swing-web.onrender.com → Add to Home screen
-USER GUIDE: USER-GUIDE.txt (every tab, button, and option explained)
+PHONE: https://vedant-swing-web.onrender.com
 
-NOT SEBI ADVICE. Trade at your own risk.
+NOT SEBI ADVICE. Trade at your own risk. No broker auto-orders.

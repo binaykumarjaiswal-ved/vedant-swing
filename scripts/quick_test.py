@@ -1,4 +1,4 @@
-"""Smoke test for Vedant Swing."""
+"""Smoke test for Vedant Swing (morning-only, no evening scan)."""
 
 from __future__ import annotations
 
@@ -16,9 +16,10 @@ def main() -> int:
     from chart_data import get_chart_payload
     from stock_universe import get_universe
     from technical import analyze_technicals
-    from evening_scan import run_evening_scan
     from watchlists import add_symbol, get_watchlist
     from alerts import add_alert, list_alerts
+    from market_regime import market_health
+    from history_db import init_db, performance_summary
 
     uni = get_universe()
     print(f"universe={uni.get('count', len(uni.get('all', [])))} source={uni.get('source')}")
@@ -36,14 +37,16 @@ def main() -> int:
     add_alert("RELIANCE", "above", 99999, note="smoke-never-trigger")
     assert len(list_alerts(active_only=True)) >= 1
 
-    result = run_evening_scan(limit=10)
-    assert result.get("ok"), result
+    init_db()
+    regime = market_health()
+    assert "regime" in regime
 
     print(json.dumps({
         "ok": True,
-        "scanned": result.get("scanned"),
-        "hits": result.get("hits"),
+        "regime": regime.get("regime"),
         "candles": len(chart.get("candles", [])),
+        "score": tech.get("swing_score"),
+        "performance": performance_summary(60).get("message"),
     }))
     return 0
 

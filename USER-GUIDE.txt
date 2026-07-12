@@ -16,7 +16,7 @@ TOP BAR (ALWAYS VISIBLE)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 VEDANT SWING          — App name
-↻ Refresh             — Reloads market mood, evening scan, watchlist,
+↻ Refresh             — Reloads market mood, morning research, watchlist,
                         paper portfolio, journal, and alerts
 
 Subtitle line         — Shows: Watchlist count · Active alerts · Time (IST)
@@ -28,7 +28,7 @@ red/amber)              Examples: "Nifty BULLISH · 20d +3.98%"
                         NEUTRAL = sideways / mixed
 
 5 TABS:
-  Home    — Search stocks, charts, evening scan, position tracker
+  Home    — Search stocks, charts, morning research, position tracker
   Watch   — Your personal stock watchlist
   Paper   — Virtual Rs.5,00,000 practice trading (no real money)
   Journal — Plan and track your real trade ideas + R:R
@@ -95,20 +95,11 @@ TAB 1 — HOME
                         Red toast = error (e.g. already holding stock)
     Journal           — Jump to Journal tab with entry/stop/target filled
 
-── EVENING SWING SCAN ──
-  Auto-runs at 3:45 PM IST on trading days (cloud automation)
-  Scans all Nifty 500 stocks for swing setups
-
-  Run now             — Manually trigger scan (takes a few minutes)
-  Meta line           — Date · number of setups found · stocks scanned
-
-  Strategy filter chips:
-    All               — Every setup found
-    Pullback 21 EMA   — Stock pulled back to 21-day average in uptrend
-    Breakout          — Price breaking out of tight range with volume
-    Oversold Bounce   — RSI low, possible bounce in uptrend
-
-  Tap any stock row   — Opens full analysis on Home tab
+── MORNING RESEARCH (only daily scan) ──
+  Auto-runs ~8:30–10:30 AM IST on trading days
+  Shows top picks, score, entry / stop / target
+  Run now             — Manually trigger morning scan on cloud
+  Evening scan        — REMOVED (do not use)
 
 ── POSITION TRACKER ──
   Shows your ONE real tracked position (if synced from cloud bot)
@@ -203,7 +194,7 @@ SIGNAL MEANINGS (ANALYSIS BADGE)
   STRONG BUY  — High score, multiple bullish signals aligned
   BUY         — Good swing setup, meets strategy rules
   WATCH       — Interesting but not full entry yet — wait
-  SETUP       — Pattern forming (evening scan)
+  SETUP       — Pattern forming (morning research)
   AVOID       — Weak setup or against trend — skip
 
   Swing score 0–100:
@@ -212,30 +203,13 @@ SIGNAL MEANINGS (ANALYSIS BADGE)
     Below 62 — Usually filtered out of scans
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-3 SWING STRATEGIES (EVENING SCAN)
+RECOMMENDED DAILY ROUTINE (IST) — MORNING ONLY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. PULLBACK 21 EMA
-   Stock in uptrend pulls back near 21-day moving average.
-   RSI 40–55. Good for buying the dip in a strong stock.
-
-2. BREAKOUT
-   Price breaks above 10-day consolidation range with volume.
-   Good for momentum entries after a tight base.
-
-3. OVERSOLD BOUNCE
-   RSI oversold but stock still above long-term trend.
-   Good for quick bounce trades (higher risk).
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-RECOMMENDED DAILY ROUTINE (IST)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  9:00 AM   — Morning research runs automatically on cloud
-  9:15 AM   — Open app → check Alerts tab
-  10:00 AM  — Review any WATCHLIST stocks with Analyze
-  3:45 PM   — Evening Nifty 500 scan runs automatically
-  4:00 PM   — Home tab → review Evening Swing Scan setups
-  4:30 PM   — Shortlist → Watchlist → Paper trade or Journal plan
-  Any time  — Use chart timeframes (1D–MAX) before deciding
+  8:30–10:30 AM — Morning research auto on cloud
+  After report  — Open app / Telegram → read BUY / NO TRADE
+  If you agree  — Buy yourself in broker (bot never places orders)
+  Market hours  — Check stop / target; sell yourself if hit
+  Evening       — Nothing required (evening scan removed)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 TOAST MESSAGES (BOTTOM POPUP)
@@ -259,7 +233,7 @@ TIPS
   • Paper trading = learning only, not connected to your demat
   • Journal = your discipline log, separate from paper portfolio
   • One paper position per symbol — mirrors real trading discipline
-  • Evening scan on free tier: first "Run now" may be slow
+  • Morning research on free tier: first "Run now" may be slow
   • Not SEBI-registered advice — all signals are for research only
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

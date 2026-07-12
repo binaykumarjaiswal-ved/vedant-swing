@@ -167,7 +167,7 @@ def run_morning_manual(force: bool = False, background: bool = True) -> dict:
         return {
             **get_scan_status(),
             "started": False,
-            "message": f"No NSE session today ({ctx.get('today_label')}). Use evening scan picks or tap Force run.",
+            "message": f"No NSE session today ({ctx.get('today_label')}). Wait for next trading day or tap Force run.",
         }
 
     if not force and report_exists_for_today():

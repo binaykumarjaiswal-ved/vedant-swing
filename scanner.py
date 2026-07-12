@@ -209,6 +209,7 @@ def scan_universe(
 
 
 def pick_best_buy(results: list[dict[str, Any]] | None = None) -> dict[str, Any] | None:
+    """Best BUY by confidence then score. Prefer recommender for full pipeline."""
     if CONFIG.get("one_buy_per_day") and _load_today_buy():
         sym = _load_today_buy()
         if results:
@@ -220,8 +221,24 @@ def pick_best_buy(results: list[dict[str, Any]] | None = None) -> dict[str, Any]
     if results is None:
         results = scan_universe()
 
-    min_score = CONFIG.get("min_buy_score", 62)
-    for r in results:
-        if r["signal"] in ("BUY", "STRONG BUY") and r["swing_score"] >= min_score:
+    min_score = CONFIG.get("min_buy_score", 65)
+    min_conf = CONFIG.get("min_confidence", 68)
+
+    # Prefer confidence-ranked if present
+    ranked = sorted(
+        results,
+        key=lambda x: (x.get("confidence") or 0, x.get("swing_score") or 0),
+        reverse=True,
+    )
+    for r in ranked:
+        if r.get("signal") not in ("BUY", "STRONG BUY"):
+            continue
+        if float(r.get("swing_score") or 0) < min_score:
+            continue
+        if r.get("confidence") is not None and float(r["confidence"]) < min_conf:
+            continue
+        return r
+    for r in ranked:
+        if r.get("signal") in ("BUY", "STRONG BUY") and float(r.get("swing_score") or 0) >= min_score:
             return r
     return results[0] if results else None

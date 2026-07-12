@@ -144,7 +144,7 @@ def get_market_context() -> dict:
         "market_open": status == "OPEN",
         "trading_day": trading_day,
         "session_hint": hint,
-        "evening_scan_at": "3:45 PM IST",
+        "morning_research_at": "8:30–10:30 AM IST",
         "market_hours": "9:15 AM – 3:30 PM IST",
     }
 

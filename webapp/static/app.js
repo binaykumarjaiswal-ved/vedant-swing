@@ -1,8 +1,6 @@
 const $ = (id) => document.getElementById(id);
 
 let lastResult = null;
-let eveningData = null;
-let eveningFilter = "all";
 let scanPollTimer = null;
 
 const QUICK = ["TITAN", "RELIANCE", "TCS", "HDFCBANK", "INFY", "BAJFINANCE"];
@@ -87,10 +85,6 @@ function fmtRs(n) {
   return "Rs." + Number(n).toLocaleString("en-IN", { maximumFractionDigits: 2 });
 }
 
-function strategyLabel(key) {
-  return STRATEGY_LABELS[key] || (key || "").replace(/_/g, " ");
-}
-
 function switchTab(name) {
   document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t.dataset.tab === name));
   document.querySelectorAll(".tab-panel").forEach((p) => p.classList.toggle("active", p.id === `panel-${name}`));
@@ -159,27 +153,26 @@ function renderMorningBriefing(data) {
     staleBanner.classList.remove("hidden");
     staleBanner.textContent =
       `Last morning report is ${meta.age_days} day(s) old. ` +
-      `${meta.next_auto}. Showing fresh evening scan picks below.`;
+      `${meta.next_auto}.`;
   } else if (staleBanner) {
     staleBanner.classList.add("hidden");
   }
 
   if (!data.has_report) {
     status.textContent = "No morning report yet — auto Mon–Fri 8:30–10:30 AM IST";
-    picks.innerHTML = "";
+    picks.innerHTML = '<p class="muted">Tap Run now or wait for morning auto scan.</p>';
     if (details) details.classList.add("hidden");
-    _renderEveningFallbackPicks(data.evening_fallback, picks);
     return;
   }
 
   if (meta.is_today) {
     status.textContent = `Today's top ${(data.top_picks || []).length} picks`;
   } else {
-    status.textContent = `Archived picks from ${meta.report_display} (use evening scan for latest)`;
+    status.textContent = `Archived picks from ${meta.report_display} (wait for next morning research)`;
   }
 
   const rows = data.top_picks || [];
-  let html = rows.length
+  const html = rows.length
     ? rows.map((p) => `
       <div class="pick-row" data-symbol="${p.symbol}">
         <div class="pick-mid"><strong>#${p.rank} ${p.symbol}</strong><span>Score ${p.score} · ${p.signal}</span></div>
@@ -187,31 +180,10 @@ function renderMorningBriefing(data) {
       </div>`).join("")
     : "";
 
-  if (meta.stale && data.evening_fallback?.picks?.length) {
-    html += `<p class="muted small" style="margin:0.5rem 0 0.25rem"><strong>Latest evening scan (${data.evening_fallback.date_display})</strong></p>`;
-    html += data.evening_fallback.picks.map((p) => `
-      <div class="pick-row" data-symbol="${p.symbol}">
-        <div class="pick-mid"><strong>${p.symbol}</strong><span>${p.strategy || "setup"} · ${p.score}/100</span></div>
-        <span class="signal-badge ${signalClass(p.signal)}">${p.signal}</span>
-      </div>`).join("");
-  }
-
   picks.innerHTML = html || '<p class="muted">Tap Run now on Monday morning for fresh report.</p>';
   bindPickClicks(picks);
   if (report) report.textContent = data.report_preview || "";
   if (details) details.classList.toggle("hidden", !data.report_preview);
-}
-
-function _renderEveningFallbackPicks(fallback, picksEl) {
-  if (!fallback?.picks?.length || !picksEl) return;
-  picksEl.innerHTML =
-    `<p class="muted small"><strong>Evening scan ${fallback.date_display}</strong> (${fallback.hits} setups)</p>` +
-    fallback.picks.map((p) => `
-      <div class="pick-row" data-symbol="${p.symbol}">
-        <div class="pick-mid"><strong>${p.symbol}</strong><span>${p.score}/100 · ${p.signal}</span></div>
-        <span class="signal-badge ${signalClass(p.signal)}">${p.signal}</span>
-      </div>`).join("");
-  bindPickClicks(picksEl);
 }
 
 function renderSectorHeatmap(data) {
@@ -257,22 +229,30 @@ function renderCompare(data) {
 
 async function loadBacktest() {
   try {
-    const data = await fetch("/api/backtest?days=30").then((r) => r.json());
-    $("bt-win").textContent = data.ok ? `${data.win_rate}%` : "—";
-    $("bt-trades").textContent = data.trades ?? "—";
-    $("bt-wins").textContent = data.wins ?? "—";
-    const samples = $("backtest-samples");
-    if (!data.samples?.length) {
-      samples.innerHTML = '<p class="muted">Run evening scans to build backtest history.</p>';
+    const data = await fetch("/api/performance?days=60").then((r) => r.json());
+    if (data.ok) {
+      $("bt-win").textContent = data.win_rate != null ? `${data.win_rate}%` : "—";
+      $("bt-trades").textContent = data.outcomes ?? data.predictions ?? "—";
+      const wins = data.win_rate != null && data.outcomes
+        ? Math.round((data.win_rate / 100) * data.outcomes)
+        : "—";
+      $("bt-wins").textContent = wins;
+      const samples = $("backtest-samples");
+      if (!data.outcomes) {
+        samples.innerHTML = '<p class="muted">No closed prediction outcomes yet. Keep using morning research; audit after ~5 days.</p>';
+        return;
+      }
+      const buckets = data.by_score_bucket || {};
+      samples.innerHTML = Object.keys(buckets).map((k) => {
+        const b = buckets[k];
+        return `<div class="pick-row"><div class="pick-mid"><strong>Score ${k}</strong><span>n=${b.n}</span></div>
+          <span class="muted small">avg ${b.avg_return_pct ?? "—"}% · win ${b.win_rate ?? "—"}%</span></div>`;
+      }).join("") || '<p class="muted">Building history…</p>';
       return;
     }
-    samples.innerHTML = data.samples.map((s) => `
-      <div class="pick-row">
-        <div class="pick-mid"><strong>${s.symbol}</strong><span>${s.date} · entry ${fmtRs(s.entry)}</span></div>
-        <span class="signal-badge ${s.hit ? "buy" : "watch"}">${s.hit ? "HIT +3%" : s.note}</span>
-      </div>`).join("");
+    $("backtest-samples").innerHTML = '<p class="muted">Performance data not ready yet.</p>';
   } catch (e) {
-    $("backtest-samples").innerHTML = '<p class="muted">Backtest unavailable</p>';
+    $("backtest-samples").innerHTML = '<p class="muted">Performance unavailable</p>';
   }
 }
 
@@ -395,47 +375,6 @@ async function runAnalyze(symbol) {
   }
 }
 
-function paintEveningList() {
-  const list = $("evening-scan-list");
-  if (!eveningData?.ok) return;
-  let rows = eveningFilter === "all" ? (eveningData.top || []).slice(0, 12) : (eveningData.by_strategy?.[eveningFilter] || []).slice(0, 15);
-  if (!rows.length) {
-    list.innerHTML = '<p class="muted">No setups.</p>';
-    return;
-  }
-  list.innerHTML = rows.map((p) => `
-    <div class="pick-row" data-symbol="${p.symbol}">
-      <div class="pick-mid"><strong>${p.symbol}</strong><span>${strategyLabel(p.strategy)} · ${p.swing_score}/100</span></div>
-      <span class="signal-badge ${signalClass(p.signal)}">${p.signal}</span>
-    </div>`).join("");
-  bindPickClicks(list);
-}
-
-function renderEveningScan(payload) {
-  eveningData = payload;
-  const meta = $("evening-scan-meta");
-  const chips = $("strategy-chips");
-  if (!payload?.ok || !payload.top?.length) {
-    meta.textContent = "Evening scan pending — auto 3:45 PM IST or Run now";
-    chips.innerHTML = "";
-    $("evening-scan-list").innerHTML = '<p class="muted">No setups yet.</p>';
-    return;
-  }
-  const scanTime = payload.generated_at || payload.date || "";
-  meta.textContent = `${scanTime} · ${payload.hits} setups / ${payload.scanned} stocks · Evening scan 3:45 PM IST`;
-  const strategies = Object.keys(payload.by_strategy || {});
-  chips.innerHTML = `<button type="button" class="strategy-chip active" data-strategy="all">All</button>` +
-    strategies.map((s) => `<button type="button" class="strategy-chip" data-strategy="${s}">${strategyLabel(s)}</button>`).join("");
-  chips.querySelectorAll(".strategy-chip").forEach((c) => {
-    c.addEventListener("click", () => {
-      eveningFilter = c.dataset.strategy;
-      chips.querySelectorAll(".strategy-chip").forEach((x) => x.classList.toggle("active", x === c));
-      paintEveningList();
-    });
-  });
-  paintEveningList();
-}
-
 async function loadWatchlist() {
   const data = await fetch("/api/watchlists/default").then((r) => r.json());
   const body = $("watchlist-body");
@@ -537,14 +476,13 @@ async function loadAlerts() {
 
 async function loadDashboard() {
   try {
-    const [dash, eve] = await Promise.all([fetch("/api/dashboard"), fetch("/api/evening-scan/latest")]);
+    const dash = await fetch("/api/dashboard");
     const data = await dash.json();
-    const evening = await eve.json();
     renderMarket(data.benchmark);
     renderHeaderStats(data);
     renderMorningBriefing(data);
     renderSectorHeatmap(data);
-    renderEveningScan(evening);
+
     await Promise.all([loadWatchlist(), loadPaper(), loadJournal(), loadAlerts(), loadBacktest()]);
   } catch (e) {
     toast("Load failed");
@@ -667,15 +605,6 @@ $("btn-run-morning")?.addEventListener("click", async () => {
   } finally {
     $("btn-run-morning").disabled = false;
   }
-});
-$("btn-run-evening").addEventListener("click", async () => {
-  $("btn-run-evening").disabled = true;
-  toast("Scan running…");
-  try {
-    const d = await fetch("/api/evening-scan").then((r) => r.json());
-    renderEveningScan({ ok: true, date: new Date().toISOString().slice(0, 10), ...d });
-    toast(`${d.hits || 0} setups`);
-  } finally { $("btn-run-evening").disabled = false; }
 });
 $("btn-paper-from-result").addEventListener("click", quickPaperBuyFromResult);
 $("btn-export-pdf").addEventListener("click", () => {

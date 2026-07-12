@@ -129,26 +129,45 @@ def build_position_signal(benchmark: dict, news: dict | None = None) -> str:
 
 
 def build_buy_signal(benchmark: dict, cfg: dict, all_scored: list) -> str:
-    from ai_analyst import analyze_buy
-    from scanner import log_buy_signal, pick_best_buy
-    from telegram_notify import format_buy
+    """Recommend-only: confidence-gated picks, no broker orders."""
+    from recommender import build_recommendations, format_recommendation_message
+    from scanner import log_buy_signal
 
-    pick = pick_best_buy(all_scored)
+    rec = build_recommendations(
+        scored=all_scored,
+        source="morning",
+        auto_paper=cfg.get("auto_paper_trade", True),
+    )
+    picks = rec.get("recommendations") or []
 
-    if not pick or pick.get("swing_score", 0) < cfg.get("min_buy_score", 62):
-        return (
-            f"STOCK ANALYST — NO BUY TODAY (Cloud)\n"
-            f"{datetime.now().strftime('%d %b %Y')}\n\n"
-            f"Market: {benchmark['mood']} ({benchmark['change_20d']:+.1f}% 20d)\n"
-            "No stock met minimum score.\n"
-            "See research picks above."
-        )
+    if not picks:
+        return format_recommendation_message(rec)
 
-    if not pick.get("already_picked_today"):
-        log_buy_signal(pick["symbol"], pick["swing_score"], pick.get("price", 0))
+    top = picks[0]
+    try:
+        log_buy_signal(top["symbol"], top.get("swing_score", 0), top.get("price", 0))
+    except Exception:
+        pass
 
-    ai_note = analyze_buy(pick, benchmark)
-    return format_buy(pick, ai_note)
+    # AI explanation for top pick only (narrative, not order)
+    ai_note = ""
+    try:
+        from ai_analyst import analyze_buy
+        from pa_config import is_ai_enabled
+
+        if is_ai_enabled():
+            ai_note = analyze_buy(top, benchmark) or ""
+    except Exception:
+        pass
+
+    msg = format_recommendation_message(rec)
+    if ai_note:
+        msg += f"\n\n── AI NOTE (top pick) ──\n{ai_note}"
+    if rec.get("paper"):
+        paper_ok = [p for p in rec["paper"] if p.get("ok")]
+        if paper_ok:
+            msg += "\n\nPaper auto-buy: " + ", ".join(p["symbol"] for p in paper_ok)
+    return msg
 
 
 def main() -> int:
