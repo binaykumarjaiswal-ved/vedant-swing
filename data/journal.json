@@ -1,6 +1,19 @@
 {
   "entries": [
     {
+      "id": "260bc95b",
+      "date": "2026-07-12",
+      "symbol": "DABUR",
+      "entry": 443.5,
+      "stop": 430.19,
+      "target": 457.91,
+      "rr": 1.08,
+      "strategy": "paper",
+      "notes": "Auto-linked from paper buy",
+      "qty": 67,
+      "status": "open"
+    },
+    {
       "id": "18880acd",
       "date": "2026-07-06",
       "symbol": "RECLTD",
