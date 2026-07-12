@@ -513,6 +513,40 @@ body {
   font-size: 0.88rem;
 }
 
+.sector-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.35rem 0 0.75rem;
+}
+
+.sector-tab {
+  border: 1px solid var(--border);
+  background: var(--card2);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.sector-tab.active {
+  color: #e0f2fe;
+  background: #1e3a5f;
+  border-color: #2563eb;
+}
+
+.sector-tab:hover {
+  border-color: #3b82f6;
+  color: var(--text);
+}
+
+.sector-heatmap .green { color: var(--green); font-weight: 600; font-variant-numeric: tabular-nums; }
+.sector-heatmap .red { color: var(--red); font-weight: 600; font-variant-numeric: tabular-nums; }
+
 .card {
   background: var(--card);
   border: 1px solid var(--border);

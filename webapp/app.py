@@ -30,7 +30,7 @@ app = Flask(
 )
 
 # Bump when UI changes — forces browsers to load new JS/CSS after deploy
-BUILD_VERSION = os.environ.get("RENDER_GIT_COMMIT", "qflags-v1")[:12]
+BUILD_VERSION = os.environ.get("RENDER_GIT_COMMIT", "sect-tabs1")[:12]
 
 
 @app.after_request

@@ -90,7 +90,13 @@
 
         <section class="card" id="sector-card">
           <h2>Sector Rotation</h2>
-          <p class="muted small">20-day relative strength</p>
+          <p class="muted small" id="sector-period-hint">Relative strength by period</p>
+          <div class="sector-tabs" id="sector-tabs" role="tablist">
+            <button type="button" class="sector-tab" data-period="today">Today</button>
+            <button type="button" class="sector-tab" data-period="week">Weekly</button>
+            <button type="button" class="sector-tab active" data-period="d20">20-day</button>
+            <button type="button" class="sector-tab" data-period="month">Monthly</button>
+          </div>
           <div id="sector-heatmap" class="sector-heatmap"></div>
         </section>
       </div>

@@ -372,21 +372,73 @@ function renderMorningBriefing(data) {
   if (details) details.classList.toggle("hidden", !data.report_preview);
 }
 
+let sectorHeatmapData = null;
+let sectorPeriod = "d20";
+
 function renderSectorHeatmap(data) {
+  if (data?.sector_heatmap) sectorHeatmapData = data.sector_heatmap;
+  const hm = sectorHeatmapData;
   const el = $("sector-heatmap");
+  const tabs = $("sector-tabs");
   if (!el) return;
-  const hm = data.sector_heatmap;
-  if (!hm?.ok || !hm.sectors?.length) {
+
+  if (!hm?.ok) {
     el.innerHTML = '<p class="muted">Sector data loading…</p>';
     return;
   }
-  el.innerHTML = hm.sectors.map((s) => {
-    const up = s.change_20d >= 0;
+
+  // Wire tabs once
+  if (tabs && !tabs.dataset.bound) {
+    tabs.dataset.bound = "1";
+    tabs.querySelectorAll(".sector-tab").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        sectorPeriod = btn.dataset.period || "d20";
+        tabs.querySelectorAll(".sector-tab").forEach((b) => {
+          b.classList.toggle("active", b.dataset.period === sectorPeriod);
+        });
+        paintSectorPeriod();
+      });
+    });
+  }
+
+  // Ensure active tab matches state
+  if (tabs) {
+    tabs.querySelectorAll(".sector-tab").forEach((b) => {
+      b.classList.toggle("active", b.dataset.period === sectorPeriod);
+    });
+  }
+  paintSectorPeriod();
+}
+
+function paintSectorPeriod() {
+  const el = $("sector-heatmap");
+  const hint = $("sector-period-hint");
+  const hm = sectorHeatmapData;
+  if (!el || !hm) return;
+
+  const block = (hm.periods && hm.periods[sectorPeriod]) || null;
+  const rows = block?.sectors || hm.sectors || [];
+  const label = block?.label || "20-day";
+
+  if (hint) {
+    hint.textContent = `${label} relative strength` +
+      (hm.updated ? ` · updated ${String(hm.updated).slice(0, 16).replace("T", " ")}` : "");
+  }
+
+  if (!rows.length) {
+    el.innerHTML = '<p class="muted">No sector data for this period.</p>';
+    return;
+  }
+
+  el.innerHTML = rows.map((s) => {
+    const chg = s.change != null ? s.change : s.change_20d;
+    const up = Number(chg) >= 0;
+    const bar = s.bar_pct != null ? s.bar_pct : Math.min(100, Math.abs(Number(chg) || 0) * 12);
     return `
       <div class="sector-row ${s.strong ? "strong" : ""}">
         <span class="sector-name">${escHtml(s.sector)}</span>
-        <div class="sector-bar-wrap"><div class="sector-bar ${up ? "up" : "down"}" style="width:${s.bar_pct}%"></div></div>
-        <span>${up ? "+" : ""}${s.change_20d}%</span>
+        <div class="sector-bar-wrap"><div class="sector-bar ${up ? "up" : "down"}" style="width:${bar}%"></div></div>
+        <span class="${up ? "green" : "red"}">${up ? "+" : ""}${Number(chg).toFixed(1)}%</span>
       </div>`;
   }).join("");
 }

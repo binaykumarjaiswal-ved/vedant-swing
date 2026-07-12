@@ -78,22 +78,38 @@ def price_freshness(symbol: str, market_open: bool) -> dict:
     }
 
 
-def get_sector_heatmap(top_n: int = 10) -> dict:
-    from sector_strength import get_sector_rankings
+def get_sector_heatmap(top_n: int = 12) -> dict:
+    """Multi-period sector rotation for dashboard tabs."""
+    from sector_strength import get_all_period_rankings, get_sector_rankings
 
-    ranks = get_sector_rankings()[:top_n]
-    if not ranks:
-        return {"ok": False, "sectors": []}
-    max_chg = max(abs(r["change_20d"]) for r in ranks) or 1
-    sectors = []
-    for i, r in enumerate(ranks, 1):
-        sectors.append({
-            **r,
-            "rank": i,
-            "strong": i <= 5,
-            "bar_pct": min(100, int(abs(r["change_20d"]) / max_chg * 100)),
-        })
-    return {"ok": True, "sectors": sectors, "top_n_strong": 5}
+    multi = get_all_period_rankings(top_n=top_n)
+    # Backward-compatible default list = 20-day
+    d20 = (multi.get("periods") or {}).get("d20") or {}
+    sectors = d20.get("sectors") or []
+    if not sectors:
+        # Fallback legacy
+        ranks = get_sector_rankings("d20")[:top_n]
+        if not ranks:
+            return {"ok": False, "sectors": [], "periods": {}}
+        max_chg = max(abs(r.get("change_20d", r.get("change", 0))) for r in ranks) or 1
+        sectors = []
+        for i, r in enumerate(ranks, 1):
+            chg = float(r.get("change_20d", r.get("change", 0)))
+            sectors.append({
+                **r,
+                "change": chg,
+                "rank": i,
+                "strong": i <= 5,
+                "bar_pct": min(100, int(abs(chg) / max_chg * 100)),
+            })
+    return {
+        "ok": True,
+        "sectors": sectors,
+        "top_n_strong": 5,
+        "default_period": "d20",
+        "periods": multi.get("periods") or {},
+        "updated": multi.get("updated", ""),
+    }
 
 
 def compare_symbols(symbol_a: str, symbol_b: str) -> dict:
